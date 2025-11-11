@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public final class Class_808 extends Component implements ImageObserver, Class_41b {
+public final class Class_808 extends Component implements ImageObserver, Material {
    public boolean sub_10(InputStream var1, Class_517 var2) {
       if (var1 == null) {
          return false;

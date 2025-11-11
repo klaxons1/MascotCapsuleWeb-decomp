@@ -14,9 +14,9 @@ public abstract class Class_1279 {
    protected int var_438;
    protected int var_491;
    protected int var_49f;
-   private final Class_6ed var_4af;
+   private final Config var_4af;
 
-   public Class_1279(Class_6ed var1) {
+   public Class_1279(Config var1) {
       this.var_4af = var1;
    }
 

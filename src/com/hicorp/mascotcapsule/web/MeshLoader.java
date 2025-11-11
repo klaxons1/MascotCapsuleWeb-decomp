@@ -1,6 +1,6 @@
 package com.hicorp.mascotcapsule.web;
 
-public abstract class Class_2e8 {
+public abstract class MeshLoader {
    protected int var_5f;
    protected int var_aa;
    protected int var_bc;
@@ -20,9 +20,9 @@ public abstract class Class_2e8 {
    protected int var_3d8;
    protected int var_403;
    protected int var_45b;
-   private final Class_6ed var_48e;
+   private final Config var_48e;
 
-   public Class_2e8(Class_6ed var1) {
+   public MeshLoader(Config var1) {
       this.var_48e = var1;
    }
 

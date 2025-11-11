@@ -9,7 +9,7 @@ final class Keyframe {
    private Keyframe() {
    }
 
-   Keyframe(Class_15bc var1) {
+   Keyframe(Interpolator var1) {
       this();
    }
 }

@@ -1,24 +1,24 @@
 package com.hicorp.mascotcapsule.web;
 
-public final class Class_14fc extends Class_2e8 {
-   private final Class_6ed var_dc;
+public final class Class_14fc extends MeshLoader {
+   private final Config var_dc;
 
-   public Class_14fc(Class_6ed var1) {
+   public Class_14fc(Config var1) {
       super(var1);
       this.var_dc = var1;
    }
 
    public void sub_81() {
-      int[] var1 = Class_6ed.sub_34c(this.var_dc);
-      int[] var2 = Class_6ed.sub_4c1();
+      int[] var1 = Config.sub_34c(this.var_dc);
+      int[] var2 = Config.sub_4c1();
       int var3 = (super.var_3bf > 0 ? super.var_3bf : -super.var_3bf) + (super.var_3d8 > 0 ? super.var_3d8 : -super.var_3d8) + 32768;
-      int var4 = Class_6ed.sub_509(this.var_dc).sub_2cf(MatrixUtils.sub_30a(var3) - 17);
-      int[] var5 = Class_6ed.sub_509(this.var_dc).sub_93();
-      int var6 = Class_6ed.sub_509(this.var_dc).sub_327(var4);
-      int var7 = Class_6ed.sub_509(this.var_dc).sub_3df(var4);
-      int var8 = Class_6ed.sub_509(this.var_dc).sub_418(var4);
-      int var9 = Class_6ed.sub_509(this.var_dc).sub_42b(var4);
-      int var10 = Class_6ed.sub_509(this.var_dc).sub_467(var4);
+      int var4 = Config.sub_509(this.var_dc).sub_2cf(MatrixUtils.sub_30a(var3) - 17);
+      int[] var5 = Config.sub_509(this.var_dc).sub_93();
+      int var6 = Config.sub_509(this.var_dc).sub_327(var4);
+      int var7 = Config.sub_509(this.var_dc).sub_3df(var4);
+      int var8 = Config.sub_509(this.var_dc).sub_418(var4);
+      int var9 = Config.sub_509(this.var_dc).sub_42b(var4);
+      int var10 = Config.sub_509(this.var_dc).sub_467(var4);
       int var11 = super.var_3bf >> var4;
       int var12 = super.var_3d8 >> var4;
       int var13 = super.var_403;
@@ -50,7 +50,7 @@ public final class Class_14fc extends Class_2e8 {
          }
 
          super.var_aa++;
-         super.var_5f = super.var_5f + Class_6ed.sub_3dd(this.var_dc);
+         super.var_5f = super.var_5f + Config.sub_3dd(this.var_dc);
          super.var_116 = super.var_116 + super.var_172;
          super.var_166 = super.var_166 + super.var_1ab;
          super.var_204 = super.var_204 + super.var_2ea;

@@ -30,7 +30,7 @@ final class Class_c25 {
       }
    }
 
-   Class_c25(Class_15bc var1) {
+   Class_c25(Interpolator var1) {
       this();
    }
 }

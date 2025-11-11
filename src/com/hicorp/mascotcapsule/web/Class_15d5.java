@@ -23,9 +23,9 @@ public abstract class Class_15d5 {
    protected int var_52a;
    protected int var_54a;
    protected int var_55b;
-   private final Class_6ed var_575;
+   private final Config var_575;
 
-   public Class_15d5(Class_6ed var1) {
+   public Class_15d5(Config var1) {
       this.var_575 = var1;
    }
 

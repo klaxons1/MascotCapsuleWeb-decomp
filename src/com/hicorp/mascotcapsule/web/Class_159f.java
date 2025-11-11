@@ -1,41 +1,41 @@
 package com.hicorp.mascotcapsule.web;
 
-public final class Class_159f extends Class_2e8 {
-   private final Class_6ed var_12;
+public final class Class_159f extends MeshLoader {
+   private final Config var_12;
 
-   public Class_159f(Class_6ed var1) {
+   public Class_159f(Config var1) {
       super(var1);
       this.var_12 = var1;
    }
 
    public void sub_81() {
-      int[] var1 = Class_6ed.sub_34c(this.var_12);
-      int[] var2 = Class_6ed.sub_4c1();
+      int[] var1 = Config.sub_34c(this.var_12);
+      int[] var2 = Config.sub_4c1();
       int var3 = (super.var_3bf > 0 ? super.var_3bf : -super.var_3bf) + (super.var_3d8 > 0 ? super.var_3d8 : -super.var_3d8) + 32768;
-      int var4 = Class_6ed.sub_509(this.var_12).sub_2cf(MatrixUtils.sub_30a(var3) - 17);
-      int[] var5 = Class_6ed.sub_509(this.var_12).sub_93();
-      int var6 = Class_6ed.sub_509(this.var_12).sub_327(var4);
-      int var7 = Class_6ed.sub_509(this.var_12).sub_3df(var4);
-      int var8 = Class_6ed.sub_509(this.var_12).sub_418(var4);
-      int var9 = Class_6ed.sub_509(this.var_12).sub_42b(var4);
-      int var10 = Class_6ed.sub_509(this.var_12).sub_467(var4);
+      int var4 = Config.sub_509(this.var_12).sub_2cf(MatrixUtils.sub_30a(var3) - 17);
+      int[] var5 = Config.sub_509(this.var_12).sub_93();
+      int var6 = Config.sub_509(this.var_12).sub_327(var4);
+      int var7 = Config.sub_509(this.var_12).sub_3df(var4);
+      int var8 = Config.sub_509(this.var_12).sub_418(var4);
+      int var9 = Config.sub_509(this.var_12).sub_42b(var4);
+      int var10 = Config.sub_509(this.var_12).sub_467(var4);
       int var11 = super.var_3bf >> var4;
       int var12 = super.var_3d8 >> var4;
       int var13 = super.var_403;
       int var14 = super.var_45b;
-      int var15 = Class_6ed.sub_52c(this.var_12);
-      int var16 = 255 - Class_6ed.sub_52c(this.var_12);
-      if (super.var_aa < Class_6ed.sub_41a(this.var_12)) {
+      int var15 = Config.sub_52c(this.var_12);
+      int var16 = 255 - Config.sub_52c(this.var_12);
+      if (super.var_aa < Config.sub_41a(this.var_12)) {
          int var17;
-         if (super.var_bc < Class_6ed.sub_41a(this.var_12)) {
+         if (super.var_bc < Config.sub_41a(this.var_12)) {
             var17 = super.var_bc - super.var_aa;
             super.var_aa = super.var_bc;
          } else {
-            var17 = Class_6ed.sub_41a(this.var_12) - super.var_aa;
-            super.var_aa = Class_6ed.sub_41a(this.var_12);
+            var17 = Config.sub_41a(this.var_12) - super.var_aa;
+            super.var_aa = Config.sub_41a(this.var_12);
          }
 
-         super.var_5f = super.var_5f + Class_6ed.sub_3dd(this.var_12) * var17;
+         super.var_5f = super.var_5f + Config.sub_3dd(this.var_12) * var17;
          super.var_116 = super.var_116 + super.var_172 * var17;
          super.var_166 = super.var_166 + super.var_1ab * var17;
          super.var_204 = super.var_204 + super.var_2ea * var17;
@@ -44,7 +44,7 @@ public final class Class_159f extends Class_2e8 {
          super.var_2c9 = super.var_2c9 + super.var_3a2 * var17;
       }
 
-      super.var_bc = super.var_bc < Class_6ed.sub_45d(this.var_12) ? super.var_bc : Class_6ed.sub_45d(this.var_12);
+      super.var_bc = super.var_bc < Config.sub_45d(this.var_12) ? super.var_bc : Config.sub_45d(this.var_12);
 
       for (super.var_2c9 += 8388608; super.var_aa < super.var_bc; super.var_2c9 = super.var_2c9 + super.var_3a2) {
          int var33 = super.var_116 >> 16;
@@ -53,17 +53,17 @@ public final class Class_159f extends Class_2e8 {
          int var20 = super.var_248 >> var4;
          int var21 = super.var_264;
          int var22 = super.var_2c9;
-         if (var33 < Class_6ed.sub_467(this.var_12)) {
-            int var23 = Class_6ed.sub_467(this.var_12) - var33;
-            var33 = Class_6ed.sub_467(this.var_12);
+         if (var33 < Config.sub_467(this.var_12)) {
+            int var23 = Config.sub_467(this.var_12) - var33;
+            var33 = Config.sub_467(this.var_12);
             var19 += var11 * var23;
             var20 += var12 * var23;
             var21 += var13 * var23;
             var22 += var14 * var23;
          }
 
-         if (var18 > Class_6ed.sub_48e(this.var_12)) {
-            var18 = Class_6ed.sub_48e(this.var_12);
+         if (var18 > Config.sub_48e(this.var_12)) {
+            var18 = Config.sub_48e(this.var_12);
          }
 
          int var34 = super.var_5f + var33;
@@ -94,7 +94,7 @@ public final class Class_159f extends Class_2e8 {
          }
 
          super.var_aa++;
-         super.var_5f = super.var_5f + Class_6ed.sub_3dd(this.var_12);
+         super.var_5f = super.var_5f + Config.sub_3dd(this.var_12);
          super.var_116 = super.var_116 + super.var_172;
          super.var_166 = super.var_166 + super.var_1ab;
          super.var_204 = super.var_204 + super.var_2ea;

@@ -1,6 +1,6 @@
 package com.hicorp.mascotcapsule.web;
 
-public abstract class Class_15c {
+public abstract class ModelLoader {
    protected int var_31;
    protected int var_6c;
    protected int var_81;
@@ -17,9 +17,9 @@ public abstract class Class_15c {
    protected int var_2d1;
    protected int var_319;
    protected int var_339;
-   private final Class_6ed var_364;
+   private final Config var_364;
 
-   public Class_15c(Class_6ed var1) {
+   public ModelLoader(Config var1) {
       this.var_364 = var1;
    }
 

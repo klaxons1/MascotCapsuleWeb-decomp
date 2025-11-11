@@ -2,7 +2,7 @@ package com.hicorp.mascotcapsule.web;
 
 import java.io.InputStream;
 
-public final class Class_89e implements Class_41b {
+public final class Class_89e implements Material {
    private static final int var_54 = 0;
    private static final int var_f5 = 1;
    private static final int var_159 = 2;

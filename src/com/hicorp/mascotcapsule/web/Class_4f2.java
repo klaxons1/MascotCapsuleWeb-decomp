@@ -1,23 +1,23 @@
 package com.hicorp.mascotcapsule.web;
 
-public final class Class_4f2 extends Class_15c {
-   private final Class_6ed var_56;
+public final class Class_4f2 extends ModelLoader {
+   private final Config var_56;
 
-   public Class_4f2(Class_6ed var1) {
+   public Class_4f2(Config var1) {
       super(var1);
       this.var_56 = var1;
    }
 
    public void sub_26() {
-      int[] var1 = Class_6ed.sub_34c(this.var_56);
+      int[] var1 = Config.sub_34c(this.var_56);
       int var2 = (super.var_2d1 > 0 ? super.var_2d1 : -super.var_2d1) + (super.var_319 > 0 ? super.var_319 : -super.var_319) + 32768;
-      int var3 = Class_6ed.sub_509(this.var_56).sub_2cf(MatrixUtils.sub_30a(var2) - 17);
-      int[] var4 = Class_6ed.sub_509(this.var_56).sub_93();
-      int var5 = Class_6ed.sub_509(this.var_56).sub_327(var3);
-      int var6 = Class_6ed.sub_509(this.var_56).sub_3df(var3);
-      int var7 = Class_6ed.sub_509(this.var_56).sub_418(var3);
-      int var8 = Class_6ed.sub_509(this.var_56).sub_42b(var3);
-      int var9 = Class_6ed.sub_509(this.var_56).sub_467(var3);
+      int var3 = Config.sub_509(this.var_56).sub_2cf(MatrixUtils.sub_30a(var2) - 17);
+      int[] var4 = Config.sub_509(this.var_56).sub_93();
+      int var5 = Config.sub_509(this.var_56).sub_327(var3);
+      int var6 = Config.sub_509(this.var_56).sub_3df(var3);
+      int var7 = Config.sub_509(this.var_56).sub_418(var3);
+      int var8 = Config.sub_509(this.var_56).sub_42b(var3);
+      int var9 = Config.sub_509(this.var_56).sub_467(var3);
       int var10 = super.var_2d1 >> var3;
       int var11 = super.var_319 >> var3;
 
@@ -43,7 +43,7 @@ public final class Class_4f2 extends Class_15c {
          }
 
          super.var_6c++;
-         super.var_31 = super.var_31 + Class_6ed.sub_3dd(this.var_56);
+         super.var_31 = super.var_31 + Config.sub_3dd(this.var_56);
          super.var_db = super.var_db + super.var_14b;
          super.var_12b = super.var_12b + super.var_18a;
          super.var_1c8 = super.var_1c8 + super.var_243;

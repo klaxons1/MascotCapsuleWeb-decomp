@@ -55,7 +55,7 @@ final class AnimationTrack {
       return var5;
    }
 
-   AnimationTrack(Model var1, Class_15bc var2) {
+   AnimationTrack(Model var1, Interpolator var2) {
       this(var1);
    }
 }

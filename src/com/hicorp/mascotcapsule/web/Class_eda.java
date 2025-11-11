@@ -8,9 +8,9 @@ public abstract class Class_eda {
    protected int var_1ac;
    protected int var_201;
    protected int var_24e;
-   private final Class_6ed var_29d;
+   private final Config var_29d;
 
-   public Class_eda(Class_6ed var1) {
+   public Class_eda(Config var1) {
       this.var_29d = var1;
    }
 

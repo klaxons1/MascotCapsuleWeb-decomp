@@ -30,7 +30,7 @@ final class RenderContext {
    protected int var_67b;
    protected int var_6c6;
    protected final BoundingBox var_6fb = new BoundingBox();
-   protected Class_6ed var_70d;
+   protected Config var_70d;
    protected Class_517 var_749 = null;
    protected Class_517 var_7a3 = null;
    protected boolean var_7e2;
@@ -50,7 +50,7 @@ final class RenderContext {
       return (float)(this.var_a3a / 2.0 / Math.tan(this.var_9da / 2.0));
    }
 
-   public RenderContext(Class_6ed var1) {
+   public RenderContext(Config var1) {
       this.var_426 = new int[512];
       this.var_477 = new float[256];
       this.var_56b = new float[0];
@@ -97,7 +97,7 @@ final class RenderContext {
       this.var_550 = var1;
    }
 
-   protected void sub_f7(Class_77c var1, boolean var2) {
+   protected void sub_f7(RenderState var1, boolean var2) {
       if (this.var_477.length < var1.sub_175()) {
          this.var_426 = new int[var1.sub_175() * 2];
          this.var_477 = new float[var1.sub_175()];
@@ -151,7 +151,7 @@ final class RenderContext {
       this.var_7a3 = var1;
    }
 
-   public void sub_2dd(Class_77c var1, Class_339 var2) {
+   public void sub_2dd(RenderState var1, Class_339 var2) {
       try {
          this.var_4da = false;
          boolean var3 = this.var_7e2 && var1.sub_1e6() != null;

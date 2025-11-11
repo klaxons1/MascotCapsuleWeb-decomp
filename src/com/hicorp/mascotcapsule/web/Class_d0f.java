@@ -1,17 +1,17 @@
 package com.hicorp.mascotcapsule.web;
 
 public final class Class_d0f extends Class_d00 {
-   private final Class_6ed var_15;
+   private final Config var_15;
 
-   public Class_d0f(Class_6ed var1) {
+   public Class_d0f(Config var1) {
       super(var1);
       this.var_15 = var1;
    }
 
    public void sub_21() {
-      int[] var1 = Class_6ed.sub_34c(this.var_15);
-      int var2 = Class_6ed.sub_397(this.var_15) & 16711935;
-      int var3 = Class_6ed.sub_397(this.var_15) & 0xFF00;
+      int[] var1 = Config.sub_34c(this.var_15);
+      int var2 = Config.sub_397(this.var_15) & 16711935;
+      int var3 = Config.sub_397(this.var_15) & 0xFF00;
 
       for (int var4 = super.var_324; super.var_cc < super.var_137; super.var_259 = super.var_259 + super.var_2a5) {
          int var5 = (super.var_15d >> 16) + super.var_7c;
@@ -25,7 +25,7 @@ public final class Class_d0f extends Class_d00 {
          }
 
          super.var_cc++;
-         super.var_7c = super.var_7c + Class_6ed.sub_3dd(this.var_15);
+         super.var_7c = super.var_7c + Config.sub_3dd(this.var_15);
          super.var_15d = super.var_15d + super.var_1ff;
          super.var_1c1 = super.var_1c1 + super.var_239;
       }

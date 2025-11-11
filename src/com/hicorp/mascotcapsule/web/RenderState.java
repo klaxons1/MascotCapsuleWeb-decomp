@@ -2,7 +2,7 @@ package com.hicorp.mascotcapsule.web;
 
 import java.io.InputStream;
 
-public final class Class_77c {
+public final class RenderState {
    public static final int var_27 = 4;
    private long var_a8;
    private static final Vector3f var_107 = new Vector3f(0.0F, 0.0F, 1.0F);

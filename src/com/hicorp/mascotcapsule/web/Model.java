@@ -22,7 +22,7 @@ public final class Model {
    protected BoneAnimation[] var_409 = null;
    protected int var_450 = 0;
    protected Keyframe[] var_492 = null;
-   public Class_77c var_4ab = null;
+   public RenderState var_4ab = null;
 
    protected void sub_43() {
       this.var_360 = 0;
@@ -126,7 +126,7 @@ public final class Model {
       }
    }
 
-   public int sub_122(Class_77c var1) {
+   public int sub_122(RenderState var1) {
       Class_8ed.sub_7d(var1 != null);
       Class_8ed.sub_7d(var1.sub_2ef());
       if (var1 == null) {
@@ -346,7 +346,7 @@ public final class Model {
       return this.var_3e4;
    }
 
-   private static final Transform3D sub_2c1(Class_77c var0, Class_13f var1, Bone var2) {
+   private static final Transform3D sub_2c1(RenderState var0, Class_13f var1, Bone var2) {
       Transform3D var3 = new Transform3D(var1.sub_d3());
       var3.sub_393();
       return var3;

@@ -18,14 +18,14 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import com.hicorp.mascotcapsule.web.Class_339;
 import com.hicorp.mascotcapsule.web.Vector3f;
-import com.hicorp.mascotcapsule.web.Class_41b;
+import com.hicorp.mascotcapsule.web.Material;
 import com.hicorp.mascotcapsule.web.Model;
 import com.hicorp.mascotcapsule.web.MatrixUtils;
 import com.hicorp.mascotcapsule.web.Class_517;
 import com.hicorp.mascotcapsule.web.BoundingBox;
 import com.hicorp.mascotcapsule.web.Class_5a9;
 import com.hicorp.mascotcapsule.web.Transform3D;
-import com.hicorp.mascotcapsule.web.Class_77c;
+import com.hicorp.mascotcapsule.web.RenderState;
 import com.hicorp.mascotcapsule.web.Class_808;
 import com.hicorp.mascotcapsule.web.MainCanvas;
 
@@ -39,7 +39,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
    private final Class_339 var_15a = new Class_339();
    private final Class_517 var_17d = new Class_517();
    private Class_517 var_1a7 = new Class_517();
-   private Class_77c var_1c9 = null;
+   private RenderState var_1c9 = null;
    private Model var_1e4 = null;
    private boolean var_235 = false;
    private Class_517 var_247 = new Class_517();
@@ -353,11 +353,11 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
 
    public void sub_312(InputStream var1) {
       ZipInputStream var2 = new ZipInputStream(var1);
-      Class_41b var3 = this.sub_43a();
+      Material var3 = this.sub_43a();
       Class_517 var4 = null;
       Class_517 var5 = null;
       Class_517 var6 = null;
-      Class_77c var7 = null;
+      RenderState var7 = null;
       Model var8 = null;
 
       ZipEntry var9;
@@ -386,7 +386,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
                   this.repaint();
                }
             } else if (var10.regionMatches(true, var11 - 5, ".jbac", 0, 5)) {
-               var7 = new Class_77c();
+               var7 = new RenderState();
                if (!var7.sub_35(new BufferedInputStream(var2))) {
                   var7 = null;
                } else if (this.var_865) {
@@ -468,10 +468,10 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
    public void sub_34e(InputStream var1, InputStream var2, InputStream var3) {
       try {
          Class_517 var4 = null;
-         Class_77c var5 = null;
+         RenderState var5 = null;
          Model var6 = null;
          if (var3 != null) {
-            Class_41b var7 = this.sub_43a();
+            Material var7 = this.sub_43a();
             var4 = new Class_517();
             if (!var7.sub_10(new BufferedInputStream(var3), var4)) {
                var4 = null;
@@ -484,7 +484,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
          }
 
          if (var1 != null) {
-            var5 = new Class_77c();
+            var5 = new RenderState();
             if (!var5.sub_35(new BufferedInputStream(var1))) {
                var5 = null;
             } else if (this.var_865) {
@@ -535,7 +535,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
    }
 
    public synchronized void sub_399(InputStream var1) {
-      Class_41b var2 = this.sub_43a();
+      Material var2 = this.sub_43a();
       if (var2.sub_10(var1, this.var_17d)) {
          if (this.var_642) {
             this.var_17d.sub_281();
@@ -548,7 +548,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
    }
 
    public synchronized void sub_3da(InputStream var1) {
-      Class_41b var2 = this.sub_43a();
+      Material var2 = this.sub_43a();
       if (var2.sub_10(var1, this.var_247)) {
          this.var_2cc = true;
          this.sub_147();
@@ -664,7 +664,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
       this.var_833 = var1.getY();
    }
 
-   public Class_41b sub_43a() {
+   public Material sub_43a() {
       return new Class_808();
    }
 

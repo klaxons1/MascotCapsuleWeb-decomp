@@ -1,23 +1,23 @@
 package com.hicorp.mascotcapsule.web;
 
 public final class Class_c3e extends Class_1279 {
-   private final Class_6ed var_25;
+   private final Config var_25;
 
-   public Class_c3e(Class_6ed var1) {
+   public Class_c3e(Config var1) {
       super(var1);
       this.var_25 = var1;
    }
 
    public void sub_1c() {
-      int[] var1 = Class_6ed.sub_34c(this.var_25);
+      int[] var1 = Config.sub_34c(this.var_25);
       int var2 = (super.var_491 > 0 ? super.var_491 : -super.var_491) + (super.var_49f > 0 ? super.var_49f : -super.var_49f) + 32768;
-      int var3 = Class_6ed.sub_509(this.var_25).sub_2cf(MatrixUtils.sub_30a(var2) - 17);
-      int[] var4 = Class_6ed.sub_509(this.var_25).sub_93();
-      int var5 = Class_6ed.sub_509(this.var_25).sub_327(var3);
-      int var6 = Class_6ed.sub_509(this.var_25).sub_3df(var3);
-      int var7 = Class_6ed.sub_509(this.var_25).sub_418(var3);
-      int var8 = Class_6ed.sub_509(this.var_25).sub_42b(var3);
-      int var9 = Class_6ed.sub_509(this.var_25).sub_467(var3);
+      int var3 = Config.sub_509(this.var_25).sub_2cf(MatrixUtils.sub_30a(var2) - 17);
+      int[] var4 = Config.sub_509(this.var_25).sub_93();
+      int var5 = Config.sub_509(this.var_25).sub_327(var3);
+      int var6 = Config.sub_509(this.var_25).sub_3df(var3);
+      int var7 = Config.sub_509(this.var_25).sub_418(var3);
+      int var8 = Config.sub_509(this.var_25).sub_42b(var3);
+      int var9 = Config.sub_509(this.var_25).sub_467(var3);
       int var10 = super.var_491 >> var3;
 
       for (int var11 = super.var_49f >> var3; super.var_139 < super.var_21c; super.var_3c2 = super.var_3c2 + super.var_438) {
@@ -36,7 +36,7 @@ public final class Class_c3e extends Class_1279 {
          }
 
          super.var_139++;
-         super.var_c4 = super.var_c4 + Class_6ed.sub_3dd(this.var_25);
+         super.var_c4 = super.var_c4 + Config.sub_3dd(this.var_25);
          super.var_279 = super.var_279 + super.var_2fe;
          super.var_2c3 = super.var_2c3 + super.var_326;
          super.var_368 = super.var_368 + super.var_40c;

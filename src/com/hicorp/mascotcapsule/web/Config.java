@@ -1,6 +1,6 @@
 package com.hicorp.mascotcapsule.web;
 
-final class Class_6ed {
+final class Config {
    public static final int var_69 = -1;
    private static final int var_78 = 8;
    private static final int var_131 = 0;
@@ -33,11 +33,11 @@ final class Class_6ed {
    public final Class_d00[] var_783 = new Class_d00[2];
    public final Class_1279[] var_7d8 = new Class_1279[2];
    public final Class_1279[][][] var_81c = new Class_1279[4][][];
-   public final Class_15c[][][] var_83b = new Class_15c[4][][];
-   public final Class_2e8[][][] var_85a = new Class_2e8[4][][];
+   public final ModelLoader[][][] var_83b = new ModelLoader[4][][];
+   public final MeshLoader[][][] var_85a = new MeshLoader[4][][];
    public final Class_15d5[][][] var_88e = new Class_15d5[4][][];
 
-   public Class_6ed() {
+   public Config() {
       this.var_74c[0] = new Class_eda[2];
       this.var_74c[0][0] = new Class_efa(this);
       this.var_74c[0][1] = new Class_4c3(this);
@@ -45,8 +45,8 @@ final class Class_6ed {
       this.var_74c[1][0] = new Class_f8f(this);
       this.var_74c[1][1] = new Class_13b6(this);
       this.var_783[0] = new Class_d0f(this);
-      this.var_783[1] = new Class_3f1(this);
-      this.var_7d8[0] = new Class_2cb(this);
+      this.var_783[1] = new Mesh(this);
+      this.var_7d8[0] = new Light(this);
       this.var_7d8[1] = new Class_14bf(this);
       this.var_81c[0] = new Class_1279[2][];
       this.var_81c[0][0] = new Class_1279[2];
@@ -58,7 +58,7 @@ final class Class_6ed {
       this.var_81c[1] = new Class_1279[2][];
       this.var_81c[1][0] = new Class_1279[2];
       this.var_81c[1][0][0] = new Class_c3e(this);
-      this.var_81c[1][0][1] = new Class_279(this);
+      this.var_81c[1][0][1] = new ResourceEntry(this);
       this.var_81c[1][1] = new Class_1279[2];
       this.var_81c[1][1][0] = new Class_1e8(this);
       this.var_81c[1][1][1] = new Class_c6f(this);
@@ -76,60 +76,60 @@ final class Class_6ed {
       this.var_81c[3][1] = new Class_1279[2];
       this.var_81c[3][1][0] = new Class_bcb(this);
       this.var_81c[3][1][1] = new Class_1629(this);
-      this.var_83b[0] = new Class_15c[2][];
-      this.var_83b[0][0] = new Class_15c[2];
+      this.var_83b[0] = new ModelLoader[2][];
+      this.var_83b[0][0] = new ModelLoader[2];
       this.var_83b[0][0][0] = new Class_1562(this);
       this.var_83b[0][0][1] = new Class_98(this);
-      this.var_83b[0][1] = new Class_15c[2];
+      this.var_83b[0][1] = new ModelLoader[2];
       this.var_83b[0][1][0] = new Class_1002(this);
       this.var_83b[0][1][1] = new Class_cc3(this);
-      this.var_83b[1] = new Class_15c[2][];
-      this.var_83b[1][0] = new Class_15c[2];
+      this.var_83b[1] = new ModelLoader[2][];
+      this.var_83b[1][0] = new ModelLoader[2];
       this.var_83b[1][0][0] = new Class_11bf(this);
       this.var_83b[1][0][1] = new Class_dfd(this);
-      this.var_83b[1][1] = new Class_15c[2];
+      this.var_83b[1][1] = new ModelLoader[2];
       this.var_83b[1][1][0] = new Class_b61(this);
       this.var_83b[1][1][1] = new Class_3ba(this);
-      this.var_83b[2] = new Class_15c[2][];
-      this.var_83b[2][0] = new Class_15c[2];
+      this.var_83b[2] = new ModelLoader[2][];
+      this.var_83b[2][0] = new ModelLoader[2];
       this.var_83b[2][0][0] = new Class_7c1(this);
       this.var_83b[2][0][1] = new Class_10ea(this);
-      this.var_83b[2][1] = new Class_15c[2];
+      this.var_83b[2][1] = new ModelLoader[2];
       this.var_83b[2][1][0] = new Class_1059(this);
       this.var_83b[2][1][1] = new Class_122c(this);
-      this.var_83b[3] = new Class_15c[2][];
-      this.var_83b[3][0] = new Class_15c[2];
+      this.var_83b[3] = new ModelLoader[2][];
+      this.var_83b[3][0] = new ModelLoader[2];
       this.var_83b[3][0][0] = new Class_4f2(this);
       this.var_83b[3][0][1] = new Class_a39(this);
-      this.var_83b[3][1] = new Class_15c[2];
-      this.var_83b[3][1][0] = new Class_3e4(this);
+      this.var_83b[3][1] = new ModelLoader[2];
+      this.var_83b[3][1][0] = new Face(this);
       this.var_83b[3][1][1] = new Class_118e(this);
-      this.var_85a[0] = new Class_2e8[2][];
-      this.var_85a[0][0] = new Class_2e8[2];
+      this.var_85a[0] = new MeshLoader[2][];
+      this.var_85a[0][0] = new MeshLoader[2];
       this.var_85a[0][0][0] = new Class_5c8(this);
       this.var_85a[0][0][1] = new Class_f30(this);
-      this.var_85a[0][1] = new Class_2e8[2];
+      this.var_85a[0][1] = new MeshLoader[2];
       this.var_85a[0][1][0] = new Class_11d7(this);
       this.var_85a[0][1][1] = new Class_1359(this);
-      this.var_85a[1] = new Class_2e8[2][];
-      this.var_85a[1][0] = new Class_2e8[2];
+      this.var_85a[1] = new MeshLoader[2][];
+      this.var_85a[1][0] = new MeshLoader[2];
       this.var_85a[1][0][0] = new Class_14fc(this);
-      this.var_85a[1][0][1] = new Class_1b1(this);
-      this.var_85a[1][1] = new Class_2e8[2];
+      this.var_85a[1][0][1] = new TextureLoader(this);
+      this.var_85a[1][1] = new MeshLoader[2];
       this.var_85a[1][1][0] = new Class_1091(this);
       this.var_85a[1][1][1] = new Class_10ac(this);
-      this.var_85a[2] = new Class_2e8[2][];
-      this.var_85a[2][0] = new Class_2e8[2];
+      this.var_85a[2] = new MeshLoader[2][];
+      this.var_85a[2][0] = new MeshLoader[2];
       this.var_85a[2][0][0] = new Class_b0e(this);
       this.var_85a[2][0][1] = new Class_da6(this);
-      this.var_85a[2][1] = new Class_2e8[2];
+      this.var_85a[2][1] = new MeshLoader[2];
       this.var_85a[2][1][0] = new Class_e4f(this);
       this.var_85a[2][1][1] = new Class_159f(this);
-      this.var_85a[3] = new Class_2e8[2][];
-      this.var_85a[3][0] = new Class_2e8[2];
+      this.var_85a[3] = new MeshLoader[2][];
+      this.var_85a[3][0] = new MeshLoader[2];
       this.var_85a[3][0][0] = new Class_65f(this);
       this.var_85a[3][0][1] = new Class_e88(this);
-      this.var_85a[3][1] = new Class_2e8[2];
+      this.var_85a[3][1] = new MeshLoader[2];
       this.var_85a[3][1][0] = new Class_916(this);
       this.var_85a[3][1][1] = new Class_abb(this);
       this.var_88e[0] = new Class_15d5[2][];
@@ -138,7 +138,7 @@ final class Class_6ed {
       this.var_88e[0][0][1] = new Class_fa0(this);
       this.var_88e[0][1] = new Class_15d5[2];
       this.var_88e[0][1][0] = new Class_a8d(this);
-      this.var_88e[0][1][1] = new Class_209(this);
+      this.var_88e[0][1][1] = new ColorRGBA(this);
       this.var_88e[1] = new Class_15d5[2][];
       this.var_88e[1][0] = new Class_15d5[2];
       this.var_88e[1][0][0] = new Class_a10(this);
@@ -148,7 +148,7 @@ final class Class_6ed {
       this.var_88e[1][1][1] = new Class_740(this);
       this.var_88e[2] = new Class_15d5[2][];
       this.var_88e[2][0] = new Class_15d5[2];
-      this.var_88e[2][0][0] = new Class_1663(this);
+      this.var_88e[2][0][0] = new AnimationSet(this);
       this.var_88e[2][0][1] = new Class_6ba(this);
       this.var_88e[2][1] = new Class_15d5[2];
       this.var_88e[2][1][0] = new Class_a66(this);
@@ -510,7 +510,7 @@ final class Class_6ed {
       }
    }
 
-   public void sub_235(Class_15c var1, Class_ae var2, Class_ae var3, Class_ae var4) {
+   public void sub_235(ModelLoader var1, Class_ae var2, Class_ae var3, Class_ae var4) {
       Class_ae var5;
       Class_ae var6;
       Class_ae var7;
@@ -631,7 +631,7 @@ final class Class_6ed {
       }
    }
 
-   public void sub_253(Class_2e8 var1, Class_ae var2, Class_ae var3, Class_ae var4) {
+   public void sub_253(MeshLoader var1, Class_ae var2, Class_ae var3, Class_ae var4) {
       Class_ae var5;
       Class_ae var6;
       Class_ae var7;
@@ -927,31 +927,31 @@ final class Class_6ed {
       return 65536 / var0;
    }
 
-   static int[] sub_34c(Class_6ed var0) {
+   static int[] sub_34c(Config var0) {
       return var0.var_54d;
    }
 
-   static int sub_397(Class_6ed var0) {
+   static int sub_397(Config var0) {
       return var0.var_6aa;
    }
 
-   static int sub_3dd(Class_6ed var0) {
+   static int sub_3dd(Config var0) {
       return var0.var_56c;
    }
 
-   static int sub_41a(Class_6ed var0) {
+   static int sub_41a(Config var0) {
       return var0.var_5e7;
    }
 
-   static int sub_45d(Class_6ed var0) {
+   static int sub_45d(Config var0) {
       return var0.var_674;
    }
 
-   static int sub_467(Class_6ed var0) {
+   static int sub_467(Config var0) {
       return var0.var_5c5;
    }
 
-   static int sub_48e(Class_6ed var0) {
+   static int sub_48e(Config var0) {
       return var0.var_643;
    }
 
@@ -959,15 +959,15 @@ final class Class_6ed {
       return var_50c;
    }
 
-   static Class_517 sub_509(Class_6ed var0) {
+   static Class_517 sub_509(Config var0) {
       return var0.var_70b;
    }
 
-   static int sub_52c(Class_6ed var0) {
+   static int sub_52c(Config var0) {
       return var0.var_6ca;
    }
 
-   static Class_517 sub_55c(Class_6ed var0) {
+   static Class_517 sub_55c(Config var0) {
       return var0.var_742;
    }
 

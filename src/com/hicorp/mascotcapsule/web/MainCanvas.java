@@ -8,7 +8,7 @@ import java.awt.Toolkit;
 public class MainCanvas extends Canvas {
    private final Toolkit var_e = Toolkit.getDefaultToolkit();
    private final FrameBuffer var_1c = new FrameBuffer(this);
-   private final Class_6ed var_4a = new Class_6ed();
+   private final Config var_4a = new Config();
    private final RenderContext var_94 = new RenderContext(this.var_4a);
    private final BoundingBox var_ee = new BoundingBox();
    private final BoundingBox var_1bb = new BoundingBox();
@@ -160,7 +160,7 @@ public class MainCanvas extends Canvas {
       this.var_94.sub_2b7(var1);
    }
 
-   public synchronized void sub_242(Class_77c var1, Class_339 var2) {
+   public synchronized void sub_242(RenderState var1, Class_339 var2) {
       this.var_94.sub_2dd(var1, var2);
       this.var_375 = this.var_375 + var1.var_255;
       this.var_3ae = this.var_3ae + var1.var_1d4;

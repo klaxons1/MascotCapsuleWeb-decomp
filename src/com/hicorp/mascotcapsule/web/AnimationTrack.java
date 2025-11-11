@@ -1,11 +1,11 @@
 package com.hicorp.mascotcapsule.web;
 
-final class Class_c82 {
+final class AnimationTrack {
    protected int var_66;
-   public Class_b42[] var_b5;
-   private final Class_47d var_d1;
+   public Keyframe[] var_b5;
+   private final Model var_d1;
 
-   private Class_c82(Class_47d var1) {
+   private AnimationTrack(Model var1) {
       this.var_d1 = var1;
       this.var_66 = 0;
       this.var_b5 = null;
@@ -14,7 +14,7 @@ final class Class_c82 {
    public int sub_2c(int var1, int var2) {
       Class_8ed.sub_7d(var2 > 0);
       this.var_66 = var2;
-      this.var_b5 = new Class_b42[this.var_66];
+      this.var_b5 = new Keyframe[this.var_66];
 
       for (int var3 = 0; var3 < this.var_66; var3++) {
          this.var_b5[var3] = this.var_d1.var_492[var1 + var3];
@@ -55,7 +55,7 @@ final class Class_c82 {
       return var5;
    }
 
-   Class_c82(Class_47d var1, Class_15bc var2) {
+   AnimationTrack(Model var1, Class_15bc var2) {
       this(var1);
    }
 }

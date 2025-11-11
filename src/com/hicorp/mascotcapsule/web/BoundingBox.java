@@ -1,16 +1,16 @@
 package com.hicorp.mascotcapsule.web;
 
-public final class Class_596 {
+public final class BoundingBox {
    public int var_35;
    public int var_88;
    public int var_d4;
    public int var_f0;
 
-   public Class_596() {
+   public BoundingBox() {
       this.sub_72();
    }
 
-   public Class_596(int var1, int var2, int var3, int var4) {
+   public BoundingBox(int var1, int var2, int var3, int var4) {
       this.var_35 = var1;
       this.var_88 = var2;
       this.var_d4 = var3;
@@ -24,7 +24,7 @@ public final class Class_596 {
       this.var_f0 = var4;
    }
 
-   public void sub_5d(Class_596 var1) {
+   public void sub_5d(BoundingBox var1) {
       this.var_35 = var1.var_35;
       this.var_88 = var1.var_88;
       this.var_d4 = var1.var_d4;
@@ -65,7 +65,7 @@ public final class Class_596 {
       }
    }
 
-   public void sub_145(Class_596 var1) {
+   public void sub_145(BoundingBox var1) {
       if (this.sub_da()) {
          if (this.var_35 < var1.var_35) {
             this.var_35 = var1.var_35;
@@ -103,7 +103,7 @@ public final class Class_596 {
       }
    }
 
-   public void sub_1bb(Class_596 var1) {
+   public void sub_1bb(BoundingBox var1) {
       if (var1 != null) {
          if (var1.var_35 < this.var_35) {
             this.var_35 = var1.var_35;

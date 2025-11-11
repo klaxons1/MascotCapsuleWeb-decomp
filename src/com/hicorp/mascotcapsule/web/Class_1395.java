@@ -11,7 +11,7 @@ public final class Class_1395 extends Class_1279 {
    public void sub_1c() {
       int[] var1 = Class_6ed.sub_34c(this.var_52);
       int var2 = (super.var_491 > 0 ? super.var_491 : -super.var_491) + (super.var_49f > 0 ? super.var_49f : -super.var_49f) + 32768;
-      int var3 = Class_6ed.sub_509(this.var_52).sub_2cf(Class_4ce.sub_30a(var2) - 17);
+      int var3 = Class_6ed.sub_509(this.var_52).sub_2cf(MatrixUtils.sub_30a(var2) - 17);
       int[] var4 = Class_6ed.sub_509(this.var_52).sub_93();
       int var5 = Class_6ed.sub_509(this.var_52).sub_327(var3);
       int var6 = Class_6ed.sub_509(this.var_52).sub_3df(var3);

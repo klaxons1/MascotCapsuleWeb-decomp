@@ -175,7 +175,7 @@ final class Class_6ed {
       this.var_674 = var4;
    }
 
-   public void sub_58(Class_596 var1) {
+   public void sub_58(BoundingBox var1) {
       this.var_5c5 = var1.var_35;
       this.var_5e7 = var1.var_88;
       this.var_643 = var1.var_d4;

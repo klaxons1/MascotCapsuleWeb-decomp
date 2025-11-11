@@ -1,6 +1,6 @@
 package com.hicorp.mascotcapsule.web;
 
-final class Class_539 {
+final class RenderContext {
    public static final int var_63 = 1;
    public static final int var_84 = 2;
    public static final int var_e3 = 4096;
@@ -29,7 +29,7 @@ final class Class_539 {
    protected float var_64e;
    protected int var_67b;
    protected int var_6c6;
-   protected final Class_596 var_6fb = new Class_596();
+   protected final BoundingBox var_6fb = new BoundingBox();
    protected Class_6ed var_70d;
    protected Class_517 var_749 = null;
    protected Class_517 var_7a3 = null;
@@ -41,7 +41,7 @@ final class Class_539 {
    private boolean var_8be;
    private float var_918;
    private static final float var_96e = 640.0F;
-   private static final float var_992 = Class_4ce.sub_1d7(60.0F);
+   private static final float var_992 = MatrixUtils.sub_1d7(60.0F);
    private float var_9da;
    private float var_a3a;
    private static final Vector3f var_a9e = new Vector3f(0.0F, 0.0F, -1.0F);
@@ -50,7 +50,7 @@ final class Class_539 {
       return (float)(this.var_a3a / 2.0 / Math.tan(this.var_9da / 2.0));
    }
 
-   public Class_539(Class_6ed var1) {
+   public RenderContext(Class_6ed var1) {
       this.var_426 = new int[512];
       this.var_477 = new float[256];
       this.var_56b = new float[0];
@@ -139,7 +139,7 @@ final class Class_539 {
       this.var_6fb.sub_72();
    }
 
-   public final void sub_23d(Class_596 var1) {
+   public final void sub_23d(BoundingBox var1) {
       var1.sub_5d(this.var_6fb);
    }
 
@@ -156,13 +156,13 @@ final class Class_539 {
          this.var_4da = false;
          boolean var3 = this.var_7e2 && var1.sub_1e6() != null;
          this.sub_f7(var1, var3);
-         Class_757 var4 = new Class_757();
-         Class_757 var5 = new Class_757();
-         Class_757 var6 = new Class_757();
-         Class_757 var7 = new Class_757();
-         Class_757 var8 = new Class_757();
-         Class_757 var9 = new Class_757();
-         Class_757 var10 = new Class_757();
+         Transform3D var4 = new Transform3D();
+         Transform3D var5 = new Transform3D();
+         Transform3D var6 = new Transform3D();
+         Transform3D var7 = new Transform3D();
+         Transform3D var8 = new Transform3D();
+         Transform3D var9 = new Transform3D();
+         Transform3D var10 = new Transform3D();
          Vector3f var11 = new Vector3f();
          Vector3f var12 = new Vector3f();
          Vector3f var13 = new Vector3f();
@@ -681,7 +681,7 @@ final class Class_539 {
       }
    }
 
-   protected void sub_477(Vector3f var1, Class_757 var2, Vector3f[] var3, int var4, int var5) {
+   protected void sub_477(Vector3f var1, Transform3D var2, Vector3f[] var3, int var4, int var5) {
       float var6 = var1.x;
       float var7 = var1.y;
       float var8 = var1.z;

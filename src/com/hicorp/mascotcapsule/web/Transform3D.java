@@ -1,6 +1,6 @@
 package com.hicorp.mascotcapsule.web;
 
-public final class Class_757 {
+public final class Transform3D {
    public float var_13;
    public float var_ad;
    public float var_c2;
@@ -14,10 +14,10 @@ public final class Class_757 {
    public float var_27d;
    public float var_2ce;
 
-   public Class_757() {
+   public Transform3D() {
    }
 
-   public Class_757(Class_757 var1) {
+   public Transform3D(Transform3D var1) {
       this.var_13 = var1.var_13;
       this.var_ad = var1.var_ad;
       this.var_c2 = var1.var_c2;
@@ -32,7 +32,7 @@ public final class Class_757 {
       this.var_2ce = var1.var_2ce;
    }
 
-   public Class_757(
+   public Transform3D(
       float var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9, float var10, float var11, float var12
    ) {
       this.var_13 = var1;
@@ -49,7 +49,7 @@ public final class Class_757 {
       this.var_2ce = var12;
    }
 
-   public final void sub_37(Class_757 var1) {
+   public final void sub_37(Transform3D var1) {
       this.var_13 = var1.var_13;
       this.var_ad = var1.var_ad;
       this.var_c2 = var1.var_c2;
@@ -187,7 +187,7 @@ public final class Class_757 {
       var2.z = var5;
    }
 
-   public final void sub_2b3(Class_757 var1, Class_757 var2) {
+   public final void sub_2b3(Transform3D var1, Transform3D var2) {
       float var3 = var1.var_13 * var2.var_13 + var1.var_ad * var2.var_e7 + var1.var_c2 * var2.var_211;
       float var4 = var1.var_13 * var2.var_ad + var1.var_ad * var2.var_138 + var1.var_c2 * var2.var_263;
       float var5 = var1.var_13 * var2.var_c2 + var1.var_ad * var2.var_191 + var1.var_c2 * var2.var_27d;
@@ -214,7 +214,7 @@ public final class Class_757 {
       this.var_2ce = var14;
    }
 
-   public final void sub_311(Class_757 var1) {
+   public final void sub_311(Transform3D var1) {
       float var2 = this.var_13 * var1.var_13 + this.var_ad * var1.var_e7 + this.var_c2 * var1.var_211;
       float var3 = this.var_13 * var1.var_ad + this.var_ad * var1.var_138 + this.var_c2 * var1.var_263;
       float var4 = this.var_13 * var1.var_c2 + this.var_ad * var1.var_191 + this.var_c2 * var1.var_27d;
@@ -241,7 +241,7 @@ public final class Class_757 {
       this.var_2ce = var13;
    }
 
-   public final void sub_339(Class_757 var1, Class_757 var2) {
+   public final void sub_339(Transform3D var1, Transform3D var2) {
       float var3 = var1.var_13 * var2.var_13 + var1.var_ad * var2.var_e7 + var1.var_c2 * var2.var_211;
       float var4 = var1.var_13 * var2.var_ad + var1.var_ad * var2.var_138 + var1.var_c2 * var2.var_263;
       float var5 = var1.var_13 * var2.var_c2 + var1.var_ad * var2.var_191 + var1.var_c2 * var2.var_27d;
@@ -262,7 +262,7 @@ public final class Class_757 {
       this.var_27d = var11;
    }
 
-   public final void sub_37e(Class_757 var1) {
+   public final void sub_37e(Transform3D var1) {
       float var2 = this.var_13 * var1.var_13 + this.var_ad * var1.var_e7 + this.var_c2 * var1.var_211;
       float var3 = this.var_13 * var1.var_ad + this.var_ad * var1.var_138 + this.var_c2 * var1.var_263;
       float var4 = this.var_13 * var1.var_c2 + this.var_ad * var1.var_191 + this.var_c2 * var1.var_27d;
@@ -303,7 +303,7 @@ public final class Class_757 {
       );
    }
 
-   public final void sub_3d7(Class_757 var1) {
+   public final void sub_3d7(Transform3D var1) {
       float var2 = var1.var_d7;
       float var3 = var1.var_1ce;
       float var4 = var1.var_2ce;

@@ -2,7 +2,7 @@ package com.hicorp.mascotcapsule.web;
 
 import java.io.InputStream;
 
-public final class Class_47d {
+public final class Model {
    private static final Vector3f var_62 = new Vector3f(1.0F, 1.0F, 1.0F);
    private static final int var_bb = 0;
    private static final int var_105 = 1;
@@ -17,11 +17,11 @@ public final class Class_47d {
    private static final int var_33e = 10;
    protected int var_360 = 0;
    protected int var_395 = 0;
-   protected Class_ae3[] var_3c7 = null;
+   protected Bone[] var_3c7 = null;
    protected int var_3e4 = 0;
-   protected Class_b78[] var_409 = null;
+   protected BoneAnimation[] var_409 = null;
    protected int var_450 = 0;
-   protected Class_b42[] var_492 = null;
+   protected Keyframe[] var_492 = null;
    public Class_77c var_4ab = null;
 
    protected void sub_43() {
@@ -55,10 +55,10 @@ public final class Class_47d {
          }
       }
 
-      this.var_492 = new Class_b42[this.var_450];
+      this.var_492 = new Keyframe[this.var_450];
 
       for (int var4 = 0; var4 < this.var_450; var4++) {
-         this.var_492[var4] = new Class_b42(null);
+         this.var_492[var4] = new Keyframe(null);
       }
    }
 
@@ -87,10 +87,10 @@ public final class Class_47d {
                short var10 = var2.sub_3f();
                this.var_395 = var2.sub_3f();
                this.var_360 = var10 < 1 ? 0 : var10 - 1;
-               this.var_3c7 = new Class_ae3[this.var_395];
+               this.var_3c7 = new Bone[this.var_395];
 
                for (int var16 = 0; var16 < this.var_395; var16++) {
-                  this.var_3c7[var16] = new Class_ae3();
+                  this.var_3c7[var16] = new Bone();
                   this.var_3c7[var16].var_51 = var2.sub_1a5();
                   this.var_3c7[var16].var_109.x = var2.sub_de();
                   this.var_3c7[var16].var_109.y = var2.sub_de();
@@ -136,13 +136,13 @@ public final class Class_47d {
       } else {
          this.var_4ab = var1;
          this.var_3e4 = var1.sub_85();
-         this.var_409 = new Class_b78[this.var_3e4];
+         this.var_409 = new BoneAnimation[this.var_3e4];
 
          for (int var2 = 0; var2 < this.var_3e4; var2++) {
-            this.var_409[var2] = new Class_b78();
+            this.var_409[var2] = new BoneAnimation();
 
             for (int var3 = 0; var3 < 10; var3++) {
-               this.var_409[var2].var_1a0[var3] = new Class_c82(this, null);
+               this.var_409[var2].var_1a0[var3] = new AnimationTrack(this, null);
             }
          }
 
@@ -150,17 +150,17 @@ public final class Class_47d {
          int var13 = 0;
 
          for (int var19 = 0; var19 < this.var_3e4; var19++) {
-            Class_b78 var14 = this.var_409[var19];
+            BoneAnimation var14 = this.var_409[var19];
             int var5 = 0;
 
             while (var5 < this.var_395 && !this.var_3c7[var5].var_51.equalsIgnoreCase(var1.sub_126(var19).sub_9e())) {
                var5++;
             }
 
-            var14.var_ff = new Class_757();
+            var14.var_ff = new Transform3D();
             if (var5 == this.var_395) {
                for (int var24 = 0; var24 <= 9; var24++) {
-                  Class_c82 var27 = var14.var_1a0[var24];
+                  AnimationTrack var27 = var14.var_1a0[var24];
                   var13 = var27.sub_2c(var13, 1);
                   var27.var_b5[0].var_65 = 0;
                   var27.var_b5[0].var_a3 = 0.0F;
@@ -175,7 +175,7 @@ public final class Class_47d {
                var14.var_24 = true;
                var14.var_ff.sub_139();
             } else {
-               Class_ae3 var15 = this.var_3c7[var5];
+               Bone var15 = this.var_3c7[var5];
                var14.var_127 = var1.sub_126(var19).sub_d3();
                var14.var_14a = sub_2c1(var1, var1.sub_126(var19), var15);
                boolean var16 = false;
@@ -184,7 +184,7 @@ public final class Class_47d {
                   float var17 = Float.MAX_VALUE;
                   float var18 = -Float.MAX_VALUE;
                   Class_c25 var11 = var15.var_2b0[var4];
-                  Class_c82 var12 = var14.var_1a0[var4];
+                  AnimationTrack var12 = var14.var_1a0[var4];
                   int var6 = var11.sub_41();
                   var13 = var12.sub_2c(var13, var6);
 
@@ -207,7 +207,7 @@ public final class Class_47d {
                }
 
                for (int var23 = 3; var23 <= 5; var23++) {
-                  Class_c82 var25 = var14.var_1a0[var23];
+                  AnimationTrack var25 = var14.var_1a0[var23];
 
                   for (int var21 = 0; var21 < var25.sub_84(); var21++) {
                      var25.var_b5[var21].var_eb /= 100.0F;
@@ -215,11 +215,11 @@ public final class Class_47d {
                   }
                }
 
-               Class_c82 var26 = var14.var_1a0[9];
+               AnimationTrack var26 = var14.var_1a0[9];
 
                for (int var22 = 0; var22 < var26.sub_84(); var22++) {
-                  var26.var_b5[var22].var_eb = Class_4ce.sub_1d7(var26.var_b5[var22].var_eb);
-                  var26.var_b5[var22].var_10a = Class_4ce.sub_1d7(var26.var_b5[var22].var_10a);
+                  var26.var_b5[var22].var_eb = MatrixUtils.sub_1d7(var26.var_b5[var22].var_eb);
+                  var26.var_b5[var22].var_10a = MatrixUtils.sub_1d7(var26.var_b5[var22].var_10a);
                }
 
                if (!var16) {
@@ -236,7 +236,7 @@ public final class Class_47d {
       }
    }
 
-   public void sub_161(Class_47d var1, float var2, Class_47d var3, float var4, int var5) {
+   public void sub_161(Model var1, float var2, Model var3, float var4, int var5) {
       Class_8ed.sub_7d(var5 >= 2);
       Class_8ed.sub_7d(this != var1 && this != var3);
       Class_8ed.sub_7d(var1.var_3e4 == var3.var_3e4);
@@ -246,20 +246,20 @@ public final class Class_47d {
       this.sub_43();
       this.var_360 = var5 - 1;
       this.var_3e4 = var1.var_3e4;
-      this.var_409 = new Class_b78[this.var_3e4];
+      this.var_409 = new BoneAnimation[this.var_3e4];
       this.var_450 = 20 * this.var_3e4;
-      this.var_492 = new Class_b42[this.var_450];
+      this.var_492 = new Keyframe[this.var_450];
       int var12 = 0;
 
       for (int var6 = 0; var6 < this.var_450; var6++) {
-         this.var_492[var6] = new Class_b42(null);
+         this.var_492[var6] = new Keyframe(null);
       }
 
       for (int var16 = 0; var16 < this.var_3e4; var16++) {
-         this.var_409[var16] = new Class_b78();
-         Class_b78 var13 = this.var_409[var16];
-         Class_b78 var14 = var1.var_409[var16];
-         Class_b78 var15 = var3.var_409[var16];
+         this.var_409[var16] = new BoneAnimation();
+         BoneAnimation var13 = this.var_409[var16];
+         BoneAnimation var14 = var1.var_409[var16];
+         BoneAnimation var15 = var3.var_409[var16];
          var14.sub_56(var2, var8);
          var15.sub_56(var4, var9);
          var10.sub_7a(var8[6], var8[7], var8[8]);
@@ -274,7 +274,7 @@ public final class Class_47d {
          var9[8] = var10.z;
 
          for (int var7 = 0; var7 < 10; var7++) {
-            Class_c82 var11 = var13.var_1a0[var7];
+            AnimationTrack var11 = var13.var_1a0[var7];
             var12 = var11.sub_2c(var12, 2);
             var11.var_b5[0].var_65 = 0;
             var11.var_b5[0].var_a3 = var5 - 1;
@@ -290,9 +290,9 @@ public final class Class_47d {
       Class_8ed.sub_7d(var12 == this.var_450);
    }
 
-   public void sub_1bc(int var1, float var2, Class_757 var3) {
+   public void sub_1bc(int var1, float var2, Transform3D var3) {
       Class_8ed.sub_7d(var1 < this.var_3e4);
-      Class_b78 var10 = this.var_409[var1];
+      BoneAnimation var10 = this.var_409[var1];
       if (var10.var_24) {
          var3.sub_37(var10.var_ff);
       } else {
@@ -307,7 +307,7 @@ public final class Class_47d {
 
          for (int var4 = 0; var4 < 10; var4++) {
             int var7 = var10.var_1a0[var4].sub_84();
-            Class_b42[] var11 = var10.var_1a0[var4].var_b5;
+            Keyframe[] var11 = var10.var_1a0[var4].var_b5;
             int var6 = 1;
 
             while (var6 < var7 && var8 >= var11[var6].var_65) {
@@ -330,7 +330,7 @@ public final class Class_47d {
    }
 
    public void sub_208(float var1) {
-      Class_757 var2 = new Class_757();
+      Transform3D var2 = new Transform3D();
 
       for (int var3 = 0; var3 < this.var_3e4; var3++) {
          this.sub_1bc(var3, var1, var2);
@@ -346,13 +346,13 @@ public final class Class_47d {
       return this.var_3e4;
    }
 
-   private static final Class_757 sub_2c1(Class_77c var0, Class_13f var1, Class_ae3 var2) {
-      Class_757 var3 = new Class_757(var1.sub_d3());
+   private static final Transform3D sub_2c1(Class_77c var0, Class_13f var1, Bone var2) {
+      Transform3D var3 = new Transform3D(var1.sub_d3());
       var3.sub_393();
       return var3;
    }
 
-   private static final void sub_307(float[] var0, Class_757 var1) {
+   private static final void sub_307(float[] var0, Transform3D var1) {
       float var2 = var0[6];
       float var3 = var0[7];
       float var4 = var0[8];
@@ -371,8 +371,8 @@ public final class Class_47d {
       }
 
       if (var0[9] != 0.0F) {
-         Class_757 var14 = new Class_757();
-         Class_4ce.sub_f2(var0[9], var14);
+         Transform3D var14 = new Transform3D();
+         MatrixUtils.sub_f2(var0[9], var14);
          var1.sub_37e(var14);
       }
 

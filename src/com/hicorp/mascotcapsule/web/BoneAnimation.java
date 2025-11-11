@@ -1,13 +1,13 @@
 package com.hicorp.mascotcapsule.web;
 
-final class Class_b78 {
+final class BoneAnimation {
    public boolean var_24 = false;
-   public Class_757 var_ff;
-   public Class_757 var_127;
-   public Class_757 var_14a;
-   public Class_c82[] var_1a0 = new Class_c82[10];
+   public Transform3D var_ff;
+   public Transform3D var_127;
+   public Transform3D var_14a;
+   public AnimationTrack[] var_1a0 = new AnimationTrack[10];
 
-   public Class_b78() {
+   public BoneAnimation() {
    }
 
    public void sub_56(float var1, float[] var2) {

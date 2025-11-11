@@ -12,7 +12,7 @@ public final class Class_da6 extends Class_2e8 {
       int[] var1 = Class_6ed.sub_34c(this.var_e1);
       int[] var2 = Class_6ed.sub_4c1();
       int var3 = (super.var_3bf > 0 ? super.var_3bf : -super.var_3bf) + (super.var_3d8 > 0 ? super.var_3d8 : -super.var_3d8) + 32768;
-      int var4 = Class_6ed.sub_509(this.var_e1).sub_2cf(Class_4ce.sub_30a(var3) - 17);
+      int var4 = Class_6ed.sub_509(this.var_e1).sub_2cf(MatrixUtils.sub_30a(var3) - 17);
       int[] var5 = Class_6ed.sub_509(this.var_e1).sub_93();
       int var6 = Class_6ed.sub_509(this.var_e1).sub_327(var4);
       int var7 = Class_6ed.sub_509(this.var_e1).sub_3df(var4);

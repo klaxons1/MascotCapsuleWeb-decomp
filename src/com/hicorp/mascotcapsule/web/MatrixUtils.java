@@ -1,17 +1,17 @@
 package com.hicorp.mascotcapsule.web;
 
-public final class Class_4ce {
+public final class MatrixUtils {
    private static final double var_44 = Math.PI;
    private static final Vector3f var_76 = new Vector3f(1.0F, 0.0F, 0.0F);
    private static final Vector3f var_b7 = new Vector3f(0.0F, 1.0F, 0.0F);
    private static final int[] var_d5 = new int[]{4, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
 
-   public static void sub_2e(float var0, Class_757 var1) {
+   public static void sub_2e(float var0, Transform3D var1) {
       var1.var_13 = var1.var_138 = var1.var_27d = var0;
       var1.var_ad = var1.var_c2 = var1.var_e7 = var1.var_191 = var1.var_211 = var1.var_263 = 0.0F;
    }
 
-   public static void sub_3f(float var0, Class_757 var1) {
+   public static void sub_3f(float var0, Transform3D var1) {
       float var2 = (float)Math.cos(var0);
       float var3 = (float)Math.sin(var0);
       var1.var_13 = 1.0F;
@@ -25,7 +25,7 @@ public final class Class_4ce {
       var1.var_27d = var2;
    }
 
-   public static void sub_92(float var0, Class_757 var1) {
+   public static void sub_92(float var0, Transform3D var1) {
       float var2 = (float)Math.cos(var0);
       float var3 = (float)Math.sin(var0);
       var1.var_13 = var2;
@@ -39,7 +39,7 @@ public final class Class_4ce {
       var1.var_27d = var2;
    }
 
-   public static void sub_f2(float var0, Class_757 var1) {
+   public static void sub_f2(float var0, Transform3D var1) {
       float var2 = (float)Math.cos(var0);
       float var3 = (float)Math.sin(var0);
       var1.var_13 = var2;
@@ -53,7 +53,7 @@ public final class Class_4ce {
       var1.var_27d = 1.0F;
    }
 
-   public static void sub_135(Vector3f var0, float var1, Class_757 var2) {
+   public static void sub_135(Vector3f var0, float var1, Transform3D var2) {
       float var3 = (float)Math.cos(var1);
       float var4 = (float)Math.sin(var1);
       float var5 = var0.x;
@@ -80,7 +80,7 @@ public final class Class_4ce {
       var2.var_27d = var10 * var17 + var3;
    }
 
-   public static final void sub_181(Vector3f var0, Vector3f var1, Class_757 var2) {
+   public static final void sub_181(Vector3f var0, Vector3f var1, Transform3D var2) {
       Vector3f var4 = new Vector3f();
       float var3 = sub_27d(var0, var1);
       if (var3 < 0.001F) {
@@ -101,11 +101,11 @@ public final class Class_4ce {
       }
    }
 
-   public static final Class_757 sub_18c(Vector3f var0, Vector3f var1) {
+   public static final Transform3D sub_18c(Vector3f var0, Vector3f var1) {
       return sub_1aa(var0, var1, 0.0F);
    }
 
-   public static final Class_757 sub_1aa(Vector3f var0, Vector3f var1, float var2) {
+   public static final Transform3D sub_1aa(Vector3f var0, Vector3f var1, float var2) {
       Class_8ed.sub_7d(var0 != var1);
       Vector3f var3 = new Vector3f();
       var3.setDifference(var1, var0);
@@ -146,10 +146,10 @@ public final class Class_4ce {
          var12 = var15;
       }
 
-      Class_757 var18 = new Class_757();
+      Transform3D var18 = new Transform3D();
       var18.sub_d5(var4, var5, var6, var7, var8, var9, var10, var11, var12);
       if (var2 != 0.0F) {
-         Class_757 var19 = new Class_757();
+         Transform3D var19 = new Transform3D();
          sub_135(var3, var2, var19);
          var18.sub_2b3(var19, var18);
       }

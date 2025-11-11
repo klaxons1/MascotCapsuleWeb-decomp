@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import com.hicorp.mascotcapsule.web.Vector3f;
-import com.hicorp.mascotcapsule.web.Class_4ce;
+import com.hicorp.mascotcapsule.web.MatrixUtils;
 
 public final class MascotCapsule extends Applet {
    private Class_aa var_75 = null;
@@ -21,9 +21,9 @@ public final class MascotCapsule extends Applet {
       this.var_75.sub_33e(this.sub_a5("SHOW_STATUS", 0) != 0);
       this.var_13c = false;
       this.var_75.sub_6f5(this.sub_fd("FRAME_PER_SEC", 20.0F));
-      this.var_75.sub_55f(Class_4ce.sub_1d7(this.sub_fd("ANGLE_X", 0.0F)));
-      this.var_75.sub_5b5(Class_4ce.sub_1d7(this.sub_fd("ANGLE_Y", 0.0F)));
-      this.var_75.sub_64f(Class_4ce.sub_1d7(this.sub_fd("ANGLE_PER_SEC", 0.0F)));
+      this.var_75.sub_55f(MatrixUtils.sub_1d7(this.sub_fd("ANGLE_X", 0.0F)));
+      this.var_75.sub_5b5(MatrixUtils.sub_1d7(this.sub_fd("ANGLE_Y", 0.0F)));
+      this.var_75.sub_64f(MatrixUtils.sub_1d7(this.sub_fd("ANGLE_PER_SEC", 0.0F)));
       this.var_75.sub_7d9(this.sub_a5("PERS", 0) != 0);
       this.var_75.sub_501(this.sub_fd("SCALE", 0.5F));
       this.var_75.sub_331(this.sub_fd("AMBIENT_LIGHT_INTENSITY", 0.2F));
@@ -31,7 +31,7 @@ public final class MascotCapsule extends Applet {
       this.var_75.sub_806(this.sub_a5("MIPMAP", 1) != 0);
       Vector3f var1 = new Vector3f(-this.sub_fd("DIRECTION_LIGHT_X", 0.0F), this.sub_fd("DIRECTION_LIGHT_Y", 0.0F), -this.sub_fd("DIRECTION_LIGHT_Z", -1.0F));
       this.var_75.sub_2e4(var1, this.sub_fd("DIRECTION_LIGHT_INTENSITY", 2.0F));
-      this.var_75.sub_5ca(Class_4ce.sub_18c(var_153, var_1b7));
+      this.var_75.sub_5ca(MatrixUtils.sub_18c(var_153, var_1b7));
       this.var_75.sub_498(this.sub_a5("OFFSET_X", 0), this.sub_a5("OFFSET_Y", 0));
       this.var_75.sub_1a2(this.sub_a5("PKTTBL_NUM", 10000), this.sub_fd("PKTTBL_X", 100.0F), this.sub_fd("PKTTBL_Y", 2000.0F));
       this.var_75.sub_5fa(this.sub_a5("FORCE_LIGHTING", 0) != 0);

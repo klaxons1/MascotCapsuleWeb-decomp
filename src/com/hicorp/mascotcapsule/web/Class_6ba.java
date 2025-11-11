@@ -11,7 +11,7 @@ public final class Class_6ba extends Class_15d5 {
    public void sub_22() {
       int[] var1 = Class_6ed.sub_34c(this.var_99);
       int var2 = (super.var_478 > 0 ? super.var_478 : -super.var_478) + (super.var_510 > 0 ? super.var_510 : -super.var_510) + 32768;
-      int var3 = Class_6ed.sub_509(this.var_99).sub_2cf(Class_4ce.sub_30a(var2) - 17);
+      int var3 = Class_6ed.sub_509(this.var_99).sub_2cf(MatrixUtils.sub_30a(var2) - 17);
       int[] var4 = Class_6ed.sub_509(this.var_99).sub_93();
       int var5 = Class_6ed.sub_509(this.var_99).sub_327(var3);
       int var6 = Class_6ed.sub_509(this.var_99).sub_3df(var3);
@@ -22,7 +22,7 @@ public final class Class_6ba extends Class_15d5 {
       int var11 = super.var_510 >> var3;
       int var12 = super.var_52a;
       var2 = (super.var_54a > 0 ? super.var_54a : -super.var_54a) + (super.var_55b > 0 ? super.var_55b : -super.var_55b) + 32768;
-      int var13 = Class_6ed.sub_55c(this.var_99).sub_2cf(Class_4ce.sub_30a(var2) - 17);
+      int var13 = Class_6ed.sub_55c(this.var_99).sub_2cf(MatrixUtils.sub_30a(var2) - 17);
       int[] var14 = Class_6ed.sub_55c(this.var_99).sub_93();
       int var15 = Class_6ed.sub_55c(this.var_99).sub_327(var13);
       int var16 = Class_6ed.sub_55c(this.var_99).sub_3df(var13);

@@ -49,7 +49,7 @@ final class FrameBuffer implements ImageProducer {
       return this.var_ba;
    }
 
-   public synchronized void sub_d6(Class_596 var1) {
+   public synchronized void sub_d6(BoundingBox var1) {
       if (var1.sub_da()) {
          int var2 = var1.var_35;
          int var3 = var1.var_88;
@@ -67,7 +67,7 @@ final class FrameBuffer implements ImageProducer {
       }
    }
 
-   public synchronized void sub_11b(Graphics var1, Class_596 var2) {
+   public synchronized void sub_11b(Graphics var1, BoundingBox var2) {
       if (var2.sub_da()) {
          var1.clipRect(var2.var_35, var2.var_88, var2.var_d4 - var2.var_35, var2.var_f0 - var2.var_88);
       }

@@ -11,9 +11,9 @@ final class Class_1438 extends Class_1498 {
    final Class_ae var_3b9;
    final Class_ae var_3ed;
    final Class_ae var_46c;
-   private final Class_539 var_4f3;
+   private final RenderContext var_4f3;
 
-   Class_1438(Class_539 var1) {
+   Class_1438(RenderContext var1) {
       super(var1, null);
       this.var_4f3 = var1;
       this.var_389 = new Class_ae();
@@ -23,7 +23,7 @@ final class Class_1438 extends Class_1498 {
       super.var_5c = 1;
    }
 
-   public void sub_ac(Class_596 var1) {
+   public void sub_ac(BoundingBox var1) {
       int var2;
       int var3;
       if (this.var_3b9.var_59 > this.var_3ed.var_59) {

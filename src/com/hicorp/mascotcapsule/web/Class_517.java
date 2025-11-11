@@ -23,8 +23,8 @@ public final class Class_517 {
    protected int[] var_5cc = new int[12];
 
    public int sub_38(int var1, int var2) {
-      this.var_1e8 = Class_4ce.sub_30a(var1);
-      this.var_238 = Class_4ce.sub_30a(var2);
+      this.var_1e8 = MatrixUtils.sub_30a(var1);
+      this.var_238 = MatrixUtils.sub_30a(var2);
       this.var_26c = (1 << this.var_1e8) - 1 << 16;
       this.var_2f0 = (1 << this.var_238) - 1 << 16;
       this.var_34d = 16;

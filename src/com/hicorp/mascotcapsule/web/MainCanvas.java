@@ -5,14 +5,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 
-public class Class_87a extends Canvas {
+public class MainCanvas extends Canvas {
    private final Toolkit var_e = Toolkit.getDefaultToolkit();
    private final FrameBuffer var_1c = new FrameBuffer(this);
    private final Class_6ed var_4a = new Class_6ed();
-   private final Class_539 var_94 = new Class_539(this.var_4a);
-   private final Class_596 var_ee = new Class_596();
-   private final Class_596 var_1bb = new Class_596();
-   private final Class_596 var_1cd = new Class_596();
+   private final RenderContext var_94 = new RenderContext(this.var_4a);
+   private final BoundingBox var_ee = new BoundingBox();
+   private final BoundingBox var_1bb = new BoundingBox();
+   private final BoundingBox var_1cd = new BoundingBox();
    private boolean var_1fe = false;
    private StringBuffer var_21f = new StringBuffer("");
    private boolean var_252 = false;
@@ -35,7 +35,7 @@ public class Class_87a extends Canvas {
       return this.var_1c.sub_bc();
    }
 
-   public Class_87a(int var1, int var2) {
+   public MainCanvas(int var1, int var2) {
       this.setSize(var1, var2);
    }
 
@@ -119,7 +119,7 @@ public class Class_87a extends Canvas {
       return true;
    }
 
-   public void sub_c9(Class_596 var1) {
+   public void sub_c9(BoundingBox var1) {
    }
 
    public void paint(Graphics var1) {

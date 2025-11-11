@@ -19,17 +19,17 @@ import java.util.zip.ZipInputStream;
 import com.hicorp.mascotcapsule.web.Class_339;
 import com.hicorp.mascotcapsule.web.Vector3f;
 import com.hicorp.mascotcapsule.web.Class_41b;
-import com.hicorp.mascotcapsule.web.Class_47d;
-import com.hicorp.mascotcapsule.web.Class_4ce;
+import com.hicorp.mascotcapsule.web.Model;
+import com.hicorp.mascotcapsule.web.MatrixUtils;
 import com.hicorp.mascotcapsule.web.Class_517;
-import com.hicorp.mascotcapsule.web.Class_596;
+import com.hicorp.mascotcapsule.web.BoundingBox;
 import com.hicorp.mascotcapsule.web.Class_5a9;
-import com.hicorp.mascotcapsule.web.Class_757;
+import com.hicorp.mascotcapsule.web.Transform3D;
 import com.hicorp.mascotcapsule.web.Class_77c;
 import com.hicorp.mascotcapsule.web.Class_808;
-import com.hicorp.mascotcapsule.web.Class_87a;
+import com.hicorp.mascotcapsule.web.MainCanvas;
 
-public final class Class_aa extends Class_87a implements KeyListener, MouseListener, MouseMotionListener {
+public final class Class_aa extends MainCanvas implements KeyListener, MouseListener, MouseMotionListener {
    private static final String var_40 = "1.00";
    private static final String var_6d = "logo.gif";
    private Image var_85 = null;
@@ -40,7 +40,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
    private final Class_517 var_17d = new Class_517();
    private Class_517 var_1a7 = new Class_517();
    private Class_77c var_1c9 = null;
-   private Class_47d var_1e4 = null;
+   private Model var_1e4 = null;
    private boolean var_235 = false;
    private Class_517 var_247 = new Class_517();
    private int[] var_27f = null;
@@ -54,7 +54,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
    private float var_431 = 0.0F;
    private float var_454 = 2.0F;
    private String var_473 = null;
-   private final Class_757 var_4a8 = new Class_757();
+   private final Transform3D var_4a8 = new Transform3D();
    private boolean var_4d7 = false;
    private float var_53b;
    private int var_570;
@@ -74,9 +74,9 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
    private static final Vector3f var_880 = new Vector3f(0.0F, 0.0F, 1000.0F);
    private static final Vector3f var_898 = new Vector3f(0.0F, 0.0F, 0.0F);
    Toolkit var_8cd = Toolkit.getDefaultToolkit();
-   final Class_757 var_92a = new Class_757();
-   final Class_757 var_976 = new Class_757();
-   final Class_757 var_9b2 = new Class_757();
+   final Transform3D var_92a = new Transform3D();
+   final Transform3D var_976 = new Transform3D();
+   final Transform3D var_9b2 = new Transform3D();
    private Class_134 var_9de;
    private int var_a18 = 0;
 
@@ -88,7 +88,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
       this.sub_1a2(10000, 100.0F, 2000.0F);
       this.var_34f = var1 / 2;
       this.var_3ab = var2 / 2;
-      this.var_15a.sub_d7(Class_4ce.sub_18c(var_880, var_898));
+      this.var_15a.sub_d7(MatrixUtils.sub_18c(var_880, var_898));
       this.resize(var1, var2);
       this.sub_1a();
       if (!var3) {
@@ -99,9 +99,9 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
    }
 
    public void sub_1a() {
-      Class_757 var1 = new Class_757();
-      Class_4ce.sub_3f(this.var_3e2, this.var_4a8);
-      Class_4ce.sub_92(this.var_431, var1);
+      Transform3D var1 = new Transform3D();
+      MatrixUtils.sub_3f(this.var_3e2, this.var_4a8);
+      MatrixUtils.sub_92(this.var_431, var1);
       this.var_4a8.sub_37e(var1);
       this.var_4a8.sub_447();
       this.var_61a = 0.0F;
@@ -124,18 +124,18 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
          this.sub_e6(1.0F);
       }
 
-      Class_4ce.sub_3f(this.var_6bf, this.var_92a);
-      Class_4ce.sub_92(this.var_71c, this.var_976);
+      MatrixUtils.sub_3f(this.var_6bf, this.var_92a);
+      MatrixUtils.sub_92(this.var_71c, this.var_976);
       this.var_6bf = 0.0F;
       this.var_71c = 0.0F;
       this.var_92a.sub_37e(this.var_976);
       this.var_4a8.sub_339(this.var_92a, this.var_4a8);
       this.var_4a8.sub_447();
       this.var_9b2.var_d7 = this.var_9b2.var_1ce = this.var_9b2.var_2ce = 0.0F;
-      Class_4ce.sub_2e(this.var_53b, this.var_9b2);
-      Class_4ce.sub_3f(this.var_698, this.var_92a);
+      MatrixUtils.sub_2e(this.var_53b, this.var_9b2);
+      MatrixUtils.sub_3f(this.var_698, this.var_92a);
       this.var_9b2.sub_37e(this.var_92a);
-      Class_4ce.sub_92(this.var_6a3, this.var_92a);
+      MatrixUtils.sub_92(this.var_6a3, this.var_92a);
       this.var_9b2.sub_37e(this.var_92a);
       this.var_6bf = 0.0F;
       this.var_71c = 0.0F;
@@ -163,7 +163,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
       }
    }
 
-   public void sub_c9(Class_596 var1) {
+   public void sub_c9(BoundingBox var1) {
       int[] var2 = this.sub_3d();
       if (var2 != null && this.var_27f != null) {
          if (var1 == null) {
@@ -358,7 +358,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
       Class_517 var5 = null;
       Class_517 var6 = null;
       Class_77c var7 = null;
-      Class_47d var8 = null;
+      Model var8 = null;
 
       ZipEntry var9;
       try {
@@ -398,7 +398,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
                   this.repaint();
                }
             } else if (var10.regionMatches(true, var11 - 5, ".jtra", 0, 5)) {
-               var8 = new Class_47d();
+               var8 = new Model();
                if (!var8.sub_f8(new BufferedInputStream(var2))) {
                   var8 = null;
                }
@@ -469,7 +469,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
       try {
          Class_517 var4 = null;
          Class_77c var5 = null;
-         Class_47d var6 = null;
+         Model var6 = null;
          if (var3 != null) {
             Class_41b var7 = this.sub_43a();
             var4 = new Class_517();
@@ -498,7 +498,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
          }
 
          if (var2 != null) {
-            var6 = new Class_47d();
+            var6 = new Model();
             if (!var6.sub_f8(new BufferedInputStream(var2))) {
                var6 = null;
             }
@@ -696,7 +696,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
       this.var_431 = var1;
    }
 
-   public void sub_5ca(Class_757 var1) {
+   public void sub_5ca(Transform3D var1) {
       this.var_15a.sub_d7(var1);
    }
 
@@ -768,7 +768,7 @@ public final class Class_aa extends Class_87a implements KeyListener, MouseListe
       return var0.var_78f;
    }
 
-   static Class_47d sub_8e3(Class_aa var0) {
+   static Model sub_8e3(Class_aa var0) {
       return var0.var_1e4;
    }
 

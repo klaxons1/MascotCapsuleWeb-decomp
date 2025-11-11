@@ -4,7 +4,7 @@ public final class Class_13f extends Class_5a9 {
    protected boolean var_2a;
    protected boolean var_8c;
    protected String var_a2;
-   protected final Class_757 var_f4 = new Class_757();
+   protected final Transform3D var_f4 = new Transform3D();
    protected int var_118;
 
    public Class_13f() {
@@ -20,7 +20,7 @@ public final class Class_13f extends Class_5a9 {
       return this.var_a2;
    }
 
-   final Class_757 sub_d3() {
+   final Transform3D sub_d3() {
       return this.var_f4;
    }
 }

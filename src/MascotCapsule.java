@@ -3,8 +3,8 @@ import java.awt.FlowLayout;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import pkg_4c.pkg_d.pkg_56.pkg_22.Class_3d2;
-import pkg_4c.pkg_d.pkg_56.pkg_22.Class_4ce;
+import com.hicorp.mascotcapsule.web.Class_3d2;
+import com.hicorp.mascotcapsule.web.Class_4ce;
 
 public final class MascotCapsule extends Applet {
    private Class_aa var_75 = null;

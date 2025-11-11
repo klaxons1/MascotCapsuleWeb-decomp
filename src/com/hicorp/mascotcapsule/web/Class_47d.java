@@ -3,7 +3,7 @@ package com.hicorp.mascotcapsule.web;
 import java.io.InputStream;
 
 public final class Class_47d {
-   private static final Class_3d2 var_62 = new Class_3d2(1.0F, 1.0F, 1.0F);
+   private static final Vector3f var_62 = new Vector3f(1.0F, 1.0F, 1.0F);
    private static final int var_bb = 0;
    private static final int var_105 = 1;
    private static final int var_164 = 2;
@@ -92,18 +92,18 @@ public final class Class_47d {
                for (int var16 = 0; var16 < this.var_395; var16++) {
                   this.var_3c7[var16] = new Class_ae3();
                   this.var_3c7[var16].var_51 = var2.sub_1a5();
-                  this.var_3c7[var16].var_109.var_3f = var2.sub_de();
-                  this.var_3c7[var16].var_109.var_93 = var2.sub_de();
-                  this.var_3c7[var16].var_109.var_d6 = var2.sub_de();
-                  this.var_3c7[var16].var_209.var_3f = var2.sub_de();
-                  this.var_3c7[var16].var_209.var_93 = var2.sub_de();
-                  this.var_3c7[var16].var_209.var_d6 = var2.sub_de();
-                  this.var_3c7[var16].var_241.var_3f = var2.sub_de();
-                  this.var_3c7[var16].var_241.var_93 = var2.sub_de();
-                  this.var_3c7[var16].var_241.var_d6 = var2.sub_de();
-                  this.var_3c7[var16].var_268.var_3f = var2.sub_de();
-                  this.var_3c7[var16].var_268.var_93 = var2.sub_de();
-                  this.var_3c7[var16].var_268.var_d6 = var2.sub_de();
+                  this.var_3c7[var16].var_109.x = var2.sub_de();
+                  this.var_3c7[var16].var_109.y = var2.sub_de();
+                  this.var_3c7[var16].var_109.z = var2.sub_de();
+                  this.var_3c7[var16].var_209.x = var2.sub_de();
+                  this.var_3c7[var16].var_209.y = var2.sub_de();
+                  this.var_3c7[var16].var_209.z = var2.sub_de();
+                  this.var_3c7[var16].var_241.x = var2.sub_de();
+                  this.var_3c7[var16].var_241.y = var2.sub_de();
+                  this.var_3c7[var16].var_241.z = var2.sub_de();
+                  this.var_3c7[var16].var_268.x = var2.sub_de();
+                  this.var_3c7[var16].var_268.y = var2.sub_de();
+                  this.var_3c7[var16].var_268.z = var2.sub_de();
 
                   for (int var4 = 0; var4 < 10; var4++) {
                      short var6 = var2.sub_3f();
@@ -242,7 +242,7 @@ public final class Class_47d {
       Class_8ed.sub_7d(var1.var_3e4 == var3.var_3e4);
       float[] var8 = new float[10];
       float[] var9 = new float[10];
-      Class_3d2 var10 = new Class_3d2();
+      Vector3f var10 = new Vector3f();
       this.sub_43();
       this.var_360 = var5 - 1;
       this.var_3e4 = var1.var_3e4;
@@ -263,15 +263,15 @@ public final class Class_47d {
          var14.sub_56(var2, var8);
          var15.sub_56(var4, var9);
          var10.sub_7a(var8[6], var8[7], var8[8]);
-         var10.sub_47c();
-         var8[6] = var10.var_3f;
-         var8[7] = var10.var_93;
-         var8[8] = var10.var_d6;
+         var10.normalize();
+         var8[6] = var10.x;
+         var8[7] = var10.y;
+         var8[8] = var10.z;
          var10.sub_7a(var9[6], var9[7], var9[8]);
-         var10.sub_47c();
-         var9[6] = var10.var_3f;
-         var9[7] = var10.var_93;
-         var9[8] = var10.var_d6;
+         var10.normalize();
+         var9[6] = var10.x;
+         var9[7] = var10.y;
+         var9[8] = var10.z;
 
          for (int var7 = 0; var7 < 10; var7++) {
             Class_c82 var11 = var13.var_1a0[var7];

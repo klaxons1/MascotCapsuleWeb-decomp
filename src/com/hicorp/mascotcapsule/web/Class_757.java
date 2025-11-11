@@ -97,10 +97,10 @@ public final class Class_757 {
       this.sub_92(1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F);
    }
 
-   public final void sub_160(Class_3d2 var1) {
-      float var2 = var1.var_3f;
-      float var3 = var1.var_93;
-      float var4 = var1.var_d6;
+   public final void sub_160(Vector3f var1) {
+      float var2 = var1.x;
+      float var3 = var1.y;
+      float var4 = var1.z;
       this.sub_d5(
          this.var_13 * var2,
          this.var_ad * var3,
@@ -114,32 +114,32 @@ public final class Class_757 {
       );
    }
 
-   public final void sub_199(Class_3d2 var1, Class_3d2 var2) {
-      float var3 = this.var_13 * var1.var_3f + this.var_ad * var1.var_93 + this.var_c2 * var1.var_d6 + this.var_d7;
-      float var4 = this.var_e7 * var1.var_3f + this.var_138 * var1.var_93 + this.var_191 * var1.var_d6 + this.var_1ce;
-      float var5 = this.var_211 * var1.var_3f + this.var_263 * var1.var_93 + this.var_27d * var1.var_d6 + this.var_2ce;
-      var2.var_3f = var3;
-      var2.var_93 = var4;
-      var2.var_d6 = var5;
+   public final void sub_199(Vector3f var1, Vector3f var2) {
+      float var3 = this.var_13 * var1.x + this.var_ad * var1.y + this.var_c2 * var1.z + this.var_d7;
+      float var4 = this.var_e7 * var1.x + this.var_138 * var1.y + this.var_191 * var1.z + this.var_1ce;
+      float var5 = this.var_211 * var1.x + this.var_263 * var1.y + this.var_27d * var1.z + this.var_2ce;
+      var2.x = var3;
+      var2.y = var4;
+      var2.z = var5;
    }
 
-   public final void sub_1d7(Class_3d2[] var1, Class_3d2[] var2, int var3, int var4) {
+   public final void sub_1d7(Vector3f[] var1, Vector3f[] var2, int var3, int var4) {
       int var5 = var3 + var4;
 
       for (int var6 = var3; var6 < var5; var6++) {
-         float var7 = var1[var6].var_3f;
-         float var8 = var1[var6].var_93;
-         float var9 = var1[var6].var_d6;
+         float var7 = var1[var6].x;
+         float var8 = var1[var6].y;
+         float var9 = var1[var6].z;
          float var10 = this.var_13 * var7 + this.var_ad * var8 + this.var_c2 * var9 + this.var_d7;
          float var11 = this.var_e7 * var7 + this.var_138 * var8 + this.var_191 * var9 + this.var_1ce;
          float var12 = this.var_211 * var7 + this.var_263 * var8 + this.var_27d * var9 + this.var_2ce;
-         var2[var6].var_3f = var10;
-         var2[var6].var_93 = var11;
-         var2[var6].var_d6 = var12;
+         var2[var6].x = var10;
+         var2[var6].y = var11;
+         var2[var6].z = var12;
       }
    }
 
-   public final void sub_212(Class_3d2[] var1, int[] var2, float[] var3, int var4, int var5, float var6) {
+   public final void sub_212(Vector3f[] var1, int[] var2, float[] var3, int var4, int var5, float var6) {
       int var9 = var4 + var5;
       float var10 = this.var_13 * var6;
       float var11 = this.var_ad * var6;
@@ -152,9 +152,9 @@ public final class Class_757 {
       int var7 = var4;
 
       for (int var8 = var4 * 2; var7 < var9; var8 += 2) {
-         float var18 = var1[var7].var_3f;
-         float var19 = var1[var7].var_93;
-         float var20 = var1[var7].var_d6;
+         float var18 = var1[var7].x;
+         float var19 = var1[var7].y;
+         float var20 = var1[var7].z;
          var2[var8 + 0] = (int)(var10 * var18 + var11 * var19 + var12 * var20 + var13);
          var2[var8 + 1] = (int)(var14 * var18 + var15 * var19 + var16 * var20 + var17);
          var3[var7] = this.var_211 * var18 + this.var_263 * var19 + this.var_27d * var20 + this.var_2ce;
@@ -162,14 +162,14 @@ public final class Class_757 {
       }
    }
 
-   public final void sub_249(Class_3d2[] var1, int[] var2, float[] var3, int var4, int var5, float var6) {
+   public final void sub_249(Vector3f[] var1, int[] var2, float[] var3, int var4, int var5, float var6) {
       int var9 = var4 + var5;
       int var7 = var4;
 
       for (int var8 = var4 * 2; var7 < var9; var8 += 2) {
-         float var11 = var1[var7].var_3f;
-         float var12 = var1[var7].var_93;
-         float var13 = var1[var7].var_d6;
+         float var11 = var1[var7].x;
+         float var12 = var1[var7].y;
+         float var13 = var1[var7].z;
          var3[var7] = this.var_211 * var11 + this.var_263 * var12 + this.var_27d * var13 + this.var_2ce;
          float var10 = var6 / var3[var7];
          var2[var8 + 0] = (int)((this.var_13 * var11 + this.var_ad * var12 + this.var_c2 * var13 + this.var_d7) * var10);
@@ -178,13 +178,13 @@ public final class Class_757 {
       }
    }
 
-   public final void sub_289(Class_3d2 var1, Class_3d2 var2) {
-      float var3 = this.var_13 * var1.var_3f + this.var_ad * var1.var_93 + this.var_c2 * var1.var_d6;
-      float var4 = this.var_e7 * var1.var_3f + this.var_138 * var1.var_93 + this.var_191 * var1.var_d6;
-      float var5 = this.var_211 * var1.var_3f + this.var_263 * var1.var_93 + this.var_27d * var1.var_d6;
-      var2.var_3f = var3;
-      var2.var_93 = var4;
-      var2.var_d6 = var5;
+   public final void sub_289(Vector3f var1, Vector3f var2) {
+      float var3 = this.var_13 * var1.x + this.var_ad * var1.y + this.var_c2 * var1.z;
+      float var4 = this.var_e7 * var1.x + this.var_138 * var1.y + this.var_191 * var1.z;
+      float var5 = this.var_211 * var1.x + this.var_263 * var1.y + this.var_27d * var1.z;
+      var2.x = var3;
+      var2.y = var4;
+      var2.z = var5;
    }
 
    public final void sub_2b3(Class_757 var1, Class_757 var2) {

@@ -2,10 +2,10 @@ package com.hicorp.mascotcapsule.web;
 
 final class Class_ae3 {
    public String var_51 = null;
-   public final Class_3d2 var_109 = new Class_3d2();
-   public final Class_3d2 var_209 = new Class_3d2();
-   public final Class_3d2 var_241 = new Class_3d2();
-   public final Class_3d2 var_268 = new Class_3d2();
+   public final Vector3f var_109 = new Vector3f();
+   public final Vector3f var_209 = new Vector3f();
+   public final Vector3f var_241 = new Vector3f();
+   public final Vector3f var_268 = new Vector3f();
    Class_c25[] var_2b0 = new Class_c25[10];
 
    Class_ae3() {

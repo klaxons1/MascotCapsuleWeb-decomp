@@ -7,7 +7,7 @@ import java.awt.Toolkit;
 
 public class Class_87a extends Canvas {
    private final Toolkit var_e = Toolkit.getDefaultToolkit();
-   private final Class_384 var_1c = new Class_384(this);
+   private final FrameBuffer var_1c = new FrameBuffer(this);
    private final Class_6ed var_4a = new Class_6ed();
    private final Class_539 var_94 = new Class_539(this.var_4a);
    private final Class_596 var_ee = new Class_596();
@@ -52,7 +52,7 @@ public class Class_87a extends Canvas {
    }
 
    public synchronized boolean sub_88() {
-      Class_384 var1 = this.var_1c;
+      FrameBuffer var1 = this.var_1c;
       synchronized (var1) {
          if (this.var_1bb.sub_da()) {
             this.var_1bb.sub_145(this.var_1cd);
@@ -174,7 +174,7 @@ public class Class_87a extends Canvas {
       this.var_94.sub_39e(var1);
    }
 
-   public synchronized void sub_2e4(Class_3d2 var1, float var2) {
+   public synchronized void sub_2e4(Vector3f var1, float var2) {
       this.var_94.sub_3cc(var1, var2);
    }
 

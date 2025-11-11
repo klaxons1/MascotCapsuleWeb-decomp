@@ -2,8 +2,8 @@ package com.hicorp.mascotcapsule.web;
 
 public final class Class_4ce {
    private static final double var_44 = Math.PI;
-   private static final Class_3d2 var_76 = new Class_3d2(1.0F, 0.0F, 0.0F);
-   private static final Class_3d2 var_b7 = new Class_3d2(0.0F, 1.0F, 0.0F);
+   private static final Vector3f var_76 = new Vector3f(1.0F, 0.0F, 0.0F);
+   private static final Vector3f var_b7 = new Vector3f(0.0F, 1.0F, 0.0F);
    private static final int[] var_d5 = new int[]{4, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
 
    public static void sub_2e(float var0, Class_757 var1) {
@@ -53,12 +53,12 @@ public final class Class_4ce {
       var1.var_27d = 1.0F;
    }
 
-   public static void sub_135(Class_3d2 var0, float var1, Class_757 var2) {
+   public static void sub_135(Vector3f var0, float var1, Class_757 var2) {
       float var3 = (float)Math.cos(var1);
       float var4 = (float)Math.sin(var1);
-      float var5 = var0.var_3f;
-      float var6 = var0.var_93;
-      float var7 = var0.var_d6;
+      float var5 = var0.x;
+      float var6 = var0.y;
+      float var7 = var0.z;
       float var8 = var5 * var5;
       float var9 = var6 * var6;
       float var10 = var7 * var7;
@@ -80,14 +80,14 @@ public final class Class_4ce {
       var2.var_27d = var10 * var17 + var3;
    }
 
-   public static final void sub_181(Class_3d2 var0, Class_3d2 var1, Class_757 var2) {
-      Class_3d2 var4 = new Class_3d2();
+   public static final void sub_181(Vector3f var0, Vector3f var1, Class_757 var2) {
+      Vector3f var4 = new Vector3f();
       float var3 = sub_27d(var0, var1);
       if (var3 < 0.001F) {
          var2.sub_139();
       } else {
          if (var3 > 3.1405928F) {
-            if (Math.abs(1.0 - Math.abs(var0.var_3f)) < 0.001) {
+            if (Math.abs(1.0 - Math.abs(var0.x)) < 0.001) {
                var4.sub_399(var0, var_b7);
             } else {
                var4.sub_399(var0, var_76);
@@ -96,23 +96,23 @@ public final class Class_4ce {
             var4.sub_399(var0, var1);
          }
 
-         var4.sub_47c();
+         var4.normalize();
          sub_135(var4, var3, var2);
       }
    }
 
-   public static final Class_757 sub_18c(Class_3d2 var0, Class_3d2 var1) {
+   public static final Class_757 sub_18c(Vector3f var0, Vector3f var1) {
       return sub_1aa(var0, var1, 0.0F);
    }
 
-   public static final Class_757 sub_1aa(Class_3d2 var0, Class_3d2 var1, float var2) {
+   public static final Class_757 sub_1aa(Vector3f var0, Vector3f var1, float var2) {
       Class_8ed.sub_7d(var0 != var1);
-      Class_3d2 var3 = new Class_3d2();
-      var3.sub_1e0(var1, var0);
-      var3.sub_47c();
-      float var13 = var3.var_3f;
-      float var14 = var3.var_93;
-      float var15 = var3.var_d6;
+      Vector3f var3 = new Vector3f();
+      var3.setDifference(var1, var0);
+      var3.normalize();
+      float var13 = var3.x;
+      float var14 = var3.y;
+      float var15 = var3.z;
       float var17 = var13 * var13 + var15 * var15;
       float var4;
       float var5;
@@ -154,9 +154,9 @@ public final class Class_4ce {
          var18.sub_2b3(var19, var18);
       }
 
-      var18.var_d7 = var0.var_3f;
-      var18.var_1ce = var0.var_93;
-      var18.var_2ce = var0.var_d6;
+      var18.var_d7 = var0.x;
+      var18.var_1ce = var0.y;
+      var18.var_2ce = var0.z;
       return var18;
    }
 
@@ -174,8 +174,8 @@ public final class Class_4ce {
       return var0;
    }
 
-   private static final float sub_27d(Class_3d2 var0, Class_3d2 var1) {
-      return (float)Math.acos(sub_227(var0.sub_34f(var1)));
+   private static final float sub_27d(Vector3f var0, Vector3f var1) {
+      return (float)Math.acos(sub_227(var0.dot(var1)));
    }
 
    public static int sub_2ab(int var0) {

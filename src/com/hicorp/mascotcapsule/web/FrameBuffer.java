@@ -10,7 +10,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-final class Class_384 implements ImageProducer {
+final class FrameBuffer implements ImageProducer {
    private final Canvas var_39;
    private Image var_6a = null;
    private int[] var_ba = null;
@@ -33,7 +33,7 @@ final class Class_384 implements ImageProducer {
       return this.var_130;
    }
 
-   public Class_384(Canvas var1) {
+   public FrameBuffer(Canvas var1) {
       this.var_39 = var1;
    }
 

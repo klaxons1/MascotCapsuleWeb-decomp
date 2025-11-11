@@ -3,14 +3,14 @@ import java.awt.FlowLayout;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import com.hicorp.mascotcapsule.web.Class_3d2;
+import com.hicorp.mascotcapsule.web.Vector3f;
 import com.hicorp.mascotcapsule.web.Class_4ce;
 
 public final class MascotCapsule extends Applet {
    private Class_aa var_75 = null;
    private boolean var_13c = true;
-   private static final Class_3d2 var_153 = new Class_3d2(0.0F, 0.0F, 1000.0F);
-   private static final Class_3d2 var_1b7 = new Class_3d2(0.0F, 0.0F, 0.0F);
+   private static final Vector3f var_153 = new Vector3f(0.0F, 0.0F, 1000.0F);
+   private static final Vector3f var_1b7 = new Vector3f(0.0F, 0.0F, 0.0F);
    private Class_2a var_253 = null;
 
    public synchronized void init() {
@@ -29,7 +29,7 @@ public final class MascotCapsule extends Applet {
       this.var_75.sub_331(this.sub_fd("AMBIENT_LIGHT_INTENSITY", 0.2F));
       this.var_75.sub_7a4(this.sub_a5("MAX_FPS", -1));
       this.var_75.sub_806(this.sub_a5("MIPMAP", 1) != 0);
-      Class_3d2 var1 = new Class_3d2(-this.sub_fd("DIRECTION_LIGHT_X", 0.0F), this.sub_fd("DIRECTION_LIGHT_Y", 0.0F), -this.sub_fd("DIRECTION_LIGHT_Z", -1.0F));
+      Vector3f var1 = new Vector3f(-this.sub_fd("DIRECTION_LIGHT_X", 0.0F), this.sub_fd("DIRECTION_LIGHT_Y", 0.0F), -this.sub_fd("DIRECTION_LIGHT_Z", -1.0F));
       this.var_75.sub_2e4(var1, this.sub_fd("DIRECTION_LIGHT_INTENSITY", 2.0F));
       this.var_75.sub_5ca(Class_4ce.sub_18c(var_153, var_1b7));
       this.var_75.sub_498(this.sub_a5("OFFSET_X", 0), this.sub_a5("OFFSET_Y", 0));

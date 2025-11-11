@@ -35,7 +35,7 @@ final class Class_539 {
    protected Class_517 var_7a3 = null;
    protected boolean var_7e2;
    protected float var_80e;
-   protected final Class_3d2 var_82c = new Class_3d2();
+   protected final Vector3f var_82c = new Vector3f();
    float var_852;
    private float var_8ad;
    private boolean var_8be;
@@ -44,7 +44,7 @@ final class Class_539 {
    private static final float var_992 = Class_4ce.sub_1d7(60.0F);
    private float var_9da;
    private float var_a3a;
-   private static final Class_3d2 var_a9e = new Class_3d2(0.0F, 0.0F, -1.0F);
+   private static final Vector3f var_a9e = new Vector3f(0.0F, 0.0F, -1.0F);
 
    private final float sub_1f() {
       return (float)(this.var_a3a / 2.0 / Math.tan(this.var_9da / 2.0));
@@ -63,7 +63,7 @@ final class Class_539 {
       this.var_7e2 = false;
       this.var_80e = 0.4F;
       this.var_82c.sub_7a(1.0F, -1.0F, 0.0F);
-      this.var_82c.sub_47c();
+      this.var_82c.normalize();
       this.var_852 = 1.0F;
       this.var_9da = var_992;
       this.var_a3a = 640.0F;
@@ -163,15 +163,15 @@ final class Class_539 {
          Class_757 var8 = new Class_757();
          Class_757 var9 = new Class_757();
          Class_757 var10 = new Class_757();
-         Class_3d2 var11 = new Class_3d2();
-         Class_3d2 var12 = new Class_3d2();
-         Class_3d2 var13 = new Class_3d2();
+         Vector3f var11 = new Vector3f();
+         Vector3f var12 = new Vector3f();
+         Vector3f var13 = new Vector3f();
          int[] var14 = this.var_426;
          float[] var15 = this.var_477;
          var2.sub_50(var1.sub_df(), var4);
          int var16 = var1.sub_85();
          int var17 = 0;
-         new Class_3d2();
+         new Vector3f();
 
          for (int var19 = 0; var19 < var16; var19++) {
             Class_13f var20 = var1.sub_126(var19);
@@ -189,7 +189,7 @@ final class Class_539 {
                var8.sub_3d7(var6);
                var8.sub_447();
                var8.sub_289(this.var_82c, var11);
-               var12.sub_249(var11, this.var_852);
+               var12.setScaled(var11, this.var_852);
                var9.sub_3d7(var5);
                var9.sub_447();
                var9.sub_289(var_a9e, var13);
@@ -637,20 +637,20 @@ final class Class_539 {
       this.var_80e = var1;
    }
 
-   public void sub_3cc(Class_3d2 var1, float var2) {
+   public void sub_3cc(Vector3f var1, float var2) {
       this.var_82c.sub_5e(var1);
-      this.var_82c.sub_47c();
-      this.var_82c.sub_133();
+      this.var_82c.normalize();
+      this.var_82c.negate();
       this.var_852 = var2;
    }
 
-   protected void sub_42e(Class_3d2 var1, Class_3d2 var2, Class_3d2 var3, Class_3d2[] var4, int var5, int var6) {
-      float var7 = var1.var_3f;
-      float var8 = var1.var_93;
-      float var9 = var1.var_d6;
-      float var10 = var7 + var3.var_3f;
-      float var11 = var8 + var3.var_93;
-      float var12 = var9 + var3.var_d6;
+   protected void sub_42e(Vector3f var1, Vector3f var2, Vector3f var3, Vector3f[] var4, int var5, int var6) {
+      float var7 = var1.x;
+      float var8 = var1.y;
+      float var9 = var1.z;
+      float var10 = var7 + var3.x;
+      float var11 = var8 + var3.y;
+      float var12 = var9 + var3.z;
       float var13 = 1.0F / (float)Math.sqrt(var10 * var10 + var11 * var11 + var12 * var12);
       var10 *= var13;
       var11 *= var13;
@@ -659,9 +659,9 @@ final class Class_539 {
       int var15 = var5 * 3;
 
       for (int var16 = 0; var16 < var6; var16++) {
-         Class_3d2 var17 = var4[var14];
+         Vector3f var17 = var4[var14];
          float var18 = this.var_80e;
-         float var19 = var17.sub_34f(var2);
+         float var19 = var17.dot(var2);
          if (var19 > 0.0F) {
             var18 += var19;
          }
@@ -669,7 +669,7 @@ final class Class_539 {
          this.var_56b[var15 + 0] = var18;
          float var20 = 0.0F;
          if (var19 > 0.0F) {
-            float var21 = var17.var_3f * var10 + var17.var_93 * var11 + var17.var_d6 * var12;
+            float var21 = var17.x * var10 + var17.y * var11 + var17.z * var12;
             if (var21 > 0.0F) {
                var20 = var21;
             }
@@ -681,10 +681,10 @@ final class Class_539 {
       }
    }
 
-   protected void sub_477(Class_3d2 var1, Class_757 var2, Class_3d2[] var3, int var4, int var5) {
-      float var6 = var1.var_3f;
-      float var7 = var1.var_93;
-      float var8 = var1.var_d6;
+   protected void sub_477(Vector3f var1, Class_757 var2, Vector3f[] var3, int var4, int var5) {
+      float var6 = var1.x;
+      float var7 = var1.y;
+      float var8 = var1.z;
       float var9 = var2.var_13 * 0.5F;
       float var10 = var2.var_ad * 0.5F;
       float var11 = var2.var_c2 * 0.5F;
@@ -695,16 +695,16 @@ final class Class_539 {
       int var16 = var4 * 3;
 
       for (int var17 = 0; var17 < var5; var17++) {
-         Class_3d2 var18 = var3[var15];
+         Vector3f var18 = var3[var15];
          float var19 = this.var_80e;
-         float var20 = var6 * var18.var_3f + var7 * var18.var_93 + var8 * var18.var_d6;
+         float var20 = var6 * var18.x + var7 * var18.y + var8 * var18.z;
          if (var20 > 0.0F) {
             var19 += var20;
          }
 
          this.var_56b[var16 + 0] = var19;
-         this.var_56b[var16 + 1] = var9 * var18.var_3f + var10 * var18.var_93 + var11 * var18.var_d6 + 0.5F;
-         this.var_56b[var16 + 2] = var12 * var18.var_3f + var13 * var18.var_93 + var14 * var18.var_d6 + 0.5F;
+         this.var_56b[var16 + 1] = var9 * var18.x + var10 * var18.y + var11 * var18.z + 0.5F;
+         this.var_56b[var16 + 2] = var12 * var18.x + var13 * var18.y + var14 * var18.z + 0.5F;
          var15++;
          var16 += 3;
       }

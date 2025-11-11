@@ -5,13 +5,13 @@ import java.io.InputStream;
 public final class Class_77c {
    public static final int var_27 = 4;
    private long var_a8;
-   private static final Class_3d2 var_107 = new Class_3d2(0.0F, 0.0F, 1.0F);
+   private static final Vector3f var_107 = new Vector3f(0.0F, 0.0F, 1.0F);
    protected final Class_5a9 var_11b = new Class_5a9();
    protected int var_12f = 0;
    protected Class_13f[] var_17c = null;
    protected int var_1d4 = 0;
-   protected Class_3d2[] var_22e = null;
-   protected Class_3d2[] var_244 = null;
+   protected Vector3f[] var_22e = null;
+   protected Vector3f[] var_244 = null;
    protected int var_255 = 0;
    protected Class_12f[] var_2b7 = null;
 
@@ -68,13 +68,13 @@ public final class Class_77c {
             }
 
             this.var_1d4 = var2.sub_77();
-            this.var_22e = new Class_3d2[this.var_1d4];
+            this.var_22e = new Vector3f[this.var_1d4];
 
             for (int var13 = 0; var13 < this.var_1d4; var13++) {
-               this.var_22e[var13] = new Class_3d2();
-               this.var_22e[var13].var_3f = var2.sub_de();
-               this.var_22e[var13].var_93 = var2.sub_de();
-               this.var_22e[var13].var_d6 = var2.sub_de();
+               this.var_22e[var13] = new Vector3f();
+               this.var_22e[var13].x = var2.sub_de();
+               this.var_22e[var13].y = var2.sub_de();
+               this.var_22e[var13].z = var2.sub_de();
             }
 
             int var10 = var2.sub_77();
@@ -83,13 +83,13 @@ public final class Class_77c {
                   return false;
                }
 
-               this.var_244 = new Class_3d2[var10];
+               this.var_244 = new Vector3f[var10];
 
                for (int var14 = 0; var14 < this.var_1d4; var14++) {
-                  this.var_244[var14] = new Class_3d2();
-                  this.var_244[var14].var_3f = var2.sub_de();
-                  this.var_244[var14].var_93 = var2.sub_de();
-                  this.var_244[var14].var_d6 = var2.sub_de();
+                  this.var_244[var14] = new Vector3f();
+                  this.var_244[var14].x = var2.sub_de();
+                  this.var_244[var14].y = var2.sub_de();
+                  this.var_244[var14].z = var2.sub_de();
                }
             } else {
                this.var_244 = null;
@@ -163,11 +163,11 @@ public final class Class_77c {
       return this.var_1d4;
    }
 
-   public final Class_3d2[] sub_198() {
+   public final Vector3f[] sub_198() {
       return this.var_22e;
    }
 
-   public final Class_3d2[] sub_1e6() {
+   public final Vector3f[] sub_1e6() {
       return this.var_244;
    }
 
@@ -189,18 +189,18 @@ public final class Class_77c {
 
    public final void sub_31b() {
       if (this.var_244 == null) {
-         this.var_244 = new Class_3d2[this.var_1d4];
-         Class_3d2 var1 = new Class_3d2();
-         Class_3d2 var2 = new Class_3d2();
+         this.var_244 = new Vector3f[this.var_1d4];
+         Vector3f var1 = new Vector3f();
+         Vector3f var2 = new Vector3f();
 
          for (int var3 = this.var_1d4 - 1; var3 >= 0; var3--) {
-            this.var_244[var3] = new Class_3d2(0.0F, 0.0F, 0.0F);
+            this.var_244[var3] = new Vector3f(0.0F, 0.0F, 0.0F);
          }
 
          for (int var4 = 0; var4 < this.var_255; var4++) {
             Class_12f var5 = this.var_2b7[var4];
-            var1.sub_1e0(this.var_22e[var5.var_15b], this.var_22e[var5.var_a0]);
-            var2.sub_1e0(this.var_22e[var5.var_1f4], this.var_22e[var5.var_a0]);
+            var1.setDifference(this.var_22e[var5.var_15b], this.var_22e[var5.var_a0]);
+            var2.setDifference(this.var_22e[var5.var_1f4], this.var_22e[var5.var_a0]);
             var2.sub_3b7(var1);
             this.var_244[var5.var_a0].sub_1b7(var2);
             this.var_244[var5.var_15b].sub_1b7(var2);
@@ -215,9 +215,9 @@ public final class Class_77c {
          }
 
          for (int var7 = this.var_1d4 - 1; var7 >= 0; var7--) {
-            float var6 = this.var_244[var7].sub_419();
+            float var6 = this.var_244[var7].lenght();
             if (var6 != 0.0F) {
-               this.var_244[var7].sub_2a8(1.0F / var6);
+               this.var_244[var7].scale(1.0F / var6);
             } else {
                this.var_244[var7].sub_7a(1.0F, 0.0F, 0.0F);
             }

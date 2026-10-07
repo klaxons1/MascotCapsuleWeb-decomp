@@ -18,13 +18,13 @@ In the original obfuscated bytecode, these span drawer classes were inner classe
 
 | Base Class | Original Name | Span Count | Rendering Operation |
 |---|---|---|---|
-| `TexturedSpanDrawer` | `Class_1279` | 16 variants | Affine texture-mapped triangle spans |
-| `UnlitSpanDrawer` | `ModelLoader` | 16 variants | Affine textured spans with constant/ambient color |
-| `LitSpanDrawer` | `MeshLoader` | 16 variants | Affine textured spans with Gouraud-interpolated lighting |
-| `SphereMapSpanDrawer` | `Class_15d5` | 16 variants | Environment sphere-mapped reflection spans |
-| `FlatSpanDrawer` | `Class_eda` | 4 variants | Solid color filled polygon spans |
-| `LineSpanDrawer` | `Class_d00` | 2 variants | Wireframe edge rendering spans |
-| `LitColorSpanDrawer` | `Class_1279` (sub) | 2 variants | Untextured Gouraud-shaded spans |
+| `TexturedDrawer` | `Class_1279` | 16 variants | Affine texture-mapped triangle spans |
+| `UnlitDrawer` | `ModelLoader` | 16 variants | Affine textured spans with constant/ambient color |
+| `LitDrawer` | `MeshLoader` | 16 variants | Affine textured spans with Gouraud-interpolated lighting |
+| `SphereMapDrawer` | `Class_15d5` | 16 variants | Environment sphere-mapped reflection spans |
+| `FlatDrawer` | `Class_eda` | 4 variants | Solid color filled polygon spans |
+| `LineDrawer` | `Class_d00` | 2 variants | Wireframe edge rendering spans |
+| `LitColorDrawer` | Sub of `LineDrawer` | 2 variants | Untextured Gouraud-shaded spans |
 
 Total concrete drawer implementations: $16 + 16 + 16 + 16 + 4 + 2 + 2 = 72$.
 
@@ -32,46 +32,34 @@ Total concrete drawer implementations: $16 + 16 + 16 + 16 + 4 + 2 + 2 = 72$.
 
 ## 3D Rasterizer Array Indexing
 
-In `Config.java` / `SoftwareRasterizer`:
-- `var_81c[4][2][2]`: Textured drawers
-- `var_83b[4][2][2]`: Unlit textured drawers
-- `var_85a[4][2][2]`: Lit textured drawers
-- `var_88e[4][2][2]`: Sphere map drawers
-
-The 3 array indices are:
-- `index 0` (0..3): **Blend Mode**
-  - `0`: Opaque (`dest = src`)
-  - `1`: 50% Alpha Blend (`dest = ((src & 0xFEFEFE) >> 1) + ((dest & 0xFEFEFE) >> 1)`)
-  - `2`: Variable Alpha Blend using 8-bit alpha factor
-  - `3`: Additive Blend (`dest = saturate(src + dest)`)
-- `index 1` (0..1): **Masking / Transparency Key**
-  - `0`: Opaque texels
-  - `1`: Transparent texels (skips writing if texel color matches key)
-- `index 2` (0..1): **Clipping**
-  - `0`: Unclipped (interior triangles within screen bounds)
-  - `1`: Clipped (triangles intersecting viewport boundaries)
+In `Config.java` (`SoftwareRasterizer`):
+- `texturedDrawers[4][2][2]`: Textured drawers (T0..T3, Opaque/Alpha, Tri/Quad)
+- `unlitDrawers[4][2][2]`: Unlit textured drawers (T0..T3, Opaque/Alpha, Tri/Quad)
+- `litDrawers[4][2][2]`: Lit textured drawers (T0..T3, Opaque/Alpha, Tri/Quad)
+- `sphereMapDrawers[4][2][2]`: Sphere map reflection drawers (T0..T3, Opaque/Alpha, Tri/Quad)
+- `flatDrawers[2][2]`: Flat color drawers (Opaque/Alpha, Tri/Quad)
+- `lineDrawers[2]`: 3D line drawers (Opaque/Alpha)
+- `litColorDrawers[2]`: Gouraud-shaded lit color drawers (Opaque/Alpha)
 
 ---
 
-## Fixed-Point DDA Scanline Algorithm
+## 16.16 Fixed-Point Math in Scanline Drawing
 
-For any triangle:
-1. Vertices are sorted by vertical screen coordinate ($y_0 \le y_1 \le y_2$).
-2. The triangle is split at $y_1$ into a flat-bottom upper triangle and a flat-top lower triangle.
-3. Slopes are calculated using 16.16 fixed point:
-   - $dx_{left} / dy$, $dx_{right} / dy$
-   - $du / dy$, $dv / dy$, $dz / dy$, $dI / dy$
-4. On each horizontal scanline $y \in [y_{start}, y_{end}]$:
-   - Left edge $x_{left}$ and right edge $x_{right}$ define the horizontal span $[x_{left}, x_{right}]$.
-   - $u, v, I$ are stepped horizontally by $du/dx, dv/dx, dI/dx$.
-   - Texels are sampled from the mipmapped texture buffer:
-     $$\text{texelIndex} = \text{mipOffset} + ((v \ \& \ \text{vMask}) \gg \text{vShift}) + ((u \ \& \ \text{uMask}) \gg \text{uShift})$$
-   - The computed pixel is written to `framebuffer[scanlineOffset + x]`.
+The rasterizer converts floating-point screen coordinates and texture UVs into 16.16 fixed-point representation:
 
----
+$$X_{fixed} = (X \ll 16) + 32768$$
+$$dX_{fixed} = \frac{(X_2 - X_1) \ll 16}{Y_2 - Y_1}$$
 
-## Mipmap Texture Sampling
+To avoid integer divide instructions inside raster loops, a fast 16.16 reciprocal table method (`fixedReciprocal(int delta)`) is used:
 
-The `Texture` class maintains up to 12 mipmap levels. The mip level $L$ is selected based on screen-space derivatives:
-$$\Delta = |du/dx| + |dv/dx|$$
-The rasterizer shifts coordinate lookups according to the selected mip level to minimize aliasing artifacts without requiring hardware trilinear filtering.
+$$\text{fixedReciprocal}(\Delta) = \frac{65536}{\Delta}$$
+
+For every scanline $Y$, the left and right span edge coordinates ($X_{left}, X_{right}$) and interpolated parameters (texture $U, V$, light intensity, normal $Z$) are stepped:
+
+$$X_{left} \mathrel{+}= dX_{left}, \quad U \mathrel{+}= dU, \quad V \mathrel{+}= dV, \quad \text{Light} \mathrel{+}= d\text{Light}$$
+
+Pixel blending uses bitwise masks to process red and blue channels together in a single 32-bit integer register:
+- `RB_MASK = 0x00FF00FF`
+- `G_MASK = 0x0000FF00`
+- `COLOR_MASK = 0x00FEFEFE` (prevents overflow during parallel channel addition)
+- 512-entry `blendTable` for branchless lighting saturation clamping.

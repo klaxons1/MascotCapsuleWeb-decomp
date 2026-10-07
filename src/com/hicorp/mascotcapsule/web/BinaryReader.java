@@ -1,5 +1,6 @@
 package com.hicorp.mascotcapsule.web;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 public class BinaryReader {
@@ -9,52 +10,91 @@ public class BinaryReader {
       this.in = in;
    }
 
-   public final byte readByte() {
-      return (byte)this.in.read();
+   public byte readByte() {
+      try {
+         return (byte)this.in.read();
+      } catch (IOException e) {
+         return -1;
+      }
    }
 
-   public final short readShort() {
-      int b0 = this.in.read();
-      int b1 = this.in.read();
+   public byte readByteSigned() {
+      return this.readByte();
+   }
+
+   public short readShort() {
+      int b0 = this.readUnsignedByte();
+      int b1 = this.readUnsignedByte();
       return (short)((b1 << 8) + b0);
    }
 
-   public final int readInt() {
-      int b0 = this.in.read();
-      int b1 = this.in.read();
-      int b2 = this.in.read();
-      int b3 = this.in.read();
+   public short readShortLE() {
+      return this.readShort();
+   }
+
+   public int readInt() {
+      int b0 = this.readUnsignedByte();
+      int b1 = this.readUnsignedByte();
+      int b2 = this.readUnsignedByte();
+      int b3 = this.readUnsignedByte();
       return (b3 << 24) + (b2 << 16) + (b1 << 8) + b0;
    }
 
-   public final float readFloat() {
-      int b0 = this.in.read();
-      int b1 = this.in.read();
-      int b2 = this.in.read();
-      int b3 = this.in.read();
-      return Float.intBitsToFloat((b3 << 24) + (b2 << 16) + (b1 << 8) + b0);
+   public int readIntLE() {
+      return this.readInt();
    }
 
-   public final int skipBytes(int count) {
-      return (int)this.in.skip(count);
+   public float readFloat() {
+      int bits = this.readInt();
+      return Float.intBitsToFloat(bits);
    }
 
-   public final int readUnsignedByte() {
-      return this.in.read();
+   public float readFloatLE() {
+      return this.readFloat();
    }
 
-   public final int readUnsignedShort() {
-      int b0 = this.in.read();
-      int b1 = this.in.read();
+   public int skip(int count) {
+      try {
+         return (int)this.in.skip(count);
+      } catch (IOException e) {
+         return 0;
+      }
+   }
+
+   public int skipBytes(int count) {
+      return this.skip(count);
+   }
+
+   public int readUnsignedByte() {
+      try {
+         return this.in.read();
+      } catch (IOException e) {
+         return -1;
+      }
+   }
+
+   public int readUnsignedShort() {
+      return this.readUnsignedShortLE();
+   }
+
+   public int readUnsignedShortLE() {
+      int b0 = this.readUnsignedByte();
+      int b1 = this.readUnsignedByte();
       return (b1 << 8) + b0;
    }
 
    public String readCString() {
       StringBuffer sb = new StringBuffer();
+
       int ch;
-      while ((ch = this.in.read()) > 0) {
+      while ((ch = this.readUnsignedByte()) > 0) {
          sb.append((char)ch);
       }
+
       return sb.toString();
+   }
+
+   public String readNullTerminatedString() {
+      return this.readCString();
    }
 }

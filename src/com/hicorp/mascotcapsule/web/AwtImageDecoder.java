@@ -16,14 +16,17 @@ public final class AwtImageDecoder extends Component implements ImageObserver, I
          return false;
       } else {
          if (in.markSupported()) {
-            in.mark(2);
-            BinaryReader reader = new BinaryReader(in);
-            int magic0 = reader.readUnsignedByte();
-            int magic1 = reader.readUnsignedByte();
-            in.reset();
-            if (magic0 == 'B' && magic1 == 'M') {
-               BmpDecoder bmpDecoder = new BmpDecoder();
-               return bmpDecoder.readImage(in, texture);
+            try {
+               in.mark(2);
+               BinaryReader reader = new BinaryReader(in);
+               int magic0 = reader.readUnsignedByte();
+               int magic1 = reader.readUnsignedByte();
+               in.reset();
+               if (magic0 == 'B' && magic1 == 'M') {
+                  BmpDecoder bmpDecoder = new BmpDecoder();
+                  return bmpDecoder.readImage(in, texture);
+               }
+            } catch (IOException e) {
             }
          }
 
@@ -39,7 +42,7 @@ public final class AwtImageDecoder extends Component implements ImageObserver, I
             return false;
          }
 
-         byteOut.close();
+         try { byteOut.close(); } catch (IOException e) {}
          Image img = Toolkit.getDefaultToolkit().createImage(byteOut.toByteArray());
          MediaTracker tracker = new MediaTracker(this);
          tracker.addImage(img, 0);

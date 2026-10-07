@@ -351,8 +351,8 @@ public final class MascotCapsuleCanvas extends MainCanvas implements KeyListener
       BacModel loadedModel = null;
       TraAnimation loadedAnim = null;
 
-      ZipEntry entry;
       try {
+         ZipEntry entry;
          while ((entry = zipIn.getNextEntry()) != null) {
             String name = entry.getName();
             int len = name.length();
@@ -413,7 +413,7 @@ public final class MascotCapsuleCanvas extends MainCanvas implements KeyListener
                }
             }
          }
-      } catch (ZipException e) {
+      } catch (IOException e) {
       }
 
       synchronized (this) {
@@ -453,7 +453,10 @@ public final class MascotCapsuleCanvas extends MainCanvas implements KeyListener
          }
       }
 
-      zipIn.close();
+      try {
+         zipIn.close();
+      } catch (IOException e) {
+      }
    }
 
    public void loadAssets(InputStream bacStream, InputStream traStream, InputStream texStream) {
@@ -521,7 +524,7 @@ public final class MascotCapsuleCanvas extends MainCanvas implements KeyListener
                this.animation.bindModel(this.model);
             }
          }
-      } catch (IOException e) {
+      } catch (Exception e) {
       }
    }
 

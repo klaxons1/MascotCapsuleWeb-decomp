@@ -1,55 +1,55 @@
 class Class_134 implements Runnable {
-   private Thread var_9c;
-   private final Class_aa var_155;
+   private Thread thread;
+   private final Class_aa canvas;
 
-   private Class_134(Class_aa var1) {
-      this.var_155 = var1;
+   private Class_134(Class_aa canvas) {
+      this.canvas = canvas;
    }
 
-   public synchronized void sub_10() {
-      if (this.var_155.sub_1aa()) {
-         this.var_9c = new Thread(this);
-         this.var_9c.setName("MascotCapsule - Animation");
-         this.var_9c.setPriority(1);
-         this.var_9c.start();
+   public synchronized void start() {
+      if (this.canvas.isReadyToRender()) {
+         this.thread = new Thread(this);
+         this.thread.setName("MascotCapsule - Animation");
+         this.thread.setPriority(1);
+         this.thread.start();
       }
    }
 
-   public synchronized void sub_5a() {
-      if (this.var_9c != null) {
-         this.var_9c.interrupt();
-         this.var_9c = null;
+   public synchronized void stop() {
+      if (this.thread != null) {
+         this.thread.interrupt();
+         this.thread = null;
       }
    }
 
    public void run() {
-      long var1 = System.currentTimeMillis();
+      long lastTime = System.currentTimeMillis();
 
       try {
          while (true) {
-            long var3 = System.currentTimeMillis();
-            long var5 = var3 - var1;
-            Class_aa.sub_81d(this.var_155, Class_aa.sub_880(this.var_155) * (float)var5 / 1000.0F);
-            float var7 = Class_aa.sub_8e3(this.var_155).getDuration();
-            if (var7 > 0.0F && Class_aa.sub_917(this.var_155) > var7) {
-               Class_aa.sub_945(this.var_155, var7 * (int)(Class_aa.sub_917(this.var_155) / var7));
+            long now = System.currentTimeMillis();
+            long dtMs = now - lastTime;
+            Class_aa.advanceAnimationFrame(this.canvas, Class_aa.getFrameRate(this.canvas) * (float)dtMs / 1000.0F);
+            float duration = Class_aa.getAnimation(this.canvas).getDuration();
+            if (duration > 0.0F && Class_aa.getCurrentFrame(this.canvas) > duration) {
+               Class_aa.wrapAnimationFrame(this.canvas, duration * (int)(Class_aa.getCurrentFrame(this.canvas) / duration));
             }
 
-            if (!this.var_155.sub_5f() || Thread.interrupted()) {
+            if (!this.canvas.renderFrame() || Thread.interrupted()) {
                throw new InterruptedException();
             }
 
-            Class_aa.sub_985(this.var_155, Class_aa.sub_9de(this.var_155) * (float)var5 / 1000.0F);
-            var1 = var3;
-            if (var5 < Class_aa.sub_a14(this.var_155)) {
-               Thread.sleep(Class_aa.sub_a14(this.var_155) - var5);
+            Class_aa.advanceRotation(this.canvas, Class_aa.getRotationSpeed(this.canvas) * (float)dtMs / 1000.0F);
+            lastTime = now;
+            if (dtMs < Class_aa.getFrameIntervalMs(this.canvas)) {
+               Thread.sleep(Class_aa.getFrameIntervalMs(this.canvas) - dtMs);
             }
          }
-      } catch (InterruptedException var8) {
+      } catch (InterruptedException e) {
       }
    }
 
-   Class_134(Class_aa var1, Class_105 var2) {
-      this(var1);
+   Class_134(Class_aa canvas, Class_105 unused) {
+      this(canvas);
    }
 }

@@ -175,11 +175,11 @@ final class Config {
       this.clipTop = var4;
    }
 
-   public void sub_58(BoundingBox var1) {
-      this.bufferHeight = var1.minX;
-      this.clipLeft = var1.minY;
-      this.clipRight = var1.maxX;
-      this.clipTop = var1.maxY;
+   public void setClipRect(BoundingBox bounds) {
+      this.bufferHeight = bounds.minX;
+      this.clipLeft = bounds.minY;
+      this.clipRight = bounds.maxX;
+      this.clipTop = bounds.maxY;
    }
 
    public void sub_8b(int var1) {

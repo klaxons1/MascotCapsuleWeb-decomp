@@ -30,765 +30,756 @@ import com.hicorp.mascotcapsule.web.Class_808;
 import com.hicorp.mascotcapsule.web.MainCanvas;
 
 public final class Class_aa extends MainCanvas implements KeyListener, MouseListener, MouseMotionListener {
-   private static final String var_40 = "1.00";
-   private static final String var_6d = "logo.gif";
-   private Image var_85 = null;
-   private boolean var_a1 = false;
-   private boolean var_d0 = false;
-   private int var_10c = 0;
-   private final Class_339 var_15a = new Class_339();
-   private final Class_517 var_17d = new Class_517();
-   private Class_517 var_1a7 = new Class_517();
-   private RenderState var_1c9 = null;
-   private Model var_1e4 = null;
-   private boolean var_235 = false;
-   private Class_517 var_247 = new Class_517();
-   private int[] var_27f = null;
-   private int var_2a8 = -16777216;
-   private boolean var_2cc = false;
-   private float var_2de = 0.005F;
-   private float var_2fb = 5.0F;
-   private int var_34f;
-   private int var_3ab;
-   private float var_3e2 = 0.0F;
-   private float var_431 = 0.0F;
-   private float var_454 = 2.0F;
-   private String var_473 = null;
-   private final Transform3D var_4a8 = new Transform3D();
-   private boolean var_4d7 = false;
-   private float var_53b;
-   private int var_570;
-   private int var_5d4;
-   private float var_61a = 0.0F;
-   private boolean var_642 = true;
-   private float var_698 = 0.0F;
-   private float var_6a3 = 0.0F;
-   private float var_6bf = 0.0F;
-   private float var_71c = 0.0F;
-   private int var_77f = -1;
-   private float var_78f = 0.1F;
-   private float var_7d3 = 0.0F;
-   private int var_7f0;
-   private int var_833;
-   private boolean var_865 = false;
-   private static final Vector3f var_880 = new Vector3f(0.0F, 0.0F, 1000.0F);
-   private static final Vector3f var_898 = new Vector3f(0.0F, 0.0F, 0.0F);
-   Toolkit var_8cd = Toolkit.getDefaultToolkit();
-   final Transform3D var_92a = new Transform3D();
-   final Transform3D var_976 = new Transform3D();
-   final Transform3D var_9b2 = new Transform3D();
-   private Class_134 var_9de;
-   private int var_a18 = 0;
+   private static final String VERSION_STRING = "1.00";
+   private static final String LOGO_RESOURCE = "logo.gif";
+   private Image logoImage = null;
+   private boolean isPainted = false;
+   private boolean showLoadingScreen = false;
+   private int loadProgressSteps = 0;
+   private final Class_339 camera = new Class_339();
+   private final Class_517 sphereTexture = new Class_517();
+   private Class_517 modelTexture = new Class_517();
+   private RenderState model = null;
+   private Model animation = null;
+   private boolean disablePerspective = false;
+   private Class_517 backgroundTexture = new Class_517();
+   private int[] backgroundPixels = null;
+   private int backgroundColor = -16777216;
+   private boolean useBackgroundTexture = false;
+   private float minScale = 0.005F;
+   private float maxScale = 5.0F;
+   private int initialCenterX;
+   private int initialCenterY;
+   private float initialAngleX = 0.0F;
+   private float initialAngleY = 0.0F;
+   private float initialScale = 2.0F;
+   private String statusText = null;
+   private final Transform3D modelRotation = new Transform3D();
+   private boolean lightingEnabled = false;
+   private float currentScale;
+   private int currentCenterX;
+   private int currentCenterY;
+   private float currentFrame = 0.0F;
+   private boolean mipmapEnabled = true;
+   private float dragAngleX = 0.0F;
+   private float dragAngleY = 0.0F;
+   private float deltaAngleX = 0.0F;
+   private float deltaAngleY = 0.0F;
+   private int targetFrameIntervalMs = -1;
+   private float frameRate = 0.1F;
+   private float rotationSpeed = 0.0F;
+   private int lastMouseX;
+   private int lastMouseY;
+   private boolean forceLighting = false;
+   private static final Vector3f DEFAULT_CAMERA_POS = new Vector3f(0.0F, 0.0F, 1000.0F);
+   private static final Vector3f DEFAULT_CAMERA_TARGET = new Vector3f(0.0F, 0.0F, 0.0F);
+   Toolkit toolkit = Toolkit.getDefaultToolkit();
+   final Transform3D rotTempX = new Transform3D();
+   final Transform3D rotTempY = new Transform3D();
+   final Transform3D modelTransform = new Transform3D();
+   private Class_134 animationThread;
+   private int mouseDragMode = 0;
 
-   public Class_aa(int var1, int var2, boolean var3) {
-      super(var1, var2);
-      this.sub_ea();
-      this.sub_147();
-      this.sub_c9(null);
-      this.sub_1a2(10000, 100.0F, 2000.0F);
-      this.var_34f = var1 / 2;
-      this.var_3ab = var2 / 2;
-      this.var_15a.setLocalTransform(MatrixUtils.createLookAt(var_880, var_898));
-      this.resize(var1, var2);
-      this.sub_1a();
-      if (!var3) {
+   public Class_aa(int width, int height, boolean fixed) {
+      super(width, height);
+      this.loadLogoImage();
+      this.updateBackgroundBuffer();
+      this.clearBackground(null);
+      this.initPacketTable(10000, 100.0F, 2000.0F);
+      this.initialCenterX = width / 2;
+      this.initialCenterY = height / 2;
+      this.camera.setLocalTransform(MatrixUtils.createLookAt(DEFAULT_CAMERA_POS, DEFAULT_CAMERA_TARGET));
+      this.resize(width, height);
+      this.resetModelTransform();
+      if (!fixed) {
          this.addKeyListener(this);
          this.addMouseListener(this);
          this.addMouseMotionListener(this);
       }
    }
 
-   public void sub_1a() {
-      Transform3D var1 = new Transform3D();
-      MatrixUtils.setRotationX(this.var_3e2, this.var_4a8);
-      MatrixUtils.setRotationY(this.var_431, var1);
-      this.var_4a8.multiplyRotation(var1);
-      this.var_4a8.normalizeColumns();
-      this.var_61a = 0.0F;
-      this.var_570 = this.var_34f;
-      this.var_5d4 = this.var_3ab;
-      this.var_53b = this.var_454;
-      this.var_6bf = 0.0F;
-      this.var_71c = 0.0F;
-      this.var_698 = 0.0F;
-      this.var_6a3 = 0.0F;
+   public void resetModelTransform() {
+      Transform3D rotY = new Transform3D();
+      MatrixUtils.setRotationX(this.initialAngleX, this.modelRotation);
+      MatrixUtils.setRotationY(this.initialAngleY, rotY);
+      this.modelRotation.multiplyRotation(rotY);
+      this.modelRotation.normalizeColumns();
+      this.currentFrame = 0.0F;
+      this.currentCenterX = this.initialCenterX;
+      this.currentCenterY = this.initialCenterY;
+      this.currentScale = this.initialScale;
+      this.deltaAngleX = 0.0F;
+      this.deltaAngleY = 0.0F;
+      this.dragAngleX = 0.0F;
+      this.dragAngleY = 0.0F;
    }
 
-   public synchronized boolean sub_5f() {
-      this.sub_1f9(this.var_1a7);
-      this.sub_283(this.var_4d7);
-      this.sub_263(this.var_570, this.var_5d4);
-      if (this.var_235) {
-         this.sub_144();
+   public synchronized boolean renderFrame() {
+      this.setDiffuseTexture(this.modelTexture);
+      this.setLightingEnabled(this.lightingEnabled);
+      this.setViewportOffset(this.currentCenterX, this.currentCenterY);
+      if (this.disablePerspective) {
+         this.disablePerspective();
       } else {
-         this.sub_e6(1.0F);
+         this.enablePerspective(1.0F);
       }
 
-      MatrixUtils.setRotationX(this.var_6bf, this.var_92a);
-      MatrixUtils.setRotationY(this.var_71c, this.var_976);
-      this.var_6bf = 0.0F;
-      this.var_71c = 0.0F;
-      this.var_92a.multiplyRotation(this.var_976);
-      this.var_4a8.multiplyRotation(this.var_92a, this.var_4a8);
-      this.var_4a8.normalizeColumns();
-      this.var_9b2.m03 = this.var_9b2.m13 = this.var_9b2.m23 = 0.0F;
-      MatrixUtils.setScale(this.var_53b, this.var_9b2);
-      MatrixUtils.setRotationX(this.var_698, this.var_92a);
-      this.var_9b2.multiplyRotation(this.var_92a);
-      MatrixUtils.setRotationY(this.var_6a3, this.var_92a);
-      this.var_9b2.multiplyRotation(this.var_92a);
-      this.var_6bf = 0.0F;
-      this.var_71c = 0.0F;
-      this.var_9b2.multiplyRotation(this.var_4a8);
-      if (this.var_1e4 != null) {
-         this.var_1e4.applyPose(this.var_61a);
+      MatrixUtils.setRotationX(this.deltaAngleX, this.rotTempX);
+      MatrixUtils.setRotationY(this.deltaAngleY, this.rotTempY);
+      this.deltaAngleX = 0.0F;
+      this.deltaAngleY = 0.0F;
+      this.rotTempX.multiplyRotation(this.rotTempY);
+      this.modelRotation.multiplyRotation(this.rotTempX, this.modelRotation);
+      this.modelRotation.normalizeColumns();
+      this.modelTransform.m03 = this.modelTransform.m13 = this.modelTransform.m23 = 0.0F;
+      MatrixUtils.setScale(this.currentScale, this.modelTransform);
+      MatrixUtils.setRotationX(this.dragAngleX, this.rotTempX);
+      this.modelTransform.multiplyRotation(this.rotTempX);
+      MatrixUtils.setRotationY(this.dragAngleY, this.rotTempX);
+      this.modelTransform.multiplyRotation(this.rotTempX);
+      this.deltaAngleX = 0.0F;
+      this.deltaAngleY = 0.0F;
+      this.modelTransform.multiplyRotation(this.modelRotation);
+      if (this.animation != null) {
+         this.animation.applyPose(this.currentFrame);
       }
 
-      Class_5a9 var1 = this.var_1c9.sub_df();
-      var1.setLocalTransform(this.var_9b2);
-      this.sub_242(this.var_1c9, this.var_15a);
-      return this.sub_88();
+      Class_5a9 root = this.model.getRootNode();
+      root.setLocalTransform(this.modelTransform);
+      this.renderModel(this.model, this.camera);
+      return this.renderAndFlush();
    }
 
-   public synchronized void sub_96() {
-      this.sub_a8();
-      this.var_9de = new Class_134(this, null);
-      this.var_9de.sub_10();
+   public synchronized void startAnimation() {
+      this.stopAnimation();
+      this.animationThread = new Class_134(this, null);
+      this.animationThread.start();
    }
 
-   public synchronized void sub_a8() {
-      if (this.var_9de != null) {
-         this.var_9de.sub_5a();
-         this.var_9de = null;
+   public synchronized void stopAnimation() {
+      if (this.animationThread != null) {
+         this.animationThread.stop();
+         this.animationThread = null;
       }
    }
 
-   public void sub_c9(BoundingBox var1) {
-      int[] var2 = this.sub_3d();
-      if (var2 != null && this.var_27f != null) {
-         if (var1 == null) {
-            System.arraycopy(this.var_27f, 0, var2, 0, var2.length);
-         } else if (var1.isValid()) {
-            int var3 = this.getWidth();
-            int var4 = var1.maxX - var1.minX;
-            int var5 = var1.minY * var3 + var1.minX;
+   public void clearBackground(BoundingBox clip) {
+      int[] pixels = this.getPixels();
+      if (pixels != null && this.backgroundPixels != null) {
+         if (clip == null) {
+            System.arraycopy(this.backgroundPixels, 0, pixels, 0, pixels.length);
+         } else if (clip.isValid()) {
+            int width = this.getWidth();
+            int spanWidth = clip.maxX - clip.minX;
+            int offset = clip.minY * width + clip.minX;
 
-            for (int var6 = var1.minY; var6 < var1.maxY; var6++) {
-               System.arraycopy(this.var_27f, var5, var2, var5, var4);
-               var5 += var3;
+            for (int y = clip.minY; y < clip.maxY; y++) {
+               System.arraycopy(this.backgroundPixels, offset, pixels, offset, spanWidth);
+               offset += width;
             }
          }
       }
    }
 
-   public synchronized void setBounds(int var1, int var2, int var3, int var4) {
-      int var5 = this.getWidth();
-      int var6 = this.getHeight();
-      super.setBounds(var1, var2, var3, var4);
-      if (var3 != var5 || var4 != var6) {
-         this.sub_147();
+   public synchronized void setBounds(int x, int y, int width, int height) {
+      int oldW = this.getWidth();
+      int oldH = this.getHeight();
+      super.setBounds(x, y, width, height);
+      if (width != oldW || height != oldH) {
+         this.updateBackgroundBuffer();
       }
 
-      this.sub_c9(null);
+      this.clearBackground(null);
    }
 
-   public void paint(Graphics var1) {
-      if (this.var_473 == null && !this.var_d0) {
-         if (!this.var_a1) {
-            this.sub_4b();
+   public void paint(Graphics g) {
+      if (this.statusText == null && !this.showLoadingScreen) {
+         if (!this.isPainted) {
+            this.markDirtyAll();
          }
 
-         super.paint(var1);
-         this.var_a1 = true;
+         super.paint(g);
+         this.isPainted = true;
       } else {
-         if (!this.var_d0) {
-            var1.setColor(Color.black);
-            var1.fillRect(0, 0, this.getWidth(), this.getHeight());
-            var1.setColor(Color.white);
-            var1.drawString(this.var_473, 16, 32);
+         if (!this.showLoadingScreen) {
+            g.setColor(Color.black);
+            g.fillRect(0, 0, this.getWidth(), this.getHeight());
+            g.setColor(Color.white);
+            g.drawString(this.statusText, 16, 32);
          } else {
-            short var2 = 287;
-            byte var3 = 83;
-            byte var4 = 99;
-            int var5 = (this.getWidth() - 104) / 2;
-            int var6 = (this.getHeight() + 83) / 2 + 4;
-            var1.setColor(Color.white);
-            var1.fillRect(0, 0, this.getWidth(), this.getHeight());
-            int var7 = this.sub_2b9();
-            int var8 = 100 - var7;
-            var1.setColor(Color.gray);
-            var1.fillRect(var5, var6, 104, 16);
-            var1.setColor(Color.white);
-            var1.fillRect(var5 + 1, var6 + 1, 102, 14);
-            int var10 = var5 + 2;
-            short var11 = 220;
-            short var12 = 255;
-            short var13 = 255;
-            byte var14 = 96;
-            short var15 = 192;
-            short var16 = 255;
+            int left = (this.getWidth() - 104) / 2;
+            int top = (this.getHeight() + 83) / 2 + 4;
+            g.setColor(Color.white);
+            g.fillRect(0, 0, this.getWidth(), this.getHeight());
+            int progress = this.getLoadingProgressPercentage();
+            int remaining = 100 - progress;
+            g.setColor(Color.gray);
+            g.fillRect(left, top, 104, 16);
+            g.setColor(Color.white);
+            g.fillRect(left + 1, top + 1, 102, 14);
+            int barX = left + 2;
 
-            for (int var17 = 0; var17 < var7; var17++) {
-               int var18 = -124 * var17 / 99 + 220;
-               int var19 = -63 * var17 / 99 + 255;
-               int var20 = 0 * var17 / 99 + 255;
-               Color var9 = new Color(var18, var19, var20);
-               var1.setColor(var9);
-               var1.drawLine(var10, var6 + 2, var10, var6 + 2 + 16 - 4 - 1);
-               var10++;
+            for (int i = 0; i < progress; i++) {
+               int r = -124 * i / 99 + 220;
+               int gr = -63 * i / 99 + 255;
+               int b = 0 * i / 99 + 255;
+               Color color = new Color(r, gr, b);
+               g.setColor(color);
+               g.drawLine(barX, top + 2, barX, top + 2 + 16 - 4 - 1);
+               barX++;
             }
 
-            var1.setColor(Color.white);
-            var1.fillRect(var5 + 2 + 100 - var8, var6 + 2, var8, 12);
-            if (this.var_85 != null) {
-               var1.drawImage(this.var_85, (this.getWidth() - 287) / 2, (this.getHeight() - 99) / 2 - 20, this);
+            g.setColor(Color.white);
+            g.fillRect(left + 2 + 100 - remaining, top + 2, remaining, 12);
+            if (this.logoImage != null) {
+               g.drawImage(this.logoImage, (this.getWidth() - 287) / 2, (this.getHeight() - 99) / 2 - 20, this);
             }
          }
 
-         this.var_a1 = false;
+         this.isPainted = false;
       }
    }
 
-   public void update(Graphics var1) {
-      if (this.var_473 != null) {
-         this.paint(var1);
+   public void update(Graphics g) {
+      if (this.statusText != null) {
+         this.paint(g);
       }
    }
 
-   private void sub_ea() {
-      ByteArrayOutputStream var1 = null;
+   private void loadLogoImage() {
+      ByteArrayOutputStream byteOut = null;
 
       try {
-         InputStream var2 = this.getClass().getResourceAsStream("logo.gif");
-         var1 = new ByteArrayOutputStream();
-         byte[] var3 = new byte[65536];
+         InputStream in = this.getClass().getResourceAsStream(LOGO_RESOURCE);
+         byteOut = new ByteArrayOutputStream();
+         byte[] buf = new byte[65536];
 
-         int var4;
-         while ((var4 = var2.read(var3)) != -1) {
-            var1.write(var3, 0, var4);
+         int count;
+         while ((count = in.read(buf)) != -1) {
+            byteOut.write(buf, 0, count);
          }
 
-         var1.close();
-      } catch (IOException var6) {
+         byteOut.close();
+      } catch (IOException e) {
       }
 
-      this.var_85 = Toolkit.getDefaultToolkit().createImage(var1.toByteArray());
-      MediaTracker var7 = new MediaTracker(this);
-      var7.addImage(this.var_85, 0);
+      this.logoImage = Toolkit.getDefaultToolkit().createImage(byteOut.toByteArray());
+      MediaTracker tracker = new MediaTracker(this);
+      tracker.addImage(this.logoImage, 0);
 
       try {
-         var7.waitForID(0);
-      } catch (InterruptedException var5) {
+         tracker.waitForID(0);
+      } catch (InterruptedException e) {
       }
    }
 
-   public synchronized void sub_123(int var1) {
-      this.var_2cc = false;
-      this.var_2a8 = var1 | 0xFF000000;
-      this.sub_147();
+   public synchronized void setBackgroundColor(int rgb) {
+      this.useBackgroundTexture = false;
+      this.backgroundColor = rgb | 0xFF000000;
+      this.updateBackgroundBuffer();
    }
 
-   private void sub_147() {
-      int var1 = this.getHeight();
-      int var2 = this.getWidth();
-      int var3 = var2 * var1;
-      int[] var4 = new int[var3];
-      if (this.var_2cc) {
-         int[] var5 = this.var_247.getPixels();
-         int var6 = 1 << this.var_247.getWidthLog2();
-         int var7 = this.var_247.getWidth();
-         int var8 = this.var_247.getHeight();
+   private void updateBackgroundBuffer() {
+      int h = this.getHeight();
+      int w = this.getWidth();
+      int totalPixels = w * h;
+      int[] buffer = new int[totalPixels];
+      if (this.useBackgroundTexture) {
+         int[] srcPixels = this.backgroundTexture.getPixels();
+         int srcStride = 1 << this.backgroundTexture.getWidthLog2();
+         int bgW = this.backgroundTexture.getWidth();
+         int bgH = this.backgroundTexture.getHeight();
 
-         for (int var9 = 0; var9 < var1; var9 += var8) {
-            int var10 = var9 + var8 < var1 ? var8 : var1 - var9;
+         for (int y = 0; y < h; y += bgH) {
+            int blockH = y + bgH < h ? bgH : h - y;
 
-            for (int var11 = 0; var11 < var10; var11++) {
-               int var12 = var11 * var6;
-               int var13 = (var9 + var11) * var2;
+            for (int dy = 0; dy < blockH; dy++) {
+               int srcOffset = dy * srcStride;
+               int dstOffset = (y + dy) * w;
 
-               for (int var14 = 0; var14 < var2; var14 += var7) {
-                  int var15 = var14 + var7 < var2 ? var7 : var2 - var14;
-                  System.arraycopy(var5, var12, var4, var13 + var14, var15);
+               for (int x = 0; x < w; x += bgW) {
+                  int blockW = x + bgW < w ? bgW : w - x;
+                  System.arraycopy(srcPixels, srcOffset, buffer, dstOffset + x, blockW);
                }
             }
          }
       } else {
-         for (int var16 = 0; var16 < var3; var16++) {
-            var4[var16] = this.var_2a8;
+         for (int i = 0; i < totalPixels; i++) {
+            buffer[i] = this.backgroundColor;
          }
       }
 
-      this.var_27f = var4;
-      this.sub_4b();
+      this.backgroundPixels = buffer;
+      this.markDirtyAll();
    }
 
-   public void sub_168(String var1) {
-      this.var_473 = var1;
+   public void setStatusText(String status) {
+      this.statusText = status;
    }
 
-   public boolean sub_1aa() {
-      return this.var_1a7.getPixels() != null && this.var_1c9 != null && this.var_1e4 != null;
+   public boolean isReadyToRender() {
+      return this.modelTexture.getPixels() != null && this.model != null && this.animation != null;
    }
 
-   public void sub_1fc(boolean var1) {
-      this.var_d0 = var1;
+   public void setShowLoadingScreen(boolean show) {
+      this.showLoadingScreen = show;
    }
 
-   public void sub_259() {
-      this.var_10c = 5;
+   public void setLoadingProgressComplete() {
+      this.loadProgressSteps = 5;
    }
 
-   private int sub_2b9() {
-      int var1 = 20 * this.var_10c;
-      if (var1 < 0) {
-         var1 = 0;
+   private int getLoadingProgressPercentage() {
+      int percent = 20 * this.loadProgressSteps;
+      if (percent < 0) {
+         percent = 0;
       }
 
-      if (var1 > 100) {
-         var1 = 100;
+      if (percent > 100) {
+         percent = 100;
       }
 
-      return var1;
+      return percent;
    }
 
-   public void sub_312(InputStream var1) {
-      ZipInputStream var2 = new ZipInputStream(var1);
-      Material var3 = this.sub_43a();
-      Class_517 var4 = null;
-      Class_517 var5 = null;
-      Class_517 var6 = null;
-      RenderState var7 = null;
-      Model var8 = null;
+   public void loadZipArchive(InputStream in) {
+      ZipInputStream zipIn = new ZipInputStream(in);
+      Material reader = this.createTextureReader();
+      Class_517 sphere = null;
+      Class_517 wall = null;
+      Class_517 tex = null;
+      RenderState loadedModel = null;
+      Model loadedAnim = null;
 
-      ZipEntry var9;
+      ZipEntry entry;
       try {
-         while ((var9 = var2.getNextEntry()) != null) {
-            String var10 = var9.getName();
-            int var11 = var10.length();
-            if (var10.regionMatches(true, var11 - 10, "sphere", 0, 6)) {
-               var4 = new Class_517();
-               if (!var3.readImage(new BufferedInputStream(var2), var4)) {
-                  var4 = null;
+         while ((entry = zipIn.getNextEntry()) != null) {
+            String name = entry.getName();
+            int len = name.length();
+            if (name.regionMatches(true, len - 10, "sphere", 0, 6)) {
+               sphere = new Class_517();
+               if (!reader.readImage(new BufferedInputStream(zipIn), sphere)) {
+                  sphere = null;
                }
 
-               if (this.var_17d == null && var4 != null) {
-                  this.var_10c++;
+               if (this.sphereTexture == null && sphere != null) {
+                  this.loadProgressSteps++;
                   this.repaint();
                }
-            } else if (var10.regionMatches(true, var11 - 8, "wall", 0, 4)) {
-               var5 = new Class_517();
-               if (!var3.readImage(new BufferedInputStream(var2), var5)) {
-                  var5 = null;
+            } else if (name.regionMatches(true, len - 8, "wall", 0, 4)) {
+               wall = new Class_517();
+               if (!reader.readImage(new BufferedInputStream(zipIn), wall)) {
+                  wall = null;
                }
 
-               if (this.var_247 == null && var5 != null) {
-                  this.var_10c++;
+               if (this.backgroundTexture == null && wall != null) {
+                  this.loadProgressSteps++;
                   this.repaint();
                }
-            } else if (var10.regionMatches(true, var11 - 5, ".jbac", 0, 5)) {
-               var7 = new RenderState();
-               if (!var7.load(new BufferedInputStream(var2))) {
-                  var7 = null;
-               } else if (this.var_865) {
-                  var7.generateNormals();
+            } else if (name.regionMatches(true, len - 5, ".jbac", 0, 5)) {
+               loadedModel = new RenderState();
+               if (!loadedModel.load(new BufferedInputStream(zipIn))) {
+                  loadedModel = null;
+               } else if (this.forceLighting) {
+                  loadedModel.generateNormals();
                }
 
-               if (this.var_1c9 == null && var7 != null) {
-                  this.var_10c++;
+               if (this.model == null && loadedModel != null) {
+                  this.loadProgressSteps++;
                   this.repaint();
                }
-            } else if (var10.regionMatches(true, var11 - 5, ".jtra", 0, 5)) {
-               var8 = new Model();
-               if (!var8.load(new BufferedInputStream(var2))) {
-                  var8 = null;
+            } else if (name.regionMatches(true, len - 5, ".jtra", 0, 5)) {
+               loadedAnim = new Model();
+               if (!loadedAnim.load(new BufferedInputStream(zipIn))) {
+                  loadedAnim = null;
                }
 
-               if (this.var_1e4 == null && var8 != null) {
-                  this.var_10c++;
+               if (this.animation == null && loadedAnim != null) {
+                  this.loadProgressSteps++;
                   this.repaint();
                }
-            } else if (var10.regionMatches(true, var11 - 4, ".bmp", 0, 4)
-               || var10.regionMatches(true, var11 - 4, ".jpg", 0, 4)
-               || var10.regionMatches(true, var11 - 4, ".png", 0, 4)
-               || var10.regionMatches(true, var11 - 4, ".gif", 0, 4)) {
-               var6 = new Class_517();
-               if (!var3.readImage(new BufferedInputStream(var2), var6)) {
-                  var6 = null;
+            } else if (name.regionMatches(true, len - 4, ".bmp", 0, 4)
+               || name.regionMatches(true, len - 4, ".jpg", 0, 4)
+               || name.regionMatches(true, len - 4, ".png", 0, 4)
+               || name.regionMatches(true, len - 4, ".gif", 0, 4)) {
+               tex = new Class_517();
+               if (!reader.readImage(new BufferedInputStream(zipIn), tex)) {
+                  tex = null;
                }
 
-               if (this.var_1a7 == null && var6 != null) {
-                  this.var_10c++;
+               if (this.modelTexture == null && tex != null) {
+                  this.loadProgressSteps++;
                   this.repaint();
                }
             }
          }
-      } catch (ZipException var14) {
+      } catch (ZipException e) {
       }
 
       synchronized (this) {
-         if (var4 != null) {
-            if (this.var_642) {
-               var4.generateMipmaps();
+         if (sphere != null) {
+            if (this.mipmapEnabled) {
+               sphere.generateMipmaps();
             }
 
-            this.sub_22b(var4);
+            this.setSphereMapTexture(sphere);
          }
 
-         if (var5 != null) {
-            this.var_2cc = true;
-            this.var_247 = var5;
-            this.sub_147();
+         if (wall != null) {
+            this.useBackgroundTexture = true;
+            this.backgroundTexture = wall;
+            this.updateBackgroundBuffer();
          }
 
-         this.sub_4b();
-         if (var6 != null) {
-            if (this.var_642) {
-               var6.generateMipmaps();
+         this.markDirtyAll();
+         if (tex != null) {
+            if (this.mipmapEnabled) {
+               tex.generateMipmaps();
             }
 
-            this.var_1a7 = var6;
+            this.modelTexture = tex;
          }
 
-         if (var7 != null) {
-            this.var_1c9 = var7;
+         if (loadedModel != null) {
+            this.model = loadedModel;
          }
 
-         if (var8 != null) {
-            this.var_1e4 = var8;
+         if (loadedAnim != null) {
+            this.animation = loadedAnim;
          }
 
-         if (var7 != null || var8 != null && this.var_1c9 != null) {
-            this.var_1e4.bindModel(this.var_1c9);
+         if (loadedModel != null || loadedAnim != null && this.model != null) {
+            this.animation.bindModel(this.model);
          }
       }
 
-      var2.close();
+      zipIn.close();
    }
 
-   public void sub_34e(InputStream var1, InputStream var2, InputStream var3) {
+   public void loadAssets(InputStream bacStream, InputStream traStream, InputStream texStream) {
       try {
-         Class_517 var4 = null;
-         RenderState var5 = null;
-         Model var6 = null;
-         if (var3 != null) {
-            Material var7 = this.sub_43a();
-            var4 = new Class_517();
-            if (!var7.readImage(new BufferedInputStream(var3), var4)) {
-               var4 = null;
+         Class_517 tex = null;
+         RenderState loadedModel = null;
+         Model loadedAnim = null;
+         if (texStream != null) {
+            Material reader = this.createTextureReader();
+            tex = new Class_517();
+            if (!reader.readImage(new BufferedInputStream(texStream), tex)) {
+               tex = null;
             }
 
-            if (this.var_1a7 == null && var4 != null) {
-               this.var_10c++;
+            if (this.modelTexture == null && tex != null) {
+               this.loadProgressSteps++;
                this.repaint();
             }
          }
 
-         if (var1 != null) {
-            var5 = new RenderState();
-            if (!var5.load(new BufferedInputStream(var1))) {
-               var5 = null;
-            } else if (this.var_865) {
-               var5.generateNormals();
+         if (bacStream != null) {
+            loadedModel = new RenderState();
+            if (!loadedModel.load(new BufferedInputStream(bacStream))) {
+               loadedModel = null;
+            } else if (this.forceLighting) {
+               loadedModel.generateNormals();
             }
 
-            if (this.var_1c9 == null && var5 != null) {
-               this.var_10c++;
+            if (this.model == null && loadedModel != null) {
+               this.loadProgressSteps++;
                this.repaint();
             }
          }
 
-         if (var2 != null) {
-            var6 = new Model();
-            if (!var6.load(new BufferedInputStream(var2))) {
-               var6 = null;
+         if (traStream != null) {
+            loadedAnim = new Model();
+            if (!loadedAnim.load(new BufferedInputStream(traStream))) {
+               loadedAnim = null;
             }
 
-            if (this.var_1e4 == null && var6 != null) {
-               this.var_10c++;
+            if (this.animation == null && loadedAnim != null) {
+               this.loadProgressSteps++;
                this.repaint();
             }
          }
 
          synchronized (this) {
-            if (var4 != null) {
-               if (this.var_642) {
-                  var4.generateMipmaps();
+            if (tex != null) {
+               if (this.mipmapEnabled) {
+                  tex.generateMipmaps();
                }
 
-               this.var_1a7 = var4;
+               this.modelTexture = tex;
             }
 
-            if (var5 != null) {
-               this.var_1c9 = var5;
+            if (loadedModel != null) {
+               this.model = loadedModel;
             }
 
-            if (var6 != null) {
-               this.var_1e4 = var6;
+            if (loadedAnim != null) {
+               this.animation = loadedAnim;
             }
 
-            if (var5 != null || var6 != null) {
-               this.var_1e4.bindModel(this.var_1c9);
+            if (loadedModel != null || loadedAnim != null) {
+               this.animation.bindModel(this.model);
             }
          }
-      } catch (IOException var10) {
+      } catch (IOException e) {
       }
    }
 
-   public synchronized void sub_399(InputStream var1) {
-      Material var2 = this.sub_43a();
-      if (var2.readImage(var1, this.var_17d)) {
-         if (this.var_642) {
-            this.var_17d.generateMipmaps();
+   public synchronized void loadSphereTexture(InputStream in) {
+      Material reader = this.createTextureReader();
+      if (reader.readImage(in, this.sphereTexture)) {
+         if (this.mipmapEnabled) {
+            this.sphereTexture.generateMipmaps();
          }
 
-         this.sub_22b(this.var_17d);
-         this.var_10c++;
+         this.setSphereMapTexture(this.sphereTexture);
+         this.loadProgressSteps++;
          this.repaint();
       }
    }
 
-   public synchronized void sub_3da(InputStream var1) {
-      Material var2 = this.sub_43a();
-      if (var2.readImage(var1, this.var_247)) {
-         this.var_2cc = true;
-         this.sub_147();
-         this.var_10c++;
+   public synchronized void loadBackgroundTexture(InputStream in) {
+      Material reader = this.createTextureReader();
+      if (reader.readImage(in, this.backgroundTexture)) {
+         this.useBackgroundTexture = true;
+         this.updateBackgroundBuffer();
+         this.loadProgressSteps++;
          this.repaint();
       }
    }
 
-   public void keyPressed(KeyEvent var1) {
-      switch (var1.getKeyCode()) {
+   public void keyPressed(KeyEvent e) {
+      switch (e.getKeyCode()) {
          case 27:
-            this.sub_1a();
+            this.resetModelTransform();
             break;
          case 37:
-            this.sub_6ba(-16, 0);
+            this.moveCenter(-16, 0);
             break;
          case 38:
-            this.sub_6ba(0, -16);
+            this.moveCenter(0, -16);
             break;
          case 39:
-            this.sub_6ba(16, 0);
+            this.moveCenter(16, 0);
             break;
          case 40:
-            this.sub_6ba(0, 16);
+            this.moveCenter(0, 16);
             break;
          case 50:
-            this.var_6bf -= 0.1F;
+            this.deltaAngleX -= 0.1F;
             break;
          case 52:
-            this.var_71c -= 0.1F;
+            this.deltaAngleY -= 0.1F;
             break;
          case 54:
-            this.var_71c += 0.1F;
+            this.deltaAngleY += 0.1F;
             break;
          case 56:
-            this.var_6bf += 0.1F;
+            this.deltaAngleX += 0.1F;
             break;
          case 88:
-            this.sub_68c(-0.1F);
+            this.adjustScale(-0.1F);
             break;
          case 90:
-            this.sub_68c(0.1F);
+            this.adjustScale(0.1F);
       }
    }
 
-   public void keyReleased(KeyEvent var1) {
+   public void keyReleased(KeyEvent e) {
    }
 
-   public void keyTyped(KeyEvent var1) {
+   public void keyTyped(KeyEvent e) {
    }
 
-   public void mousePressed(MouseEvent var1) {
-      if (var1.isAltDown()) {
-         this.var_a18 = 3;
-      } else if (var1.isMetaDown()) {
-         this.var_a18 = 2;
+   public void mousePressed(MouseEvent e) {
+      if (e.isAltDown()) {
+         this.mouseDragMode = 3;
+      } else if (e.isMetaDown()) {
+         this.mouseDragMode = 2;
       } else {
-         this.var_a18 = 1;
+         this.mouseDragMode = 1;
       }
 
       this.setCursor(new Cursor(12));
    }
 
-   public void mouseReleased(MouseEvent var1) {
-      this.var_a18 = 0;
+   public void mouseReleased(MouseEvent e) {
+      this.mouseDragMode = 0;
       this.setCursor(Cursor.getDefaultCursor());
-      if (this.var_698 != 0.0F || this.var_6a3 != 0.0F) {
-         this.var_6bf = this.var_698;
-         this.var_71c = this.var_6a3;
-         this.var_698 = 0.0F;
-         this.var_6a3 = 0.0F;
+      if (this.dragAngleX != 0.0F || this.dragAngleY != 0.0F) {
+         this.deltaAngleX = this.dragAngleX;
+         this.deltaAngleY = this.dragAngleY;
+         this.dragAngleX = 0.0F;
+         this.dragAngleY = 0.0F;
       }
    }
 
-   public void mouseClicked(MouseEvent var1) {
+   public void mouseClicked(MouseEvent e) {
    }
 
-   public void mouseEntered(MouseEvent var1) {
+   public void mouseEntered(MouseEvent e) {
    }
 
-   public void mouseExited(MouseEvent var1) {
-      this.mouseReleased(var1);
+   public void mouseExited(MouseEvent e) {
+      this.mouseReleased(e);
    }
 
-   public void mouseDragged(MouseEvent var1) {
-      int var2 = var1.getX();
-      int var3 = var1.getY();
-      switch (this.var_a18) {
+   public void mouseDragged(MouseEvent e) {
+      int x = e.getX();
+      int y = e.getY();
+      switch (this.mouseDragMode) {
          case 1:
-            this.var_6a3 = this.var_6a3 + (var2 - this.var_7f0) * 0.01F;
-            this.var_698 = this.var_698 + (var3 - this.var_833) * 0.01F;
+            this.dragAngleY += (x - this.lastMouseX) * 0.01F;
+            this.dragAngleX += (y - this.lastMouseY) * 0.01F;
             break;
          case 2:
-            this.var_570 = this.var_570 + (var2 - this.var_7f0);
-            this.var_5d4 = this.var_5d4 + (var3 - this.var_833);
+            this.currentCenterX += (x - this.lastMouseX);
+            this.currentCenterY += (y - this.lastMouseY);
             break;
          case 3:
-            this.var_53b = this.var_53b + (var2 - this.var_7f0) * 0.005F;
-            this.var_53b = this.var_53b + (var3 - this.var_833) * 0.005F;
-            if (this.var_53b < this.var_2de) {
-               this.var_53b = this.var_2de;
-            } else if (this.var_53b > this.var_2fb) {
-               this.var_53b = this.var_2fb;
+            this.currentScale += (x - this.lastMouseX) * 0.005F;
+            this.currentScale += (y - this.lastMouseY) * 0.005F;
+            if (this.currentScale < this.minScale) {
+               this.currentScale = this.minScale;
+            } else if (this.currentScale > this.maxScale) {
+               this.currentScale = this.maxScale;
             }
       }
 
-      this.var_7f0 = var2;
-      this.var_833 = var3;
+      this.lastMouseX = x;
+      this.lastMouseY = y;
    }
 
-   public void mouseMoved(MouseEvent var1) {
-      this.var_7f0 = var1.getX();
-      this.var_833 = var1.getY();
+   public void mouseMoved(MouseEvent e) {
+      this.lastMouseX = e.getX();
+      this.lastMouseY = e.getY();
    }
 
-   public Material sub_43a() {
+   public Material createTextureReader() {
       return new Class_808();
    }
 
-   public void sub_498(int var1, int var2) {
-      this.var_34f += var1;
-      this.var_3ab += var2;
+   public void addViewOffset(int dx, int dy) {
+      this.initialCenterX += dx;
+      this.initialCenterY += dy;
    }
 
-   public void sub_4ec(int var1, int var2) {
-      this.var_34f = var1;
-      this.var_3ab = var2;
+   public void setViewOffset(int x, int y) {
+      this.initialCenterX = x;
+      this.initialCenterY = y;
    }
 
-   public void sub_501(float var1) {
-      if (var1 > this.var_2fb) {
-         var1 = this.var_2fb;
-      } else if (var1 < this.var_2de) {
-         var1 = this.var_2de;
+   public void setInitialScale(float scale) {
+      if (scale > this.maxScale) {
+         scale = this.maxScale;
+      } else if (scale < this.minScale) {
+         scale = this.minScale;
       }
 
-      this.var_454 = var1;
+      this.initialScale = scale;
    }
 
-   public void sub_55f(float var1) {
-      this.var_3e2 = var1;
+   public void setInitialAngleX(float angle) {
+      this.initialAngleX = angle;
    }
 
-   public void sub_5b5(float var1) {
-      this.var_431 = var1;
+   public void setInitialAngleY(float angle) {
+      this.initialAngleY = angle;
    }
 
-   public void sub_5ca(Transform3D var1) {
-      this.var_15a.setLocalTransform(var1);
+   public void setCameraLookAt(Transform3D lookAt) {
+      this.camera.setLocalTransform(lookAt);
    }
 
-   public void sub_5fa(boolean var1) {
-      this.var_865 = var1;
+   public void setForceLighting(boolean force) {
+      this.forceLighting = force;
    }
 
-   public void sub_64f(float var1) {
-      this.var_7d3 = var1;
+   public void setRotationSpeed(float speed) {
+      this.rotationSpeed = speed;
    }
 
-   public void sub_68c(float var1) {
-      this.var_53b += var1;
-      if (this.var_53b > this.var_2fb) {
-         this.var_53b = this.var_2fb;
-      } else if (this.var_53b < this.var_2de) {
-         this.var_53b = this.var_2de;
+   public void adjustScale(float delta) {
+      this.currentScale += delta;
+      if (this.currentScale > this.maxScale) {
+         this.currentScale = this.maxScale;
+      } else if (this.currentScale < this.minScale) {
+         this.currentScale = this.minScale;
       }
    }
 
-   public void sub_6ba(int var1, int var2) {
-      this.var_570 += var1;
-      this.var_5d4 += var2;
+   public void moveCenter(int dx, int dy) {
+      this.currentCenterX += dx;
+      this.currentCenterY += dy;
    }
 
-   public void sub_6c8(float var1, float var2) {
-      this.var_6bf += var1;
-      this.var_71c += var2;
+   public void rotateModel(float rotX, float rotY) {
+      this.deltaAngleX += rotX;
+      this.deltaAngleY += rotY;
    }
 
-   public void sub_6f5(float var1) {
-      this.var_78f = var1;
+   public void setFrameRate(float fps) {
+      this.frameRate = fps;
    }
 
-   public void sub_74b(float var1) {
-      float var2 = this.var_78f + var1;
-      if (var2 < 0.0F) {
-         var2 = 0.0F;
+   public void adjustFrameRate(float delta) {
+      float newRate = this.frameRate + delta;
+      if (newRate < 0.0F) {
+         newRate = 0.0F;
       }
 
-      this.var_78f = var2;
+      this.frameRate = newRate;
    }
 
-   public void sub_761(int var1) {
-      this.var_4d7 = var1 != 0;
+   public void setLightingMode(int mode) {
+      this.lightingEnabled = mode != 0;
    }
 
-   public void sub_7a4(float var1) {
-      if (var1 == 0.0F) {
-         this.var_77f = -1;
+   public void setMaxFps(float maxFps) {
+      if (maxFps == 0.0F) {
+         this.targetFrameIntervalMs = -1;
       } else {
-         this.var_77f = (int)(1000.0F / var1);
+         this.targetFrameIntervalMs = (int)(1000.0F / maxFps);
       }
    }
 
-   public void sub_7d9(boolean var1) {
-      this.var_235 = var1;
+   public void setPerspective(boolean persp) {
+      this.disablePerspective = !persp;
    }
 
-   public void sub_806(boolean var1) {
-      this.var_642 = var1;
+   public void setMipmapEnabled(boolean mipmap) {
+      this.mipmapEnabled = mipmap;
    }
 
-   static float sub_81d(Class_aa var0, float var1) {
-      return var0.var_61a += var1;
+   static float advanceAnimationFrame(Class_aa canvas, float delta) {
+      return canvas.currentFrame += delta;
    }
 
-   static float sub_880(Class_aa var0) {
-      return var0.var_78f;
+   static float getFrameRate(Class_aa canvas) {
+      return canvas.frameRate;
    }
 
-   static Model sub_8e3(Class_aa var0) {
-      return var0.var_1e4;
+   static Model getAnimation(Class_aa canvas) {
+      return canvas.animation;
    }
 
-   static float sub_917(Class_aa var0) {
-      return var0.var_61a;
+   static float getCurrentFrame(Class_aa canvas) {
+      return canvas.currentFrame;
    }
 
-   static float sub_945(Class_aa var0, float var1) {
-      return var0.var_61a -= var1;
+   static float wrapAnimationFrame(Class_aa canvas, float delta) {
+      return canvas.currentFrame -= delta;
    }
 
-   static float sub_985(Class_aa var0, float var1) {
-      return var0.var_71c += var1;
+   static float advanceRotation(Class_aa canvas, float delta) {
+      return canvas.deltaAngleY += delta;
    }
 
-   static float sub_9de(Class_aa var0) {
-      return var0.var_7d3;
+   static float getRotationSpeed(Class_aa canvas) {
+      return canvas.rotationSpeed;
    }
 
-   static int sub_a14(Class_aa var0) {
-      return var0.var_77f;
+   static int getFrameIntervalMs(Class_aa canvas) {
+      return canvas.targetFrameIntervalMs;
    }
 }

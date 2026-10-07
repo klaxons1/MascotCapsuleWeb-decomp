@@ -3,76 +3,76 @@ import java.io.InputStream;
 import java.net.URL;
 
 class Class_2a implements Runnable {
-   private Thread var_4f;
-   private final MascotCapsule var_97;
+   private Thread thread;
+   private final MascotCapsule applet;
 
-   private Class_2a(MascotCapsule var1) {
-      this.var_97 = var1;
-      this.var_4f = null;
+   private Class_2a(MascotCapsule applet) {
+      this.applet = applet;
+      this.thread = null;
    }
 
-   public synchronized void sub_2d() {
-      this.var_4f = new Thread(this);
-      this.var_4f.setName("MascotCapsule - ModelLoader");
-      this.var_4f.setPriority(5);
-      this.var_4f.start();
+   public synchronized void start() {
+      this.thread = new Thread(this);
+      this.thread.setName("MascotCapsule - ModelLoader");
+      this.thread.setPriority(5);
+      this.thread.start();
    }
 
-   public synchronized void sub_8c() {
-      MascotCapsule.sub_13e(this.var_97).sub_a8();
-      if (this.var_4f != null) {
-         this.var_4f.interrupt();
-         this.var_4f = null;
+   public synchronized void stop() {
+      this.applet.getCanvas().stopAnimation();
+      if (this.thread != null) {
+         this.thread.interrupt();
+         this.thread = null;
       }
    }
 
    public void run() {
       try {
-         if (MascotCapsule.sub_15f(this.var_97)) {
-            MascotCapsule.sub_13e(this.var_97).sub_1fc(true);
+         if (this.applet.isAutoLoad()) {
+            this.applet.getCanvas().setShowLoadingScreen(true);
          } else {
-            MascotCapsule.sub_13e(this.var_97).sub_168(" ");
+            this.applet.getCanvas().setStatusText(" ");
          }
 
-         long var1 = System.currentTimeMillis();
+         long startTime = System.currentTimeMillis();
 
          try {
-            String var3 = MascotCapsule.sub_171(this.var_97, "ZIPFILE", null);
-            String var4 = MascotCapsule.sub_171(this.var_97, "BACFILE", null);
-            String var5 = MascotCapsule.sub_171(this.var_97, "TRAFILE", null);
-            String var6 = MascotCapsule.sub_171(this.var_97, "TEXTURE", null);
-            String var7 = MascotCapsule.sub_171(this.var_97, "SPHERE", null);
-            String var8 = MascotCapsule.sub_171(this.var_97, "BACKGROUND", null);
-            URL var9 = this.var_97.getDocumentBase();
+            String zipFile = this.applet.getStringParam("ZIPFILE", null);
+            String bacFile = this.applet.getStringParam("BACFILE", null);
+            String traFile = this.applet.getStringParam("TRAFILE", null);
+            String textureFile = this.applet.getStringParam("TEXTURE", null);
+            String sphereFile = this.applet.getStringParam("SPHERE", null);
+            String bgFile = this.applet.getStringParam("BACKGROUND", null);
+            URL docBase = this.applet.getDocumentBase();
             if (Thread.interrupted()) {
                throw new InterruptedException();
             }
 
-            if (var3 != null) {
-               InputStream var10 = new URL(var9, var3).openStream();
-               MascotCapsule.sub_13e(this.var_97).sub_312(var10);
-               var10.close();
+            if (zipFile != null) {
+               InputStream zipStream = new URL(docBase, zipFile).openStream();
+               this.applet.getCanvas().loadZipArchive(zipStream);
+               zipStream.close();
             }
 
             if (Thread.interrupted()) {
                throw new InterruptedException();
             }
 
-            if (var4 != null || var5 != null || var6 != null) {
-               InputStream var18 = var4 != null ? new URL(var9, var4).openStream() : null;
-               InputStream var11 = var5 != null ? new URL(var9, var6).openStream() : null;
-               InputStream var12 = var6 != null ? new URL(var9, var5).openStream() : null;
-               MascotCapsule.sub_13e(this.var_97).sub_34e(var18, var11, var12);
-               if (var18 != null) {
-                  var18.close();
+            if (bacFile != null || traFile != null || textureFile != null) {
+               InputStream bacStream = bacFile != null ? new URL(docBase, bacFile).openStream() : null;
+               InputStream traStream = traFile != null ? new URL(docBase, traFile).openStream() : null;
+               InputStream texStream = textureFile != null ? new URL(docBase, textureFile).openStream() : null;
+               this.applet.getCanvas().loadAssets(bacStream, traStream, texStream);
+               if (bacStream != null) {
+                  bacStream.close();
                }
 
-               if (var11 != null) {
-                  var11.close();
+               if (traStream != null) {
+                  traStream.close();
                }
 
-               if (var12 != null) {
-                  var12.close();
+               if (texStream != null) {
+                  texStream.close();
                }
             }
 
@@ -80,63 +80,63 @@ class Class_2a implements Runnable {
                throw new InterruptedException();
             }
 
-            if (var7 != null) {
-               InputStream var19 = new URL(var9, var7).openStream();
-               MascotCapsule.sub_13e(this.var_97).sub_399(var19);
-               var19.close();
+            if (sphereFile != null) {
+               InputStream sphereStream = new URL(docBase, sphereFile).openStream();
+               this.applet.getCanvas().loadSphereTexture(sphereStream);
+               sphereStream.close();
             }
 
             if (Thread.interrupted()) {
                throw new InterruptedException();
             }
 
-            if (var8 != null) {
-               InputStream var20 = new URL(var9, var8).openStream();
-               MascotCapsule.sub_13e(this.var_97).sub_3da(var20);
-               var20.close();
+            if (bgFile != null) {
+               InputStream bgStream = new URL(docBase, bgFile).openStream();
+               this.applet.getCanvas().loadBackgroundTexture(bgStream);
+               bgStream.close();
             }
 
             if (Thread.interrupted()) {
                throw new InterruptedException();
             }
-         } catch (IOException var15) {
-            var15.printStackTrace();
+         } catch (IOException e) {
+            e.printStackTrace();
          }
 
-         if (MascotCapsule.sub_15f(this.var_97)) {
-            MascotCapsule.sub_13e(this.var_97).sub_259();
-            MascotCapsule.sub_13e(this.var_97).repaint();
-            long var17 = System.currentTimeMillis() - var1;
-            if (var17 < 1000L) {
-               Thread.sleep(1000L - var17);
+         if (this.applet.isAutoLoad()) {
+            this.applet.getCanvas().setLoadingProgressComplete();
+            this.applet.getCanvas().repaint();
+            long elapsed = System.currentTimeMillis() - startTime;
+            if (elapsed < 1000L) {
+               Thread.sleep(1000L - elapsed);
             }
          }
 
-         MascotCapsule.sub_13e(this.var_97).sub_168(MascotCapsule.sub_13e(this.var_97).sub_1aa() ? null : "Data Error.");
-         if (MascotCapsule.sub_15f(this.var_97)) {
-            MascotCapsule.sub_13e(this.var_97).sub_1fc(false);
+         this.applet.getCanvas().setStatusText(this.applet.getCanvas().isReadyToRender() ? null : "Data Error.");
+         if (this.applet.isAutoLoad()) {
+            this.applet.getCanvas().setShowLoadingScreen(false);
          }
 
-         if (!MascotCapsule.sub_13e(this.var_97).sub_1aa()) {
-            MascotCapsule.sub_13e(this.var_97).repaint();
+         if (!this.applet.getCanvas().isReadyToRender()) {
+            this.applet.getCanvas().repaint();
          }
 
          synchronized (this) {
-            MascotCapsule.sub_13e(this.var_97).sub_a8();
+            this.applet.getCanvas().stopAnimation();
             if (Thread.interrupted()) {
                throw new InterruptedException();
             }
 
             System.gc();
-            MascotCapsule.sub_13e(this.var_97).sub_96();
+            this.applet.getCanvas().startAnimation();
          }
-      } catch (InterruptedException var16) {
+      } catch (InterruptedException e) {
       }
 
-      this.var_4f = null;
+      this.thread = null;
    }
 
-   Class_2a(MascotCapsule var1, Class_60 var2) {
-      this(var1);
+   Class_2a(MascotCapsule applet, Class_60 unused) {
+      this(applet);
    }
 }

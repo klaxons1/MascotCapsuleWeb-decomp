@@ -6,191 +6,191 @@ import java.awt.Graphics;
 import java.awt.Toolkit;
 
 public class MainCanvas extends Canvas {
-   private final Toolkit var_e = Toolkit.getDefaultToolkit();
-   private final FrameBuffer var_1c = new FrameBuffer(this);
-   private final Config var_4a = new Config();
-   private final RenderContext var_94 = new RenderContext(this.var_4a);
-   private final BoundingBox var_ee = new BoundingBox();
-   private final BoundingBox var_1bb = new BoundingBox();
-   private final BoundingBox var_1cd = new BoundingBox();
-   private boolean var_1fe = false;
-   private StringBuffer var_21f = new StringBuffer("");
-   private boolean var_252 = false;
-   private int var_25e = 0;
-   private long var_2aa = System.currentTimeMillis();
-   private long var_2fa = this.var_2aa;
-   private int var_337 = 0;
-   private int var_375 = 0;
-   private int var_3ae = 0;
+   private final Toolkit toolkit = Toolkit.getDefaultToolkit();
+   private final FrameBuffer frameBuffer = new FrameBuffer(this);
+   private final Config rasterizer = new Config();
+   private final RenderContext renderContext = new RenderContext(this.rasterizer);
+   private final BoundingBox damageBounds = new BoundingBox();
+   private final BoundingBox accumulatedBounds = new BoundingBox();
+   private final BoundingBox screenBounds = new BoundingBox();
+   private boolean unusedFlag = false;
+   private StringBuffer statsText = new StringBuffer("");
+   private boolean showStats = false;
+   private int frameCount = 0;
+   private long startTimeMs = System.currentTimeMillis();
+   private long lastFpsTimeMs = this.startTimeMs;
+   private int lastFpsFrameCount = 0;
+   private int polyCount = 0;
+   private int vertexCount = 0;
 
    public final int getWidth() {
-      return this.var_1c.getWidth();
+      return this.frameBuffer.getWidth();
    }
 
    public final int getHeight() {
-      return this.var_1c.getHeight();
+      return this.frameBuffer.getHeight();
    }
 
-   public final int[] sub_3d() {
-      return this.var_1c.getPixels();
+   public final int[] getPixels() {
+      return this.frameBuffer.getPixels();
    }
 
-   public MainCanvas(int var1, int var2) {
-      this.setSize(var1, var2);
+   public MainCanvas(int width, int height) {
+      this.setSize(width, height);
    }
 
-   public synchronized void setSize(int var1, int var2) {
-      this.var_1c.setSize(var1, var2);
-      this.var_1cd.setBounds(0, 0, var1, var2);
-      this.var_4a.sub_58(this.var_1cd);
-      this.var_4a.setRenderTarget(this.var_1c.getStride(), this.var_1c.getPixels());
-      this.sub_c9(null);
+   public synchronized void setSize(int width, int height) {
+      this.frameBuffer.setSize(width, height);
+      this.screenBounds.setBounds(0, 0, width, height);
+      this.rasterizer.setClipRect(this.screenBounds);
+      this.rasterizer.setRenderTarget(this.frameBuffer.getStride(), this.frameBuffer.getPixels());
+      this.clearBackground(null);
    }
 
-   public synchronized void sub_4b() {
-      this.var_1bb.resetInfinite();
+   public synchronized void markDirtyAll() {
+      this.accumulatedBounds.resetInfinite();
    }
 
-   public synchronized boolean sub_88() {
-      FrameBuffer var1 = this.var_1c;
-      synchronized (var1) {
-         if (this.var_1bb.isValid()) {
-            this.var_1bb.intersect(this.var_1cd);
-            this.sub_c9(this.var_1bb);
+   public synchronized boolean renderAndFlush() {
+      FrameBuffer fb = this.frameBuffer;
+      synchronized (fb) {
+         if (this.accumulatedBounds.isValid()) {
+            this.accumulatedBounds.intersect(this.screenBounds);
+            this.clearBackground(this.accumulatedBounds);
          }
 
-         this.var_ee.setBounds(this.var_1bb);
-         this.var_94.flushToDirtyRect(this.var_1bb);
-         this.var_94.resetRenderBounds();
-         this.var_ee.union(this.var_1bb);
-         this.var_ee.intersect(this.var_1cd);
-         this.var_94.clearPacketTable();
+         this.damageBounds.setBounds(this.accumulatedBounds);
+         this.renderContext.flushToDirtyRect(this.accumulatedBounds);
+         this.renderContext.resetRenderBounds();
+         this.damageBounds.union(this.accumulatedBounds);
+         this.damageBounds.intersect(this.screenBounds);
+         this.renderContext.clearPacketTable();
       }
 
-      Graphics var2 = null;
+      Graphics g = null;
 
       try {
-         var2 = this.getGraphics();
-         if (var2 == null) {
+         g = this.getGraphics();
+         if (g == null) {
             return true;
          }
-      } catch (NullPointerException var6) {
+      } catch (NullPointerException e) {
          return false;
       }
 
-      if (this.var_252 && this.var_ee.minY < 15) {
-         this.var_ee.minY = 15;
+      if (this.showStats && this.damageBounds.minY < 15) {
+         this.damageBounds.minY = 15;
       }
 
-      if (this.var_ee.isValid()) {
-         this.var_1c.flush(this.var_ee);
-         this.var_1c.sub_11b(var2, this.var_ee);
+      if (this.damageBounds.isValid()) {
+         this.frameBuffer.flush(this.damageBounds);
+         this.frameBuffer.paint(g, this.damageBounds);
       }
 
-      if (this.var_252) {
-         var2.setClip(null);
-         var2.setColor(Color.black);
-         var2.fillRect(0, 0, this.getWidth(), 15);
-         var2.setColor(Color.white);
-         var2.drawString(this.var_21f.toString(), 8, 12);
+      if (this.showStats) {
+         g.setClip(null);
+         g.setColor(Color.black);
+         g.fillRect(0, 0, this.getWidth(), 15);
+         g.setColor(Color.white);
+         g.drawString(this.statsText.toString(), 8, 12);
       }
 
-      var2.dispose();
-      var2 = null;
-      if (this.var_252) {
-         this.var_25e++;
-         long var3 = System.currentTimeMillis();
-         int var5 = this.var_25e - this.var_337;
-         if (var5 > 50) {
-            this.var_21f = new StringBuffer(256);
-            this.var_21f.append((int)(var5 * 1000.0F / (float)(var3 - this.var_2fa)));
-            this.var_21f.append(" fps, ");
-            this.var_21f.append(this.var_375 / var5);
-            this.var_21f.append(" poly, ");
-            this.var_21f.append(this.var_3ae / var5);
-            this.var_21f.append(" vert");
-            this.var_2fa = var3;
-            this.var_337 = this.var_25e;
-            this.var_375 = 0;
-            this.var_3ae = 0;
+      g.dispose();
+      g = null;
+      if (this.showStats) {
+         this.frameCount++;
+         long now = System.currentTimeMillis();
+         int frames = this.frameCount - this.lastFpsFrameCount;
+         if (frames > 50) {
+            this.statsText = new StringBuffer(256);
+            this.statsText.append((int)(frames * 1000.0F / (float)(now - this.lastFpsTimeMs)));
+            this.statsText.append(" fps, ");
+            this.statsText.append(this.polyCount / frames);
+            this.statsText.append(" poly, ");
+            this.statsText.append(this.vertexCount / frames);
+            this.statsText.append(" vert");
+            this.lastFpsTimeMs = now;
+            this.lastFpsFrameCount = this.frameCount;
+            this.polyCount = 0;
+            this.vertexCount = 0;
          }
       }
 
       return true;
    }
 
-   public void sub_c9(BoundingBox var1) {
+   public void clearBackground(BoundingBox bounds) {
    }
 
-   public void paint(Graphics var1) {
-      this.var_1c.sub_166(var1);
-      var1.dispose();
+   public void paint(Graphics g) {
+      this.frameBuffer.paint(g);
+      g.dispose();
    }
 
-   public void update(Graphics var1) {
+   public void update(Graphics g) {
    }
 
-   public synchronized void setBounds(int var1, int var2, int var3, int var4) {
-      if (this.getWidth() != var3 || this.getHeight() != var4) {
-         this.setSize(var3, var4);
+   public synchronized void setBounds(int x, int y, int width, int height) {
+      if (this.getWidth() != width || this.getHeight() != height) {
+         this.setSize(width, height);
       }
 
-      super.setBounds(var1, var2, var3, var4);
-      this.var_e.sync();
-      this.sub_4b();
+      super.setBounds(x, y, width, height);
+      this.toolkit.sync();
+      this.markDirtyAll();
    }
 
-   public synchronized void sub_e6(float var1) {
-      this.var_94.enablePerspective(var1);
+   public synchronized void enablePerspective(float fov) {
+      this.renderContext.enablePerspective(fov);
    }
 
-   public synchronized void sub_144() {
-      this.var_94.disablePerspective();
+   public synchronized void disablePerspective() {
+      this.renderContext.disablePerspective();
    }
 
-   public synchronized void sub_1a2(int var1, float var2, float var3) {
-      this.var_94.initPacketTable(var1, var2, var3);
+   public synchronized void initPacketTable(int capacity, float nearZ, float farZ) {
+      this.renderContext.initPacketTable(capacity, nearZ, farZ);
    }
 
-   public synchronized void sub_1f9(Class_517 var1) {
-      this.var_94.setDiffuseTexture(var1);
+   public synchronized void setDiffuseTexture(Class_517 texture) {
+      this.renderContext.setDiffuseTexture(texture);
    }
 
-   public synchronized void sub_22b(Class_517 var1) {
-      this.var_94.setSphereMapTexture(var1);
+   public synchronized void setSphereMapTexture(Class_517 texture) {
+      this.renderContext.setSphereMapTexture(texture);
    }
 
-   public synchronized void sub_242(RenderState var1, Class_339 var2) {
-      this.var_94.setProjection(var1, var2);
-      this.var_375 = this.var_375 + var1.var_255;
-      this.var_3ae = this.var_3ae + var1.var_1d4;
+   public synchronized void renderModel(RenderState model, Class_339 camera) {
+      this.renderContext.setProjection(model, camera);
+      this.polyCount += model.getPolygonCount();
+      this.vertexCount += model.getVertexCount();
    }
 
-   public synchronized void sub_263(int var1, int var2) {
-      this.var_94.setViewportOffset(var1, var2);
+   public synchronized void setViewportOffset(int x, int y) {
+      this.renderContext.setViewportOffset(x, y);
    }
 
-   public synchronized void sub_283(boolean var1) {
-      this.var_94.setLightingEnabled(var1);
+   public synchronized void setLightingEnabled(boolean enabled) {
+      this.renderContext.setLightingEnabled(enabled);
    }
 
-   public synchronized void sub_2e4(Vector3f var1, float var2) {
-      this.var_94.setDirectionalLight(var1, var2);
+   public synchronized void setDirectionalLight(Vector3f dir, float intensity) {
+      this.renderContext.setDirectionalLight(dir, intensity);
    }
 
-   public synchronized void sub_331(float var1) {
-      this.var_94.setAmbientIntensity(var1);
+   public synchronized void setAmbientIntensity(float intensity) {
+      this.renderContext.setAmbientIntensity(intensity);
    }
 
-   public synchronized void sub_33e(boolean var1) {
-      this.var_252 = var1;
-      if (!var1) {
-         this.sub_4b();
+   public synchronized void setShowStats(boolean show) {
+      this.showStats = show;
+      if (!show) {
+         this.markDirtyAll();
       } else {
-         this.var_2fa = System.currentTimeMillis();
-         this.var_337 = this.var_25e;
-         this.var_375 = 0;
-         this.var_3ae = 0;
+         this.lastFpsTimeMs = System.currentTimeMillis();
+         this.lastFpsFrameCount = this.frameCount;
+         this.polyCount = 0;
+         this.vertexCount = 0;
       }
    }
 }

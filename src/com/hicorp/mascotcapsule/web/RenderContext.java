@@ -38,8 +38,8 @@ public class RenderContext {
    protected final Vector3f lightDirection = new Vector3f();
    protected float lightIntensity;
    private float focalLength;
-   private boolean perspectiveEnabled;
-   private float perspectiveScale;
+   private boolean parallelProjectionEnabled;
+   private float parallelScale;
    private static final float DEFAULT_VIEWPORT_WIDTH = 640.0F;
    private static final float DEFAULT_FOV = MatrixUtils.toRadians(60.0F);
    private float fov;
@@ -68,18 +68,22 @@ public class RenderContext {
       this.fov = DEFAULT_FOV;
       this.viewportWidth = 640.0F;
       this.focalLength = this.computeFocalLength();
-      this.perspectiveEnabled = false;
-      this.perspectiveScale = 1.0F;
+      this.parallelProjectionEnabled = false;
+      this.parallelScale = 1.0F;
    }
 
-   public final void enablePerspective(float scale) {
-      this.perspectiveEnabled = true;
-      this.perspectiveScale = scale;
+   public final float getFocalLength() {
+      return this.focalLength;
    }
 
-   public final void disablePerspective() {
-      this.perspectiveEnabled = false;
-      this.perspectiveScale = 1.0F;
+   public final void enableParallelProjection(float scale) {
+      this.parallelProjectionEnabled = true;
+      this.parallelScale = scale;
+   }
+
+   public final void disableParallelProjection() {
+      this.parallelProjectionEnabled = false;
+      this.parallelScale = 1.0F;
    }
 
    protected PolygonRenderCommand obtainPolygonCommand() {
@@ -176,10 +180,10 @@ public class RenderContext {
             BoneNode bone = model.getBone(i);
             bone.getTransformRelativeToRoot(relBoneTransform);
             boneTransform.multiply(modelView, relBoneTransform);
-            if (this.perspectiveEnabled) {
-               boneTransform.transformAndProjectPerspective(model.getVertices(), coords, depths, vertOffset, bone.getIndex(), this.perspectiveScale);
+            if (this.parallelProjectionEnabled) {
+               boneTransform.transformAndProjectOrthographic(model.getVertices(), coords, depths, vertOffset, bone.getIndex(), this.parallelScale);
             } else {
-               boneTransform.transformAndProjectOrthographic(model.getVertices(), coords, depths, vertOffset, bone.getIndex(), this.focalLength);
+               boneTransform.transformAndProjectPerspective(model.getVertices(), coords, depths, vertOffset, bone.getIndex(), this.focalLength);
             }
 
             if (hasLighting) {
@@ -523,7 +527,9 @@ public class RenderContext {
          }
 
          this.recyclePolygonCommand(cmd);
-      } catch (NullPointerException e) {
+      } catch (Throwable e) {
+         System.err.println("Exception in RenderContext.render: " + e);
+         e.printStackTrace();
       }
    }
 

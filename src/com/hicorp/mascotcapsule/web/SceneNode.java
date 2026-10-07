@@ -11,10 +11,11 @@ public class SceneNode {
    protected final Transform3D cachedTransform = new Transform3D();
 
    public SceneNode() {
-      this.hasLocalTransform = false;
+      this.hasLocalTransform = true;
       this.isWorldValid = false;
       this.isParentWorldValid = false;
       this.parent = NULL_NODE;
+      this.localTransform.setIdentity();
    }
 
    public SceneNode(SceneNode parent) {

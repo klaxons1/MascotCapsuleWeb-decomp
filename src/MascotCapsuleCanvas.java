@@ -41,7 +41,7 @@ public final class MascotCapsuleCanvas extends MainCanvas implements KeyListener
    private Texture modelTexture = new Texture();
    private BacModel model = null;
    private TraAnimation animation = null;
-   private boolean disablePerspective = false;
+   private boolean isPerspective = false;
    private Texture backgroundTexture = new Texture();
    private int[] backgroundPixels = null;
    private int backgroundColor = -16777216;
@@ -118,10 +118,10 @@ public final class MascotCapsuleCanvas extends MainCanvas implements KeyListener
       this.setDiffuseTexture(this.modelTexture);
       this.setLightingEnabled(this.lightingEnabled);
       this.setViewportOffset(this.currentCenterX, this.currentCenterY);
-      if (this.disablePerspective) {
-         this.disablePerspective();
+      if (this.isPerspective) {
+         this.disableParallelProjection();
       } else {
-         this.enablePerspective(1.0F);
+         this.enableParallelProjection(1.0F);
       }
 
       MatrixUtils.setRotationX(this.deltaAngleX, this.rotTempX);
@@ -251,19 +251,26 @@ public final class MascotCapsuleCanvas extends MainCanvas implements KeyListener
 
       try {
          InputStream in = this.getClass().getResourceAsStream(LOGO_RESOURCE);
-         byteOut = new ByteArrayOutputStream();
-         byte[] buf = new byte[65536];
-
-         int count;
-         while ((count = in.read(buf)) != -1) {
-            byteOut.write(buf, 0, count);
+         if (in == null) {
+            in = this.getClass().getResourceAsStream("/" + LOGO_RESOURCE);
          }
+         if (in != null) {
+            byteOut = new ByteArrayOutputStream();
+            byte[] buf = new byte[65536];
 
-         byteOut.close();
+            int count;
+            while ((count = in.read(buf)) != -1) {
+               byteOut.write(buf, 0, count);
+            }
+
+            byteOut.close();
+         }
       } catch (IOException e) {
       }
 
-      this.logoImage = Toolkit.getDefaultToolkit().createImage(byteOut.toByteArray());
+      if (byteOut != null) {
+         this.logoImage = Toolkit.getDefaultToolkit().createImage(byteOut.toByteArray());
+      }
       MediaTracker tracker = new MediaTracker(this);
       tracker.addImage(this.logoImage, 0);
 
@@ -747,7 +754,7 @@ public final class MascotCapsuleCanvas extends MainCanvas implements KeyListener
    }
 
    public void setPerspective(boolean persp) {
-      this.disablePerspective = !persp;
+      this.isPerspective = persp;
    }
 
    public void setMipmapEnabled(boolean mipmap) {
@@ -784,5 +791,21 @@ public final class MascotCapsuleCanvas extends MainCanvas implements KeyListener
 
    static int getFrameIntervalMs(MascotCapsuleCanvas canvas) {
       return canvas.targetFrameIntervalMs;
+   }
+
+   public BacModel getModel() {
+      return this.model;
+   }
+
+   public TraAnimation getAnimation() {
+      return this.animation;
+   }
+
+   public Texture getModelTexture() {
+      return this.modelTexture;
+   }
+
+   public int[] getBackgroundPixels() {
+      return this.backgroundPixels;
    }
 }

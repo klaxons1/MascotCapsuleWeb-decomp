@@ -140,12 +140,12 @@ public class MainCanvas extends Canvas {
       this.markDirtyAll();
    }
 
-   public synchronized void enablePerspective(float fov) {
-      this.renderContext.enablePerspective(fov);
+   public synchronized void enableParallelProjection(float scale) {
+      this.renderContext.enableParallelProjection(scale);
    }
 
-   public synchronized void disablePerspective() {
-      this.renderContext.disablePerspective();
+   public synchronized void disableParallelProjection() {
+      this.renderContext.disableParallelProjection();
    }
 
    public synchronized void initPacketTable(int capacity, float nearZ, float farZ) {

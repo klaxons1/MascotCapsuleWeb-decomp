@@ -38,6 +38,7 @@ public final class BacModel {
          bone.restTransform.m23 = reader.readFloat();
          bone.boneIndex = reader.readShort();
          bone.setParent((SceneNode)(boneIndex == 0 ? this.rootNode : this.bones[parentIndex]));
+         bone.setLocalTransform(bone.restTransform);
          boneIndex++;
          if (hasChild) {
             boneIndex = this.readBones(boneIndex, boneIndex - 1, reader);
@@ -108,13 +109,13 @@ public final class BacModel {
                   this.polygons[i].vertexCount = 3;
                   this.polygons[i].vert0 = reader.readShort();
                   this.polygons[i].u0 = reader.readShort();
-                  this.polygons[i].vert0 = reader.readShort();
+                  this.polygons[i].v0 = reader.readShort();
                   this.polygons[i].vert1 = reader.readShort();
                   this.polygons[i].u1 = reader.readShort();
-                  this.polygons[i].vert1 = reader.readShort();
+                  this.polygons[i].v1 = reader.readShort();
                   this.polygons[i].vert2 = reader.readShort();
                   this.polygons[i].u2 = reader.readShort();
-                  this.polygons[i].vert2 = reader.readShort();
+                  this.polygons[i].v2 = reader.readShort();
                }
 
                int quadCount = reader.readInt();
@@ -125,13 +126,13 @@ public final class BacModel {
                   this.polygons[i].vertexCount = 4;
                   this.polygons[i].vert0 = reader.readShort();
                   this.polygons[i].u0 = reader.readShort();
-                  this.polygons[i].vert0 = reader.readShort();
+                  this.polygons[i].v0 = reader.readShort();
                   this.polygons[i].vert1 = reader.readShort();
                   this.polygons[i].u1 = reader.readShort();
-                  this.polygons[i].vert1 = reader.readShort();
+                  this.polygons[i].v1 = reader.readShort();
                   this.polygons[i].vert2 = reader.readShort();
                   this.polygons[i].u2 = reader.readShort();
-                  this.polygons[i].vert2 = reader.readShort();
+                  this.polygons[i].v2 = reader.readShort();
                   this.polygons[i].vert3 = reader.readShort();
                   this.polygons[i].u3 = reader.readShort();
                   this.polygons[i].vert3 = reader.readShort();

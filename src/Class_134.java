@@ -30,7 +30,7 @@ class Class_134 implements Runnable {
             long var3 = System.currentTimeMillis();
             long var5 = var3 - var1;
             Class_aa.sub_81d(this.var_155, Class_aa.sub_880(this.var_155) * (float)var5 / 1000.0F);
-            float var7 = Class_aa.sub_8e3(this.var_155).sub_23d();
+            float var7 = Class_aa.sub_8e3(this.var_155).getDuration();
             if (var7 > 0.0F && Class_aa.sub_917(this.var_155) > var7) {
                Class_aa.sub_945(this.var_155, var7 * (int)(Class_aa.sub_917(this.var_155) / var7));
             }

@@ -88,7 +88,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
       this.sub_1a2(10000, 100.0F, 2000.0F);
       this.var_34f = var1 / 2;
       this.var_3ab = var2 / 2;
-      this.var_15a.sub_d7(MatrixUtils.createLookAt(var_880, var_898));
+      this.var_15a.setLocalTransform(MatrixUtils.createLookAt(var_880, var_898));
       this.resize(var1, var2);
       this.sub_1a();
       if (!var3) {
@@ -141,11 +141,11 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
       this.var_71c = 0.0F;
       this.var_9b2.multiplyRotation(this.var_4a8);
       if (this.var_1e4 != null) {
-         this.var_1e4.sub_208(this.var_61a);
+         this.var_1e4.applyPose(this.var_61a);
       }
 
       Class_5a9 var1 = this.var_1c9.sub_df();
-      var1.sub_d7(this.var_9b2);
+      var1.setLocalTransform(this.var_9b2);
       this.sub_242(this.var_1c9, this.var_15a);
       return this.sub_88();
    }
@@ -387,10 +387,10 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
                }
             } else if (var10.regionMatches(true, var11 - 5, ".jbac", 0, 5)) {
                var7 = new RenderState();
-               if (!var7.sub_35(new BufferedInputStream(var2))) {
+               if (!var7.load(new BufferedInputStream(var2))) {
                   var7 = null;
                } else if (this.var_865) {
-                  var7.sub_31b();
+                  var7.generateNormals();
                }
 
                if (this.var_1c9 == null && var7 != null) {
@@ -399,7 +399,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
                }
             } else if (var10.regionMatches(true, var11 - 5, ".jtra", 0, 5)) {
                var8 = new Model();
-               if (!var8.sub_f8(new BufferedInputStream(var2))) {
+               if (!var8.load(new BufferedInputStream(var2))) {
                   var8 = null;
                }
 
@@ -458,7 +458,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
          }
 
          if (var7 != null || var8 != null && this.var_1c9 != null) {
-            this.var_1e4.sub_122(this.var_1c9);
+            this.var_1e4.bindModel(this.var_1c9);
          }
       }
 
@@ -485,10 +485,10 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
 
          if (var1 != null) {
             var5 = new RenderState();
-            if (!var5.sub_35(new BufferedInputStream(var1))) {
+            if (!var5.load(new BufferedInputStream(var1))) {
                var5 = null;
             } else if (this.var_865) {
-               var5.sub_31b();
+               var5.generateNormals();
             }
 
             if (this.var_1c9 == null && var5 != null) {
@@ -499,7 +499,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
 
          if (var2 != null) {
             var6 = new Model();
-            if (!var6.sub_f8(new BufferedInputStream(var2))) {
+            if (!var6.load(new BufferedInputStream(var2))) {
                var6 = null;
             }
 
@@ -527,7 +527,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
             }
 
             if (var5 != null || var6 != null) {
-               this.var_1e4.sub_122(this.var_1c9);
+               this.var_1e4.bindModel(this.var_1c9);
             }
          }
       } catch (IOException var10) {
@@ -697,7 +697,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
    }
 
    public void sub_5ca(Transform3D var1) {
-      this.var_15a.sub_d7(var1);
+      this.var_15a.setLocalTransform(var1);
    }
 
    public void sub_5fa(boolean var1) {

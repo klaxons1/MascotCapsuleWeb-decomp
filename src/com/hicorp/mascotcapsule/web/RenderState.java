@@ -3,143 +3,143 @@ package com.hicorp.mascotcapsule.web;
 import java.io.InputStream;
 
 public final class RenderState {
-   public static final int var_27 = 4;
-   private long var_a8;
-   private static final Vector3f var_107 = new Vector3f(0.0F, 0.0F, 1.0F);
-   protected final Class_5a9 var_11b = new Class_5a9();
-   protected int var_12f = 0;
-   protected Class_13f[] var_17c = null;
-   protected int var_1d4 = 0;
-   protected Vector3f[] var_22e = null;
-   protected Vector3f[] var_244 = null;
-   protected int var_255 = 0;
-   protected Class_12f[] var_2b7 = null;
+   public static final int HEADER_MAGIC = 4;
+   private long version;
+   private static final Vector3f DEFAULT_LIGHT_DIR = new Vector3f(0.0F, 0.0F, 1.0F);
+   protected final Class_5a9 rootNode = new Class_5a9();
+   protected int boneCount = 0;
+   protected Class_13f[] bones = null;
+   protected int vertexCount = 0;
+   protected Vector3f[] vertices = null;
+   protected Vector3f[] normals = null;
+   protected int polygonCount = 0;
+   protected Class_12f[] polygons = null;
 
-   protected int sub_2b(int var1, int var2, Class_613 var3) {
-      boolean var5;
+   protected int readBones(int boneIndex, int parentIndex, Class_613 reader) {
+      boolean hasSibling;
       do {
-         Class_13f var9 = new Class_13f();
-         this.var_17c[var1] = var9;
-         boolean var4;
-         var9.var_2a = var4 = var3.readByte() != 0;
-         var9.var_8c = var5 = var3.readByte() != 0;
-         var9.var_a2 = var3.readCString();
-         var9.var_f4.m00 = var3.readFloat();
-         var9.var_f4.m01 = var3.readFloat();
-         var9.var_f4.m02 = var3.readFloat();
-         var9.var_f4.m10 = var3.readFloat();
-         var9.var_f4.m11 = var3.readFloat();
-         var9.var_f4.m12 = var3.readFloat();
-         var9.var_f4.m20 = var3.readFloat();
-         var9.var_f4.m21 = var3.readFloat();
-         var9.var_f4.m22 = var3.readFloat();
-         var9.var_f4.m03 = var3.readFloat();
-         var9.var_f4.m13 = var3.readFloat();
-         var9.var_f4.m23 = var3.readFloat();
-         var9.var_118 = var3.readShort();
-         var9.sub_55((Class_5a9)(var1 == 0 ? this.var_11b : this.var_17c[var2]));
-         var1++;
-         if (var4) {
-            var1 = this.sub_2b(var1, var1 - 1, var3);
+         Class_13f bone = new Class_13f();
+         this.bones[boneIndex] = bone;
+         boolean hasChild;
+         bone.hasChild = hasChild = reader.readByte() != 0;
+         bone.hasSibling = hasSibling = reader.readByte() != 0;
+         bone.name = reader.readCString();
+         bone.restTransform.m00 = reader.readFloat();
+         bone.restTransform.m01 = reader.readFloat();
+         bone.restTransform.m02 = reader.readFloat();
+         bone.restTransform.m10 = reader.readFloat();
+         bone.restTransform.m11 = reader.readFloat();
+         bone.restTransform.m12 = reader.readFloat();
+         bone.restTransform.m20 = reader.readFloat();
+         bone.restTransform.m21 = reader.readFloat();
+         bone.restTransform.m22 = reader.readFloat();
+         bone.restTransform.m03 = reader.readFloat();
+         bone.restTransform.m13 = reader.readFloat();
+         bone.restTransform.m23 = reader.readFloat();
+         bone.boneIndex = reader.readShort();
+         bone.setParent((Class_5a9)(boneIndex == 0 ? this.rootNode : this.bones[parentIndex]));
+         boneIndex++;
+         if (hasChild) {
+            boneIndex = this.readBones(boneIndex, boneIndex - 1, reader);
          }
-      } while (var5);
+      } while (hasSibling);
 
-      return var1;
+      return boneIndex;
    }
 
-   public boolean sub_35(InputStream var1) {
-      Class_613 var2 = new Class_613(var1);
-      byte var4 = var2.readByte();
-      byte var5 = var2.readByte();
-      byte var6 = var2.readByte();
-      byte var7 = var2.readByte();
-      if (var4 == 72 && var5 == 73 && var6 == 74 && var7 == 66) {
-         this.var_a8 = var2.readInt();
-         if (this.var_a8 != 1L) {
+   public boolean load(InputStream in) {
+      Class_613 reader = new Class_613(in);
+      byte m0 = reader.readByte();
+      byte m1 = reader.readByte();
+      byte m2 = reader.readByte();
+      byte m3 = reader.readByte();
+      if (m0 == 'H' && m1 == 'I' && m2 == 'J' && m3 == 'B') {
+         this.version = reader.readInt();
+         if (this.version != 1L) {
             return false;
          } else {
-            var2.skipBytes(12);
-            byte[] var8 = new byte[64];
-            byte var9 = 0;
+            reader.skipBytes(12);
+            byte[] headerPad = new byte[64];
+            byte padSum = 0;
 
-            for (int var3 = 0; var3 < 64; var3++) {
-               var8[var3] = var2.readByte();
-               var9 += var8[var3];
+            for (int i = 0; i < 64; i++) {
+               headerPad[i] = reader.readByte();
+               padSum += headerPad[i];
             }
 
-            this.var_1d4 = var2.readInt();
-            this.var_22e = new Vector3f[this.var_1d4];
+            this.vertexCount = reader.readInt();
+            this.vertices = new Vector3f[this.vertexCount];
 
-            for (int var13 = 0; var13 < this.var_1d4; var13++) {
-               this.var_22e[var13] = new Vector3f();
-               this.var_22e[var13].x = var2.readFloat();
-               this.var_22e[var13].y = var2.readFloat();
-               this.var_22e[var13].z = var2.readFloat();
+            for (int i = 0; i < this.vertexCount; i++) {
+               this.vertices[i] = new Vector3f();
+               this.vertices[i].x = reader.readFloat();
+               this.vertices[i].y = reader.readFloat();
+               this.vertices[i].z = reader.readFloat();
             }
 
-            int var10 = var2.readInt();
-            if (var10 > 0) {
-               if (var10 != this.var_1d4) {
+            int normalCount = reader.readInt();
+            if (normalCount > 0) {
+               if (normalCount != this.vertexCount) {
                   return false;
                }
 
-               this.var_244 = new Vector3f[var10];
+               this.normals = new Vector3f[normalCount];
 
-               for (int var14 = 0; var14 < this.var_1d4; var14++) {
-                  this.var_244[var14] = new Vector3f();
-                  this.var_244[var14].x = var2.readFloat();
-                  this.var_244[var14].y = var2.readFloat();
-                  this.var_244[var14].z = var2.readFloat();
+               for (int i = 0; i < this.vertexCount; i++) {
+                  this.normals[i] = new Vector3f();
+                  this.normals[i].x = reader.readFloat();
+                  this.normals[i].y = reader.readFloat();
+                  this.normals[i].z = reader.readFloat();
                }
             } else {
-               this.var_244 = null;
+               this.normals = null;
             }
 
-            this.var_255 = var2.readInt();
-            if (var9 == 0 && this.var_255 >= 500) {
+            this.polygonCount = reader.readInt();
+            if (padSum == 0 && this.polygonCount >= 500) {
                return false;
             } else {
-               this.var_2b7 = new Class_12f[this.var_255];
-               int var11 = var2.readInt();
+               this.polygons = new Class_12f[this.polygonCount];
+               int triCount = reader.readInt();
 
-               for (int var15 = 0; var15 < var11; var15++) {
-                  this.var_2b7[var15] = new Class_12f();
-                  this.var_2b7[var15].var_37 = var2.readInt();
-                  this.var_2b7[var15].var_55 = 3;
-                  this.var_2b7[var15].var_a0 = var2.readShort();
-                  this.var_2b7[var15].var_bf = var2.readShort();
-                  this.var_2b7[var15].var_103 = var2.readShort();
-                  this.var_2b7[var15].var_15b = var2.readShort();
-                  this.var_2b7[var15].var_1a3 = var2.readShort();
-                  this.var_2b7[var15].var_1d0 = var2.readShort();
-                  this.var_2b7[var15].var_1f4 = var2.readShort();
-                  this.var_2b7[var15].var_23e = var2.readShort();
-                  this.var_2b7[var15].var_280 = var2.readShort();
+               for (int i = 0; i < triCount; i++) {
+                  this.polygons[i] = new Class_12f();
+                  this.polygons[i].flags = reader.readInt();
+                  this.polygons[i].vertexCount = 3;
+                  this.polygons[i].v0 = reader.readShort();
+                  this.polygons[i].u0 = reader.readShort();
+                  this.polygons[i].v0_coord = reader.readShort();
+                  this.polygons[i].v1 = reader.readShort();
+                  this.polygons[i].u1 = reader.readShort();
+                  this.polygons[i].v1_coord = reader.readShort();
+                  this.polygons[i].v2 = reader.readShort();
+                  this.polygons[i].u2 = reader.readShort();
+                  this.polygons[i].v2_coord = reader.readShort();
                }
 
-               int var12 = var2.readInt();
+               int quadCount = reader.readInt();
 
-               for (int var16 = var11; var16 < this.var_255; var16++) {
-                  this.var_2b7[var16] = new Class_12f();
-                  this.var_2b7[var16].var_37 = var2.readInt();
-                  this.var_2b7[var16].var_55 = 4;
-                  this.var_2b7[var16].var_a0 = var2.readShort();
-                  this.var_2b7[var16].var_bf = var2.readShort();
-                  this.var_2b7[var16].var_103 = var2.readShort();
-                  this.var_2b7[var16].var_15b = var2.readShort();
-                  this.var_2b7[var16].var_1a3 = var2.readShort();
-                  this.var_2b7[var16].var_1d0 = var2.readShort();
-                  this.var_2b7[var16].var_1f4 = var2.readShort();
-                  this.var_2b7[var16].var_23e = var2.readShort();
-                  this.var_2b7[var16].var_280 = var2.readShort();
-                  this.var_2b7[var16].var_2ba = var2.readShort();
-                  this.var_2b7[var16].var_30e = var2.readShort();
-                  this.var_2b7[var16].var_356 = var2.readShort();
+               for (int i = triCount; i < this.polygonCount; i++) {
+                  this.polygons[i] = new Class_12f();
+                  this.polygons[i].flags = reader.readInt();
+                  this.polygons[i].vertexCount = 4;
+                  this.polygons[i].v0 = reader.readShort();
+                  this.polygons[i].u0 = reader.readShort();
+                  this.polygons[i].v0_coord = reader.readShort();
+                  this.polygons[i].v1 = reader.readShort();
+                  this.polygons[i].u1 = reader.readShort();
+                  this.polygons[i].v1_coord = reader.readShort();
+                  this.polygons[i].v2 = reader.readShort();
+                  this.polygons[i].u2 = reader.readShort();
+                  this.polygons[i].v2_coord = reader.readShort();
+                  this.polygons[i].v3 = reader.readShort();
+                  this.polygons[i].u3 = reader.readShort();
+                  this.polygons[i].v3_coord = reader.readShort();
                }
 
-               this.var_12f = var2.readInt();
-               this.var_17c = new Class_13f[this.var_12f];
-               return this.var_12f == this.sub_2b(0, 0, var2);
+               this.boneCount = reader.readInt();
+               this.bones = new Class_13f[this.boneCount];
+               return this.boneCount == this.readBones(0, 0, reader);
             }
          }
       } else {
@@ -147,79 +147,79 @@ public final class RenderState {
       }
    }
 
-   public final int sub_85() {
-      return this.var_12f;
+   public final int getBoneCount() {
+      return this.boneCount;
    }
 
-   public final Class_5a9 sub_df() {
-      return this.var_11b;
+   public final Class_5a9 getRootNode() {
+      return this.rootNode;
    }
 
-   public final Class_13f sub_126(int var1) {
-      return this.var_17c[var1];
+   public final Class_13f getBone(int index) {
+      return this.bones[index];
    }
 
-   public final int sub_175() {
-      return this.var_1d4;
+   public final int getVertexCount() {
+      return this.vertexCount;
    }
 
-   public final Vector3f[] sub_198() {
-      return this.var_22e;
+   public final Vector3f[] getVertices() {
+      return this.vertices;
    }
 
-   public final Vector3f[] sub_1e6() {
-      return this.var_244;
+   public final Vector3f[] getNormals() {
+      return this.normals;
    }
 
-   public final int sub_24a() {
-      return this.var_255;
+   public final int getPolygonCount() {
+      return this.polygonCount;
    }
 
-   public final Class_12f sub_28f(int var1) {
-      return this.var_2b7[var1];
+   public final Class_12f getPolygon(int index) {
+      return this.polygons[index];
    }
 
-   public final Class_12f sub_2e1() {
-      return this.var_2b7[0];
+   public final Class_12f getFirstPolygon() {
+      return this.polygons[0];
    }
 
-   public final boolean sub_2ef() {
-      return this.var_17c != null;
+   public final boolean hasBones() {
+      return this.bones != null;
    }
 
-   public final void sub_31b() {
-      if (this.var_244 == null) {
-         this.var_244 = new Vector3f[this.var_1d4];
-         Vector3f var1 = new Vector3f();
-         Vector3f var2 = new Vector3f();
+   public final void generateNormals() {
+      if (this.normals == null) {
+         this.normals = new Vector3f[this.vertexCount];
+         Vector3f edge1 = new Vector3f();
+         Vector3f edge2 = new Vector3f();
 
-         for (int var3 = this.var_1d4 - 1; var3 >= 0; var3--) {
-            this.var_244[var3] = new Vector3f(0.0F, 0.0F, 0.0F);
+         for (int i = this.vertexCount - 1; i >= 0; i--) {
+            this.normals[i] = new Vector3f(0.0F, 0.0F, 0.0F);
          }
 
-         for (int var4 = 0; var4 < this.var_255; var4++) {
-            Class_12f var5 = this.var_2b7[var4];
-            var1.setDifference(this.var_22e[var5.var_15b], this.var_22e[var5.var_a0]);
-            var2.setDifference(this.var_22e[var5.var_1f4], this.var_22e[var5.var_a0]);
-            var2.cross(var1);
-            this.var_244[var5.var_a0].add(var2);
-            this.var_244[var5.var_15b].add(var2);
-            this.var_244[var5.var_1f4].add(var2);
-            if (var5.var_55 == 4) {
-               this.var_244[var5.var_2ba].add(var2);
+         for (int i = 0; i < this.polygonCount; i++) {
+            Class_12f poly = this.polygons[i];
+            edge1.setDifference(this.vertices[poly.v1], this.vertices[poly.v0]);
+            edge2.setDifference(this.vertices[poly.v2], this.vertices[poly.v0]);
+            edge2.cross(edge1);
+            this.normals[poly.v0].add(edge2);
+            this.normals[poly.v1].add(edge2);
+            this.normals[poly.v2].add(edge2);
+            if (poly.vertexCount == 4) {
+               this.normals[poly.v3].add(edge2);
             }
 
-            var5.var_37 |= 32768;
-            var5.var_37 &= 65535;
-            var5.var_37 |= 1077936128;
+            poly.flags |= 32768;
+            poly.flags &= 65535;
+            poly.flags |= 1077936128;
          }
 
-         for (int var7 = this.var_1d4 - 1; var7 >= 0; var7--) {
-            float var6 = this.var_244[var7].length();
-            if (var6 != 0.0F) {
-               this.var_244[var7].scale(1.0F / var6);
+         for (int i = this.vertexCount - 1; i >= 0; i--) {
+            float len = this.normals[i].length();
+            if (len != 0.0F) {
+               this.normals[i].scale(1.0F / len);
             } else {
-               this.var_244[var7].sub_7a(1.0F, 0.0F, 0.0F);
+               this.normals[i].set(1.0F, 0.0F, 0.0F);
             }
          }
       }

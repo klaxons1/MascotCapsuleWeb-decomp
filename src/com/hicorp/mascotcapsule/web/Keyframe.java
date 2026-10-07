@@ -1,15 +1,15 @@
 package com.hicorp.mascotcapsule.web;
 
 final class Keyframe {
-   int var_65;
-   float var_a3;
-   float var_eb;
-   float var_10a;
+   int time;
+   float duration;
+   float value;
+   float deltaValue;
 
    private Keyframe() {
    }
 
-   Keyframe(Interpolator var1) {
+   Keyframe(Interpolator unused) {
       this();
    }
 }

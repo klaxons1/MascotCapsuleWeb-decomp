@@ -98,13 +98,13 @@ final class RenderContext {
    }
 
    protected void sub_f7(RenderState var1, boolean var2) {
-      if (this.var_477.length < var1.sub_175()) {
-         this.var_426 = new int[var1.sub_175() * 2];
-         this.var_477 = new float[var1.sub_175()];
+      if (this.var_477.length < var1.getVertexCount()) {
+         this.var_426 = new int[var1.getVertexCount() * 2];
+         this.var_477 = new float[var1.getVertexCount()];
       }
 
-      if (var2 && this.var_56b.length < var1.sub_175() * 3) {
-         this.var_56b = new float[var1.sub_175() * 3];
+      if (var2 && this.var_56b.length < var1.getVertexCount() * 3) {
+         this.var_56b = new float[var1.getVertexCount() * 3];
       }
    }
 
@@ -154,7 +154,7 @@ final class RenderContext {
    public void sub_2dd(RenderState var1, Class_339 var2) {
       try {
          this.var_4da = false;
-         boolean var3 = this.var_7e2 && var1.sub_1e6() != null;
+         boolean var3 = this.var_7e2 && var1.getNormals() != null;
          this.sub_f7(var1, var3);
          Transform3D var4 = new Transform3D();
          Transform3D var5 = new Transform3D();
@@ -168,23 +168,23 @@ final class RenderContext {
          Vector3f var13 = new Vector3f();
          int[] var14 = this.var_426;
          float[] var15 = this.var_477;
-         var2.sub_50(var1.sub_df(), var4);
+         var2.computeModelViewTransform(var1.getRootNode(), var4);
          int var16 = var1.sub_85();
          int var17 = 0;
          new Vector3f();
 
          for (int var19 = 0; var19 < var16; var19++) {
-            Class_13f var20 = var1.sub_126(var19);
-            var20.sub_16b(var7);
+            Class_13f var20 = var1.getBone(var19);
+            var20.getTransformRelativeToRoot(var7);
             var5.multiply(var4, var7);
             if (this.var_8be) {
-               var5.transformAndProjectPerspective(var1.sub_198(), var14, var15, var17, var20.sub_59(), this.var_918);
+               var5.transformAndProjectPerspective(var1.getVertices(), var14, var15, var17, var20.getIndex(), this.var_918);
             } else {
-               var5.transformAndProjectOrthographic(var1.sub_198(), var14, var15, var17, var20.sub_59(), this.var_8ad);
+               var5.transformAndProjectOrthographic(var1.getVertices(), var14, var15, var17, var20.getIndex(), this.var_8ad);
             }
 
             if (var3) {
-               var1.sub_df().sub_12f(var6);
+               var1.getRootNode().sub_12f(var6);
                var6.multiply(var7);
                var8.invert(var6);
                var8.normalizeColumns();
@@ -196,13 +196,13 @@ final class RenderContext {
                var10.set(var5);
                var10.normalizeColumns();
                if (this.var_7a3 != null) {
-                  this.sub_477(var12, var10, var1.sub_1e6(), var17, var20.sub_59());
+                  this.sub_477(var12, var10, var1.getNormals(), var17, var20.getIndex());
                } else {
-                  this.sub_42e(var11, var12, var13, var1.sub_1e6(), var17, var20.sub_59());
+                  this.sub_42e(var11, var12, var13, var1.getNormals(), var17, var20.getIndex());
                }
             }
 
-            var17 += var20.sub_59();
+            var17 += var20.getIndex();
          }
 
          int var48 = this.var_7a3 != null ? this.var_7a3.getWidth() : 0;
@@ -214,14 +214,14 @@ final class RenderContext {
          var22[2] = var23.var_3ed;
          var22[3] = var23.var_46c;
 
-         for (int var24 = 0; var24 < var1.sub_24a(); var24++) {
-            Class_12f var25 = var1.sub_28f(var24);
-            int var26 = var25.var_55;
+         for (int var24 = 0; var24 < var1.getPolygonCount(); var24++) {
+            Class_12f var25 = var1.getPolygon(var24);
+            int var26 = var25.vertexCount;
             Class_8ed.assertTrue(var26 >= 3 && var26 <= 4);
-            int var27 = var25.var_37;
-            int var28 = var25.var_a0 * 2;
-            int var29 = var25.var_15b * 2;
-            int var30 = var25.var_1f4 * 2;
+            int var27 = var25.flags;
+            int var28 = var25.v0 * 2;
+            int var29 = var25.v1 * 2;
+            int var30 = var25.v2 * 2;
             if ((var27 & 1) == 0) {
                int var31 = (var14[var29 + 0] - var14[var28 + 0]) * (var14[var30 + 1] - var14[var29 + 1])
                   - (var14[var29 + 1] - var14[var28 + 1]) * (var14[var30 + 0] - var14[var29 + 0]);
@@ -230,7 +230,7 @@ final class RenderContext {
                      continue;
                   }
                } else {
-                  int var32 = var25.var_2ba * 2;
+                  int var32 = var25.v3 * 2;
                   int var33 = (var14[var30 + 0] - var14[var29 + 0]) * (var14[var32 + 1] - var14[var30 + 1])
                      - (var14[var30 + 1] - var14[var29 + 1]) * (var14[var32 + 0] - var14[var30 + 0]);
                   if (var31 - var33 <= 0) {
@@ -247,28 +247,28 @@ final class RenderContext {
             var22[1].var_9f = var14[var29 + 1] + this.var_6c6;
             var22[2].var_59 = var14[var30 + 0] + this.var_67b;
             var22[2].var_9f = var14[var30 + 1] + this.var_6c6;
-            if (var15[var25.var_a0] < var49) {
-               var49 = var15[var25.var_a0];
+            if (var15[var25.v0] < var49) {
+               var49 = var15[var25.v0];
             }
 
-            if (var15[var25.var_15b] < var49) {
-               var49 = var15[var25.var_15b];
+            if (var15[var25.v1] < var49) {
+               var49 = var15[var25.v1];
             }
 
-            if (var15[var25.var_1f4] < var49) {
-               var49 = var15[var25.var_1f4];
+            if (var15[var25.v2] < var49) {
+               var49 = var15[var25.v2];
             }
 
-            if (var15[var25.var_a0] > var50) {
-               var50 = var15[var25.var_a0];
+            if (var15[var25.v0] > var50) {
+               var50 = var15[var25.v0];
             }
 
-            if (var15[var25.var_15b] > var50) {
-               var50 = var15[var25.var_15b];
+            if (var15[var25.v1] > var50) {
+               var50 = var15[var25.v1];
             }
 
-            if (var15[var25.var_1f4] > var50) {
-               var50 = var15[var25.var_1f4];
+            if (var15[var25.v2] > var50) {
+               var50 = var15[var25.v2];
             }
 
             int var35 = this.var_70d.sub_2de(var22[0]);
@@ -277,15 +277,15 @@ final class RenderContext {
             int var51 = var35 | var36 | var37;
             int var34 = var35 & var36 & var37;
             if (var26 == 4) {
-               var35 = var25.var_2ba * 2;
+               var35 = var25.v3 * 2;
                var22[3].var_59 = var14[var35 + 0] + this.var_67b;
                var22[3].var_9f = var14[var35 + 1] + this.var_6c6;
-               if (var15[var25.var_2ba] < var49) {
-                  var49 = var15[var25.var_2ba];
+               if (var15[var25.v3] < var49) {
+                  var49 = var15[var25.v3];
                }
 
-               if (var15[var25.var_2ba] > var50) {
-                  var50 = var15[var25.var_2ba];
+               if (var15[var25.v3] > var50) {
+                  var50 = var15[var25.v3];
                }
 
                var36 = this.var_70d.sub_2de(var22[3]);
@@ -304,51 +304,51 @@ final class RenderContext {
                }
 
                if (!var55) {
-                  var22[0].var_100 = var25.var_bf;
-                  var22[0].var_114 = var25.var_103;
-                  var22[1].var_100 = var25.var_1a3;
-                  var22[1].var_114 = var25.var_1d0;
-                  var22[2].var_100 = var25.var_23e;
-                  var22[2].var_114 = var25.var_280;
+                  var22[0].var_100 = var25.u0;
+                  var22[0].var_114 = var25.v0_coord;
+                  var22[1].var_100 = var25.u1;
+                  var22[1].var_114 = var25.v1_coord;
+                  var22[2].var_100 = var25.u2;
+                  var22[2].var_114 = var25.v2_coord;
                   if (var26 == 4) {
-                     var22[3].var_100 = var25.var_30e;
-                     var22[3].var_114 = var25.var_356;
+                     var22[3].var_100 = var25.u3;
+                     var22[3].var_114 = var25.v3_coord;
                   }
                } else {
                   var37 = var27 >>> 16 & 0xFF;
                   int var38 = 255 - var37;
                   if (var37 <= 0) {
                      var23.var_2c5 = null;
-                     var22[0].var_100 = var25.var_bf;
-                     var22[0].var_114 = var25.var_103;
-                     var22[1].var_100 = var25.var_1a3;
-                     var22[1].var_114 = var25.var_1d0;
-                     var22[2].var_100 = var25.var_23e;
-                     var22[2].var_114 = var25.var_280;
+                     var22[0].var_100 = var25.u0;
+                     var22[0].var_114 = var25.v0_coord;
+                     var22[1].var_100 = var25.u1;
+                     var22[1].var_114 = var25.v1_coord;
+                     var22[2].var_100 = var25.u2;
+                     var22[2].var_114 = var25.v2_coord;
                      var22[0].var_181 = var22[1].var_181 = var22[2].var_181 = 0;
-                     int var39 = (int)(this.var_56b[var25.var_a0 * 3] * var38);
+                     int var39 = (int)(this.var_56b[var25.v0 * 3] * var38);
                      if (var39 > 255) {
                         var39 = 255;
                      }
 
                      var22[0].var_165 = var39;
-                     var39 = (int)(this.var_56b[var25.var_15b * 3] * var38);
+                     var39 = (int)(this.var_56b[var25.v1 * 3] * var38);
                      if (var39 > 255) {
                         var39 = 255;
                      }
 
                      var22[1].var_165 = var39;
-                     var39 = (int)(this.var_56b[var25.var_1f4 * 3] * var38);
+                     var39 = (int)(this.var_56b[var25.v2 * 3] * var38);
                      if (var39 > 255) {
                         var39 = 255;
                      }
 
                      var22[2].var_165 = var39;
                      if (var26 == 4) {
-                        var22[3].var_100 = var25.var_30e;
-                        var22[3].var_114 = var25.var_356;
+                        var22[3].var_100 = var25.u3;
+                        var22[3].var_114 = var25.v3_coord;
                         var22[3].var_181 = 0;
-                        var39 = (int)(this.var_56b[var25.var_2ba * 3] * var38);
+                        var39 = (int)(this.var_56b[var25.v3 * 3] * var38);
                         if (var39 > 255) {
                            var39 = 255;
                         }
@@ -357,15 +357,15 @@ final class RenderContext {
                      }
                   } else if (this.var_7a3 != null) {
                      var23.var_2c5 = this.var_7a3;
-                     var22[0].var_100 = var25.var_bf;
-                     var22[0].var_114 = var25.var_103;
-                     var22[1].var_100 = var25.var_1a3;
-                     var22[1].var_114 = var25.var_1d0;
-                     var22[2].var_100 = var25.var_23e;
-                     var22[2].var_114 = var25.var_280;
-                     int var40 = var25.var_a0 * 3;
-                     int var41 = var25.var_15b * 3;
-                     int var42 = var25.var_1f4 * 3;
+                     var22[0].var_100 = var25.u0;
+                     var22[0].var_114 = var25.v0_coord;
+                     var22[1].var_100 = var25.u1;
+                     var22[1].var_114 = var25.v1_coord;
+                     var22[2].var_100 = var25.u2;
+                     var22[2].var_114 = var25.v2_coord;
+                     int var40 = var25.v0 * 3;
+                     int var41 = var25.v1 * 3;
+                     int var42 = var25.v2 * 3;
                      int var60 = (int)(this.var_56b[var40 + 0] * var38);
                      if (var60 > 255) {
                         var60 = 255;
@@ -391,9 +391,9 @@ final class RenderContext {
                      var22[2].var_181 = (int)(this.var_56b[var42 + 1] * var48);
                      var22[2].var_1a4 = (int)(this.var_56b[var42 + 2] * var21);
                      if (var26 == 4) {
-                        var22[3].var_100 = var25.var_30e;
-                        var22[3].var_114 = var25.var_356;
-                        int var43 = var25.var_2ba * 3;
+                        var22[3].var_100 = var25.u3;
+                        var22[3].var_114 = var25.v3_coord;
+                        int var43 = var25.v3 * 3;
                         var60 = (int)(this.var_56b[var43 + 0] * var38);
                         if (var60 > 255) {
                            var60 = 255;
@@ -405,15 +405,15 @@ final class RenderContext {
                      }
                   } else {
                      var23.var_2c5 = null;
-                     var22[0].var_100 = var25.var_bf;
-                     var22[0].var_114 = var25.var_103;
-                     var22[1].var_100 = var25.var_1a3;
-                     var22[1].var_114 = var25.var_1d0;
-                     var22[2].var_100 = var25.var_23e;
-                     var22[2].var_114 = var25.var_280;
-                     int var76 = var25.var_a0 * 3;
-                     int var77 = var25.var_15b * 3;
-                     int var44 = var25.var_1f4 * 3;
+                     var22[0].var_100 = var25.u0;
+                     var22[0].var_114 = var25.v0_coord;
+                     var22[1].var_100 = var25.u1;
+                     var22[1].var_114 = var25.v1_coord;
+                     var22[2].var_100 = var25.u2;
+                     var22[2].var_114 = var25.v2_coord;
+                     int var76 = var25.v0 * 3;
+                     int var77 = var25.v1 * 3;
+                     int var44 = var25.v2 * 3;
                      int var64 = (int)(this.var_56b[var76 + 0] * var38);
                      if (var64 > 255) {
                         var64 = 255;
@@ -482,9 +482,9 @@ final class RenderContext {
 
                      var22[2].var_181 = var68;
                      if (var26 == 4) {
-                        var22[3].var_100 = var25.var_30e;
-                        var22[3].var_114 = var25.var_356;
-                        int var80 = var25.var_2ba * 3;
+                        var22[3].var_100 = var25.u3;
+                        var22[3].var_114 = var25.v3_coord;
+                        int var80 = var25.v3 * 3;
                         var64 = (int)(this.var_56b[var80 + 0] * var38);
                         if (var64 > 255) {
                            var64 = 255;

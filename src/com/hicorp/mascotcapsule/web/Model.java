@@ -3,117 +3,115 @@ package com.hicorp.mascotcapsule.web;
 import java.io.InputStream;
 
 public final class Model {
-   private static final Vector3f var_62 = new Vector3f(1.0F, 1.0F, 1.0F);
-   private static final int var_bb = 0;
-   private static final int var_105 = 1;
-   private static final int var_164 = 2;
-   private static final int var_1c3 = 3;
-   private static final int var_217 = 4;
-   private static final int var_262 = 5;
-   private static final int var_26d = 6;
-   private static final int var_2a6 = 7;
-   private static final int var_2b1 = 8;
-   private static final int var_2e5 = 9;
-   private static final int var_33e = 10;
-   protected int var_360 = 0;
-   protected int var_395 = 0;
-   protected Bone[] var_3c7 = null;
-   protected int var_3e4 = 0;
-   protected BoneAnimation[] var_409 = null;
-   protected int var_450 = 0;
-   protected Keyframe[] var_492 = null;
-   public RenderState var_4ab = null;
+   private static final Vector3f DEFAULT_SCALE = new Vector3f(1.0F, 1.0F, 1.0F);
+   public static final int TRACK_POS_X = 0;
+   public static final int TRACK_POS_Y = 1;
+   public static final int TRACK_POS_Z = 2;
+   public static final int TRACK_SCALE_X = 3;
+   public static final int TRACK_SCALE_Y = 4;
+   public static final int TRACK_SCALE_Z = 5;
+   public static final int TRACK_ROT_AXIS_X = 6;
+   public static final int TRACK_ROT_AXIS_Y = 7;
+   public static final int TRACK_ROT_AXIS_Z = 8;
+   public static final int TRACK_ROT_ANGLE = 9;
+   public static final int NUM_TRACKS = 10;
 
-   protected void sub_43() {
-      this.var_360 = 0;
-      this.var_395 = 0;
-      this.var_3c7 = null;
-      this.var_3e4 = 0;
-      this.var_409 = null;
-      this.var_450 = 0;
-      this.var_492 = null;
-      this.var_4ab = null;
+   protected int duration = 0;
+   protected int boneCount = 0;
+   protected Bone[] boneChannels = null;
+   protected int modelBoneCount = 0;
+   protected BoneAnimation[] bonePoses = null;
+   protected int totalKeyframes = 0;
+   protected Keyframe[] allKeyframes = null;
+   public RenderState bacModel = null;
+
+   protected void reset() {
+      this.duration = 0;
+      this.boneCount = 0;
+      this.boneChannels = null;
+      this.modelBoneCount = 0;
+      this.bonePoses = null;
+      this.totalKeyframes = 0;
+      this.allKeyframes = null;
+      this.bacModel = null;
    }
 
-   protected void sub_a5() {
-      this.var_450 = 0;
-      this.var_492 = null;
+   protected void initKeyframeBuffer() {
+      this.totalKeyframes = 0;
+      this.allKeyframes = null;
 
-      for (int var1 = 0; var1 < this.var_3e4; var1++) {
-         int var2 = 0;
-
-         while (var2 < this.var_395 && !this.var_3c7[var2].var_51.equalsIgnoreCase(this.var_4ab.sub_126(var1).sub_9e())) {
-            var2++;
+      for (int i = 0; i < this.modelBoneCount; i++) {
+         int idx = 0;
+         while (idx < this.boneCount && !this.boneChannels[idx].name.equalsIgnoreCase(this.bacModel.getBone(i).getName())) {
+            idx++;
          }
 
-         if (var2 != this.var_395) {
-            for (int var3 = 0; var3 <= 9; var3++) {
-               this.var_450 = this.var_450 + this.var_3c7[var2].var_2b0[var3].sub_41();
+         if (idx != this.boneCount) {
+            for (int t = 0; t < NUM_TRACKS; t++) {
+               this.totalKeyframes += this.boneChannels[idx].tracks[t].getCount();
             }
          } else {
-            this.var_450 += 10;
+            this.totalKeyframes += NUM_TRACKS;
          }
       }
 
-      this.var_492 = new Keyframe[this.var_450];
-
-      for (int var4 = 0; var4 < this.var_450; var4++) {
-         this.var_492[var4] = new Keyframe(null);
+      this.allKeyframes = new Keyframe[this.totalKeyframes];
+      for (int i = 0; i < this.totalKeyframes; i++) {
+         this.allKeyframes[i] = new Keyframe(null);
       }
    }
 
-   public boolean sub_f8(InputStream var1) {
-      this.sub_43();
-      if (var1 == null) {
+   public boolean load(InputStream in) {
+      this.reset();
+      if (in == null) {
          return true;
       } else {
-         Class_613 var2 = new Class_613(var1);
-         byte var11 = var2.readByte();
-         byte var12 = var2.readByte();
-         byte var13 = var2.readByte();
-         byte var14 = var2.readByte();
-         if (var11 == 72 && var12 == 73 && var13 == 74 && var14 == 84) {
-            int var9 = var2.readInt();
-            if (var9 != 1) {
+         Class_613 reader = new Class_613(in);
+         byte m0 = reader.readByte();
+         byte m1 = reader.readByte();
+         byte m2 = reader.readByte();
+         byte m3 = reader.readByte();
+         if (m0 == 'H' && m1 == 'I' && m2 == 'J' && m3 == 'T') {
+            int ver = reader.readInt();
+            if (ver != 1) {
                return false;
             } else {
-               var2.skipBytes(12);
-               byte[] var15 = new byte[64];
-
-               for (int var3 = 0; var3 < 64; var3++) {
-                  var15[var3] = var2.readByte();
+               reader.skipBytes(12);
+               byte[] headerPad = new byte[64];
+               for (int i = 0; i < 64; i++) {
+                  headerPad[i] = reader.readByte();
                }
 
-               short var10 = var2.readShort();
-               this.var_395 = var2.readShort();
-               this.var_360 = var10 < 1 ? 0 : var10 - 1;
-               this.var_3c7 = new Bone[this.var_395];
+               short frames = reader.readShort();
+               this.boneCount = reader.readShort();
+               this.duration = frames < 1 ? 0 : frames - 1;
+               this.boneChannels = new Bone[this.boneCount];
 
-               for (int var16 = 0; var16 < this.var_395; var16++) {
-                  this.var_3c7[var16] = new Bone();
-                  this.var_3c7[var16].var_51 = var2.readCString();
-                  this.var_3c7[var16].var_109.x = var2.readFloat();
-                  this.var_3c7[var16].var_109.y = var2.readFloat();
-                  this.var_3c7[var16].var_109.z = var2.readFloat();
-                  this.var_3c7[var16].var_209.x = var2.readFloat();
-                  this.var_3c7[var16].var_209.y = var2.readFloat();
-                  this.var_3c7[var16].var_209.z = var2.readFloat();
-                  this.var_3c7[var16].var_241.x = var2.readFloat();
-                  this.var_3c7[var16].var_241.y = var2.readFloat();
-                  this.var_3c7[var16].var_241.z = var2.readFloat();
-                  this.var_3c7[var16].var_268.x = var2.readFloat();
-                  this.var_3c7[var16].var_268.y = var2.readFloat();
-                  this.var_3c7[var16].var_268.z = var2.readFloat();
+               for (int i = 0; i < this.boneCount; i++) {
+                  this.boneChannels[i] = new Bone();
+                  this.boneChannels[i].name = reader.readCString();
+                  this.boneChannels[i].translation.x = reader.readFloat();
+                  this.boneChannels[i].translation.y = reader.readFloat();
+                  this.boneChannels[i].translation.z = reader.readFloat();
+                  this.boneChannels[i].rotationAxis.x = reader.readFloat();
+                  this.boneChannels[i].rotationAxis.y = reader.readFloat();
+                  this.boneChannels[i].rotationAxis.z = reader.readFloat();
+                  this.boneChannels[i].rotationAngles.x = reader.readFloat();
+                  this.boneChannels[i].rotationAngles.y = reader.readFloat();
+                  this.boneChannels[i].rotationAngles.z = reader.readFloat();
+                  this.boneChannels[i].scale.x = reader.readFloat();
+                  this.boneChannels[i].scale.y = reader.readFloat();
+                  this.boneChannels[i].scale.z = reader.readFloat();
 
-                  for (int var4 = 0; var4 < 10; var4++) {
-                     short var6 = var2.readShort();
-                     this.var_3c7[var16].var_2b0[var4].sub_9a(var6);
+                  for (int t = 0; t < NUM_TRACKS; t++) {
+                     short count = reader.readShort();
+                     this.boneChannels[i].tracks[t].allocate(count);
 
-                     for (int var5 = 0; var5 < var6; var5++) {
-                        short var7 = var2.readShort();
-                        this.var_3c7[var16].var_2b0[var4].var_ce[var5].var_2e = var7;
-                        float var8 = var2.readFloat();
-                        this.var_3c7[var16].var_2b0[var4].var_ce[var5].var_92 = var8;
+                     for (int k = 0; k < count; k++) {
+                        short time = reader.readShort();
+                        this.boneChannels[i].tracks[t].keyframes[k].time = time;
+                        float val = reader.readFloat();
+                        this.boneChannels[i].tracks[t].keyframes[k].value = val;
                      }
                   }
                }
@@ -126,275 +124,284 @@ public final class Model {
       }
    }
 
-   public int sub_122(RenderState var1) {
-      Class_8ed.assertTrue(var1 != null);
-      Class_8ed.assertTrue(var1.sub_2ef());
-      if (var1 == null) {
-         return 1;
-      } else if (!var1.sub_2ef()) {
+   public int bindModel(RenderState model) {
+      Class_8ed.assertTrue(model != null);
+      Class_8ed.assertTrue(model.hasBones());
+      if (model == null || !model.hasBones()) {
          return 1;
       } else {
-         this.var_4ab = var1;
-         this.var_3e4 = var1.sub_85();
-         this.var_409 = new BoneAnimation[this.var_3e4];
+         this.bacModel = model;
+         this.modelBoneCount = model.getBoneCount();
+         this.bonePoses = new BoneAnimation[this.modelBoneCount];
 
-         for (int var2 = 0; var2 < this.var_3e4; var2++) {
-            this.var_409[var2] = new BoneAnimation();
-
-            for (int var3 = 0; var3 < 10; var3++) {
-               this.var_409[var2].var_1a0[var3] = new AnimationTrack(this, null);
+         for (int i = 0; i < this.modelBoneCount; i++) {
+            this.bonePoses[i] = new BoneAnimation();
+            for (int t = 0; t < NUM_TRACKS; t++) {
+               this.bonePoses[i].tracks[t] = new AnimationTrack(this, null);
             }
          }
 
-         this.sub_a5();
-         int var13 = 0;
+         this.initKeyframeBuffer();
+         int keyframeOffset = 0;
 
-         for (int var19 = 0; var19 < this.var_3e4; var19++) {
-            BoneAnimation var14 = this.var_409[var19];
-            int var5 = 0;
+         for (int i = 0; i < this.modelBoneCount; i++) {
+            BoneAnimation pose = this.bonePoses[i];
+            int matchIdx = 0;
 
-            while (var5 < this.var_395 && !this.var_3c7[var5].var_51.equalsIgnoreCase(var1.sub_126(var19).sub_9e())) {
-               var5++;
+            while (matchIdx < this.boneCount && !this.boneChannels[matchIdx].name.equalsIgnoreCase(model.getBone(i).getName())) {
+               matchIdx++;
             }
 
-            var14.var_ff = new Transform3D();
-            if (var5 == this.var_395) {
-               for (int var24 = 0; var24 <= 9; var24++) {
-                  AnimationTrack var27 = var14.var_1a0[var24];
-                  var13 = var27.sub_2c(var13, 1);
-                  var27.var_b5[0].var_65 = 0;
-                  var27.var_b5[0].var_a3 = 0.0F;
-                  var27.var_b5[0].var_eb = 0.0F;
-                  var27.var_b5[0].var_10a = 0.0F;
+            pose.rotationMatrix = new Transform3D();
+            if (matchIdx == this.boneCount) {
+               for (int t = 0; t < NUM_TRACKS; t++) {
+                  AnimationTrack track = pose.tracks[t];
+                  keyframeOffset = track.bindKeyframes(keyframeOffset, 1);
+                  track.keyframes[0].time = 0;
+                  track.keyframes[0].duration = 0.0F;
+                  track.keyframes[0].value = 0.0F;
+                  track.keyframes[0].deltaValue = 0.0F;
                }
 
-               var14.var_1a0[3].var_b5[0].var_eb = 1.0F;
-               var14.var_1a0[4].var_b5[0].var_eb = 1.0F;
-               var14.var_1a0[5].var_b5[0].var_eb = 1.0F;
-               var14.var_1a0[8].var_b5[0].var_eb = 1.0F;
-               var14.var_24 = true;
-               var14.var_ff.setIdentity();
+               pose.tracks[3].keyframes[0].value = 1.0F;
+               pose.tracks[4].keyframes[0].value = 1.0F;
+               pose.tracks[5].keyframes[0].value = 1.0F;
+               pose.tracks[8].keyframes[0].value = 1.0F;
+               pose.isAnimated = true;
+               pose.rotationMatrix.setIdentity();
             } else {
-               Bone var15 = this.var_3c7[var5];
-               var14.var_127 = var1.sub_126(var19).sub_d3();
-               var14.var_14a = sub_2c1(var1, var1.sub_126(var19), var15);
-               boolean var16 = false;
+               Bone channel = this.boneChannels[matchIdx];
+               pose.scaleMatrix = model.getBone(i).getRestTransform();
+               pose.transformMatrix = computeInverseRestTransform(model, model.getBone(i), channel);
+               boolean hasVariation = false;
 
-               for (int var4 = 0; var4 <= 9; var4++) {
-                  float var17 = Float.MAX_VALUE;
-                  float var18 = -Float.MAX_VALUE;
-                  Class_c25 var11 = var15.var_2b0[var4];
-                  AnimationTrack var12 = var14.var_1a0[var4];
-                  int var6 = var11.sub_41();
-                  var13 = var12.sub_2c(var13, var6);
+               for (int t = 0; t < NUM_TRACKS; t++) {
+                  float minVal = Float.MAX_VALUE;
+                  float maxVal = -Float.MAX_VALUE;
+                  Class_c25 raw = channel.tracks[t];
+                  AnimationTrack track = pose.tracks[t];
+                  int count = raw.getCount();
+                  keyframeOffset = track.bindKeyframes(keyframeOffset, count);
 
-                  for (int var20 = 0; var20 < var6; var20++) {
-                     int var7 = var11.var_ce[var20].var_2e;
-                     float var8 = var20 == var6 - 1 ? 0.0F : var11.var_ce[var20 + 1].var_2e - var7;
-                     float var9 = var11.var_ce[var20].var_92;
-                     float var10 = var20 == var6 - 1 ? 0.0F : var11.var_ce[var20 + 1].var_92 - var9;
-                     var12.var_b5[var20].var_65 = var7;
-                     var12.var_b5[var20].var_a3 = var8;
-                     var12.var_b5[var20].var_eb = var9;
-                     var12.var_b5[var20].var_10a = var10;
-                     var17 = var17 > var9 ? var9 : var17;
-                     var18 = var18 < var9 ? var9 : var18;
+                  for (int k = 0; k < count; k++) {
+                     int time = raw.keyframes[k].time;
+                     float dt = k == count - 1 ? 0.0F : raw.keyframes[k + 1].time - time;
+                     float val = raw.keyframes[k].value;
+                     float dVal = k == count - 1 ? 0.0F : raw.keyframes[k + 1].value - val;
+                     track.keyframes[k].time = time;
+                     track.keyframes[k].duration = dt;
+                     track.keyframes[k].value = val;
+                     track.keyframes[k].deltaValue = dVal;
+                     minVal = minVal > val ? val : minVal;
+                     maxVal = maxVal < val ? val : maxVal;
                   }
 
-                  if (var18 - var17 > 1.0E-5F) {
-                     var16 = true;
-                  }
-               }
-
-               for (int var23 = 3; var23 <= 5; var23++) {
-                  AnimationTrack var25 = var14.var_1a0[var23];
-
-                  for (int var21 = 0; var21 < var25.sub_84(); var21++) {
-                     var25.var_b5[var21].var_eb /= 100.0F;
-                     var25.var_b5[var21].var_10a /= 100.0F;
+                  if (maxVal - minVal > 1.0E-5F) {
+                     hasVariation = true;
                   }
                }
 
-               AnimationTrack var26 = var14.var_1a0[9];
-
-               for (int var22 = 0; var22 < var26.sub_84(); var22++) {
-                  var26.var_b5[var22].var_eb = MatrixUtils.toRadians(var26.var_b5[var22].var_eb);
-                  var26.var_b5[var22].var_10a = MatrixUtils.toRadians(var26.var_b5[var22].var_10a);
+               for (int t = 3; t <= 5; t++) {
+                  AnimationTrack track = pose.tracks[t];
+                  for (int k = 0; k < track.getKeyframeCount(); k++) {
+                     track.keyframes[k].value /= 100.0F;
+                     track.keyframes[k].deltaValue /= 100.0F;
+                  }
                }
 
-               if (!var16) {
-                  this.sub_1bc(var19, 0.0F, var14.var_ff);
-                  var14.var_24 = true;
+               AnimationTrack angleTrack = pose.tracks[9];
+               for (int k = 0; k < angleTrack.getKeyframeCount(); k++) {
+                  angleTrack.keyframes[k].value = MatrixUtils.toRadians(angleTrack.keyframes[k].value);
+                  angleTrack.keyframes[k].deltaValue = MatrixUtils.toRadians(angleTrack.keyframes[k].deltaValue);
+               }
+
+               if (!hasVariation) {
+                  this.computeBoneTransform(i, 0.0F, pose.rotationMatrix);
+                  pose.isAnimated = true;
                }
             }
          }
 
-         this.var_395 = 0;
-         this.var_3c7 = null;
-         Class_8ed.assertTrue(var13 == this.var_450);
+         this.boneCount = 0;
+         this.boneChannels = null;
+         Class_8ed.assertTrue(keyframeOffset == this.totalKeyframes);
          return 0;
       }
    }
 
-   public void sub_161(Model var1, float var2, Model var3, float var4, int var5) {
-      Class_8ed.assertTrue(var5 >= 2);
-      Class_8ed.assertTrue(this != var1 && this != var3);
-      Class_8ed.assertTrue(var1.var_3e4 == var3.var_3e4);
-      float[] var8 = new float[10];
-      float[] var9 = new float[10];
-      Vector3f var10 = new Vector3f();
-      this.sub_43();
-      this.var_360 = var5 - 1;
-      this.var_3e4 = var1.var_3e4;
-      this.var_409 = new BoneAnimation[this.var_3e4];
-      this.var_450 = 20 * this.var_3e4;
-      this.var_492 = new Keyframe[this.var_450];
-      int var12 = 0;
+   public void blendAnimations(Model animA, float timeA, Model animB, float timeB, int frames) {
+      Class_8ed.assertTrue(frames >= 2);
+      Class_8ed.assertTrue(this != animA && this != animB);
+      Class_8ed.assertTrue(animA.modelBoneCount == animB.modelBoneCount);
+      float[] valsA = new float[NUM_TRACKS];
+      float[] valsB = new float[NUM_TRACKS];
+      Vector3f normAxis = new Vector3f();
+      this.reset();
+      this.duration = frames - 1;
+      this.modelBoneCount = animA.modelBoneCount;
+      this.bonePoses = new BoneAnimation[this.modelBoneCount];
+      this.totalKeyframes = 20 * this.modelBoneCount;
+      this.allKeyframes = new Keyframe[this.totalKeyframes];
 
-      for (int var6 = 0; var6 < this.var_450; var6++) {
-         this.var_492[var6] = new Keyframe(null);
+      for (int i = 0; i < this.totalKeyframes; i++) {
+         this.allKeyframes[i] = new Keyframe(null);
       }
 
-      for (int var16 = 0; var16 < this.var_3e4; var16++) {
-         this.var_409[var16] = new BoneAnimation();
-         BoneAnimation var13 = this.var_409[var16];
-         BoneAnimation var14 = var1.var_409[var16];
-         BoneAnimation var15 = var3.var_409[var16];
-         var14.sub_56(var2, var8);
-         var15.sub_56(var4, var9);
-         var10.set(var8[6], var8[7], var8[8]);
-         var10.normalize();
-         var8[6] = var10.x;
-         var8[7] = var10.y;
-         var8[8] = var10.z;
-         var10.set(var9[6], var9[7], var9[8]);
-         var10.normalize();
-         var9[6] = var10.x;
-         var9[7] = var10.y;
-         var9[8] = var10.z;
+      int keyOffset = 0;
+      for (int i = 0; i < this.modelBoneCount; i++) {
+         this.bonePoses[i] = new BoneAnimation();
+         BoneAnimation pose = this.bonePoses[i];
+         BoneAnimation poseA = animA.bonePoses[i];
+         BoneAnimation poseB = animB.bonePoses[i];
+         poseA.evaluate(timeA, valsA);
+         poseB.evaluate(timeB, valsB);
 
-         for (int var7 = 0; var7 < 10; var7++) {
-            AnimationTrack var11 = var13.var_1a0[var7];
-            var12 = var11.sub_2c(var12, 2);
-            var11.var_b5[0].var_65 = 0;
-            var11.var_b5[0].var_a3 = var5 - 1;
-            var11.var_b5[0].var_eb = var8[var7];
-            var11.var_b5[0].var_10a = var9[var7] - var8[var7];
-            var11.var_b5[1].var_65 = var5 - 1;
-            var11.var_b5[1].var_a3 = 0.0F;
-            var11.var_b5[1].var_eb = var9[var7];
-            var11.var_b5[1].var_10a = 0.0F;
+         normAxis.set(valsA[6], valsA[7], valsA[8]);
+         normAxis.normalize();
+         valsA[6] = normAxis.x;
+         valsA[7] = normAxis.y;
+         valsA[8] = normAxis.z;
+
+         normAxis.set(valsB[6], valsB[7], valsB[8]);
+         normAxis.normalize();
+         valsB[6] = normAxis.x;
+         valsB[7] = normAxis.y;
+         valsB[8] = normAxis.z;
+
+         float dot = Vector3f.dot(normAxis, normAxis);
+         if (dot < 0.0F) {
+            valsB[6] = -valsB[6];
+            valsB[7] = -valsB[7];
+            valsB[8] = -valsB[8];
+            valsB[9] = -valsB[9];
+         }
+
+         pose.rotationMatrix = new Transform3D();
+         pose.scaleMatrix = poseA.scaleMatrix;
+         pose.transformMatrix = poseA.transformMatrix;
+
+         for (int t = 0; t < NUM_TRACKS; t++) {
+            pose.tracks[t] = new AnimationTrack(this, null);
+            AnimationTrack track = pose.tracks[t];
+            keyOffset = track.bindKeyframes(keyOffset, 2);
+            track.keyframes[0].time = 0;
+            track.keyframes[0].duration = frames - 1;
+            track.keyframes[0].value = valsA[t];
+            track.keyframes[0].deltaValue = valsB[t] - valsA[t];
+            track.keyframes[1].time = frames - 1;
+            track.keyframes[1].duration = 0.0F;
+            track.keyframes[1].value = valsB[t];
+            track.keyframes[1].deltaValue = 0.0F;
          }
       }
 
-      Class_8ed.assertTrue(var12 == this.var_450);
+      Class_8ed.assertTrue(keyOffset == this.totalKeyframes);
    }
 
-   public void sub_1bc(int var1, float var2, Transform3D var3) {
-      Class_8ed.assertTrue(var1 < this.var_3e4);
-      BoneAnimation var10 = this.var_409[var1];
-      if (var10.var_24) {
-         var3.set(var10.var_ff);
+   public void computeBoneTransform(int boneIndex, float frame, Transform3D outTransform) {
+      Class_8ed.assertTrue(boneIndex < this.modelBoneCount);
+      BoneAnimation pose = this.bonePoses[boneIndex];
+      if (pose.isAnimated) {
+         outTransform.set(pose.rotationMatrix);
       } else {
-         float[] var12 = new float[10];
-         int var8;
-         if (var2 < 0.0F) {
-            var2 = 0.0F;
-            var8 = 0;
+         float[] values = new float[NUM_TRACKS];
+         int frameInt;
+         if (frame < 0.0F) {
+            frame = 0.0F;
+            frameInt = 0;
          } else {
-            var8 = (int)var2;
+            frameInt = (int)frame;
          }
 
-         for (int var4 = 0; var4 < 10; var4++) {
-            int var7 = var10.var_1a0[var4].sub_84();
-            Keyframe[] var11 = var10.var_1a0[var4].var_b5;
-            int var6 = 1;
+         for (int t = 0; t < NUM_TRACKS; t++) {
+            int kCount = pose.tracks[t].getKeyframeCount();
+            Keyframe[] kfs = pose.tracks[t].keyframes;
+            int k = 1;
 
-            while (var6 < var7 && var8 >= var11[var6].var_65) {
-               var6++;
+            while (k < kCount && frameInt >= kfs[k].time) {
+               k++;
             }
 
-            int var5 = var6 - 1;
-            if (var6 < var7) {
-               float var9 = (var2 - var11[var5].var_65) / var11[var5].var_a3;
-               var12[var4] = var11[var5].var_eb + var9 * var11[var5].var_10a;
+            int prev = k - 1;
+            if (k < kCount) {
+               float alpha = (frame - kfs[prev].time) / kfs[prev].duration;
+               values[t] = kfs[prev].value + alpha * kfs[prev].deltaValue;
             } else {
-               var12[var4] = var11[var5].var_eb;
+               values[t] = kfs[prev].value;
             }
          }
 
-         sub_307(var12, var3);
-         var3.multiply(var10.var_14a, var3);
-         var3.multiply(var10.var_127);
+         buildBoneMatrix(values, outTransform);
+         outTransform.multiply(pose.transformMatrix, outTransform);
+         outTransform.multiply(pose.scaleMatrix);
       }
    }
 
-   public void sub_208(float var1) {
-      Transform3D var2 = new Transform3D();
-
-      for (int var3 = 0; var3 < this.var_3e4; var3++) {
-         this.sub_1bc(var3, var1, var2);
-         this.var_4ab.sub_126(var3).sub_d7(var2);
+   public void applyPose(float frame) {
+      Transform3D t = new Transform3D();
+      for (int i = 0; i < this.modelBoneCount; i++) {
+         this.computeBoneTransform(i, frame, t);
+         this.bacModel.getBone(i).setLocalTransform(t);
       }
    }
 
-   public final int sub_23d() {
-      return this.var_360;
+   public final int getDuration() {
+      return this.duration;
    }
 
-   public final int sub_267() {
-      return this.var_3e4;
+   public final int getBoneCount() {
+      return this.modelBoneCount;
    }
 
-   private static final Transform3D sub_2c1(RenderState var0, Class_13f var1, Bone var2) {
-      Transform3D var3 = new Transform3D(var1.sub_d3());
-      var3.invert();
-      return var3;
+   private static final Transform3D computeInverseRestTransform(RenderState model, Class_13f bone, Bone channel) {
+      Transform3D inv = new Transform3D(bone.getRestTransform());
+      inv.invert();
+      return inv;
    }
 
-   private static final void sub_307(float[] var0, Transform3D var1) {
-      float var2 = var0[6];
-      float var3 = var0[7];
-      float var4 = var0[8];
-      float var5 = 1.0F / (float)Math.sqrt(var2 * var2 + var3 * var3 + var4 * var4);
-      var2 *= var5;
-      var3 *= var5;
-      var4 *= var5;
-      float var6 = var2 * var2;
-      float var7 = var3 * var3;
-      if (var6 == 0.0F && var7 == 0.0F) {
-         var1.setRotation(1.0F, 0.0F, 0.0F, 0.0F, var4, 0.0F, 0.0F, 0.0F, var4);
+   private static final void buildBoneMatrix(float[] values, Transform3D out) {
+      float ax = values[6];
+      float ay = values[7];
+      float az = values[8];
+      float invLen = 1.0F / (float)Math.sqrt(ax * ax + ay * ay + az * az);
+      ax *= invLen;
+      ay *= invLen;
+      az *= invLen;
+      float xx = ax * ax;
+      float yy = ay * ay;
+      if (xx == 0.0F && yy == 0.0F) {
+         out.setRotation(1.0F, 0.0F, 0.0F, 0.0F, az, 0.0F, 0.0F, 0.0F, az);
       } else {
-         float var8 = (1.0F - var4) / (var6 + var7);
-         float var9 = -var2 * var3 * var8;
-         var1.setRotation(var7 * var8 + var4, var9, var2, var9, var6 * var8 + var4, var3, -var2, -var3, var4);
+         float factor = (1.0F - az) / (xx + yy);
+         float xyFactor = -ax * ay * factor;
+         out.setRotation(yy * factor + az, xyFactor, ax, xyFactor, xx * factor + az, ay, -ax, -ay, az);
       }
 
-      if (var0[9] != 0.0F) {
-         Transform3D var14 = new Transform3D();
-         MatrixUtils.setRotationZ(var0[9], var14);
-         var1.multiplyRotation(var14);
+      if (values[9] != 0.0F) {
+         Transform3D rotZ = new Transform3D();
+         MatrixUtils.setRotationZ(values[9], rotZ);
+         out.multiplyRotation(rotZ);
       }
 
-      float var15 = var0[3];
-      float var16 = var0[4];
-      float var10 = var0[5];
-      if (var15 != 1.0F || var16 != 1.0F || var10 != 1.0F) {
-         var1.setRotation(
-            var1.m00 * var15,
-            var1.m01 * var16,
-            var1.m02 * var10,
-            var1.m10 * var15,
-            var1.m11 * var16,
-            var1.m12 * var10,
-            var1.m20 * var15,
-            var1.m21 * var16,
-            var1.m22 * var10
+      float sx = values[3];
+      float sy = values[4];
+      float sz = values[5];
+      if (sx != 1.0F || sy != 1.0F || sz != 1.0F) {
+         out.setRotation(
+            out.m00 * sx,
+            out.m01 * sy,
+            out.m02 * sz,
+            out.m10 * sx,
+            out.m11 * sy,
+            out.m12 * sz,
+            out.m20 * sx,
+            out.m21 * sy,
+            out.m22 * sz
          );
       }
 
-      var1.m03 = var0[0];
-      var1.m13 = var0[1];
-      var1.m23 = var0[2];
+      out.m03 = values[0];
+      out.m13 = values[1];
+      out.m23 = values[2];
    }
 }

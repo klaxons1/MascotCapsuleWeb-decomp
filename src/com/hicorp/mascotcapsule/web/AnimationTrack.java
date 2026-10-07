@@ -1,61 +1,60 @@
 package com.hicorp.mascotcapsule.web;
 
 final class AnimationTrack {
-   protected int var_66;
-   public Keyframe[] var_b5;
-   private final Model var_d1;
+   protected int keyframeCount;
+   public Keyframe[] keyframes;
+   private final Model animation;
 
-   private AnimationTrack(Model var1) {
-      this.var_d1 = var1;
-      this.var_66 = 0;
-      this.var_b5 = null;
+   private AnimationTrack(Model animation) {
+      this.animation = animation;
+      this.keyframeCount = 0;
+      this.keyframes = null;
    }
 
-   public int sub_2c(int var1, int var2) {
-      Class_8ed.assertTrue(var2 > 0);
-      this.var_66 = var2;
-      this.var_b5 = new Keyframe[this.var_66];
+   public int bindKeyframes(int offset, int count) {
+      Class_8ed.assertTrue(count > 0);
+      this.keyframeCount = count;
+      this.keyframes = new Keyframe[this.keyframeCount];
 
-      for (int var3 = 0; var3 < this.var_66; var3++) {
-         this.var_b5[var3] = this.var_d1.var_492[var1 + var3];
+      for (int i = 0; i < this.keyframeCount; i++) {
+         this.keyframes[i] = this.animation.allKeyframes[offset + i];
       }
 
-      return var1 + var2;
+      return offset + count;
    }
 
-   final int sub_84() {
-      return this.var_66;
+   final int getKeyframeCount() {
+      return this.keyframeCount;
    }
 
-   float sub_d5(float var1) {
-      Class_8ed.assertTrue(this.var_66 > 0);
-      int var4;
-      if (var1 < 0.0F) {
-         var1 = 0.0F;
-         var4 = 0;
+   float evaluate(float time) {
+      Class_8ed.assertTrue(this.keyframeCount > 0);
+      int frame;
+      if (time < 0.0F) {
+         time = 0.0F;
+         frame = 0;
       } else {
-         var4 = (int)var1;
+         frame = (int)time;
       }
 
-      int var3 = 1;
-
-      while (var3 < this.var_66 && var4 >= this.var_b5[var3].var_65) {
-         var3++;
+      int k = 1;
+      while (k < this.keyframeCount && frame >= this.keyframes[k].time) {
+         k++;
       }
 
-      int var2 = var3 - 1;
-      float var5;
-      if (var3 < this.var_66) {
-         float var6 = (var1 - this.var_b5[var2].var_65) / this.var_b5[var2].var_a3;
-         var5 = this.var_b5[var2].var_eb + var6 * this.var_b5[var2].var_10a;
+      int prev = k - 1;
+      float val;
+      if (k < this.keyframeCount) {
+         float alpha = (time - this.keyframes[prev].time) / this.keyframes[prev].duration;
+         val = this.keyframes[prev].value + alpha * this.keyframes[prev].deltaValue;
       } else {
-         var5 = this.var_b5[var2].var_eb;
+         val = this.keyframes[prev].value;
       }
 
-      return var5;
+      return val;
    }
 
-   AnimationTrack(Model var1, Interpolator var2) {
-      this(var1);
+   AnimationTrack(Model animation, Interpolator unused) {
+      this(animation);
    }
 }

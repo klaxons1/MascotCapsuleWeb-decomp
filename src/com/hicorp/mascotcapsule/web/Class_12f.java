@@ -1,18 +1,18 @@
 package com.hicorp.mascotcapsule.web;
 
 public final class Class_12f {
-   public int var_37;
-   public int var_55;
-   public short var_a0;
-   public short var_bf;
-   public short var_103;
-   public short var_15b;
-   public short var_1a3;
-   public short var_1d0;
-   public short var_1f4;
-   public short var_23e;
-   public short var_280;
-   public short var_2ba;
-   public short var_30e;
-   public short var_356;
+   public int flags;
+   public int vertexCount;
+   public short v0;
+   public short u0;
+   public short v0_coord;
+   public short v1;
+   public short u1;
+   public short v1_coord;
+   public short v2;
+   public short u2;
+   public short v2_coord;
+   public short v3;
+   public short u3;
+   public short v3_coord;
 }

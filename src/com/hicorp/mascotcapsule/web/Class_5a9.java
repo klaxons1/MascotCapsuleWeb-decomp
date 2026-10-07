@@ -1,96 +1,96 @@
 package com.hicorp.mascotcapsule.web;
 
 public class Class_5a9 {
-   public static final Class_5a9 var_2d = null;
-   protected Class_5a9 var_70 = null;
-   protected boolean var_b4;
-   protected final Transform3D var_124 = new Transform3D();
-   protected boolean var_154;
-   protected final Transform3D var_196 = new Transform3D();
-   protected boolean var_1c0;
-   protected final Transform3D var_1ea = new Transform3D();
+   public static final Class_5a9 NULL_NODE = null;
+   protected Class_5a9 parent = null;
+   protected boolean hasLocalTransform;
+   protected final Transform3D localTransform = new Transform3D();
+   protected boolean isWorldValid;
+   protected final Transform3D worldTransform = new Transform3D();
+   protected boolean isParentWorldValid;
+   protected final Transform3D cachedTransform = new Transform3D();
 
    public Class_5a9() {
-      this.var_b4 = false;
-      this.var_154 = false;
-      this.var_1c0 = false;
-      this.var_70 = var_2d;
+      this.hasLocalTransform = false;
+      this.isWorldValid = false;
+      this.isParentWorldValid = false;
+      this.parent = NULL_NODE;
    }
 
-   public Class_5a9(Class_5a9 var1) {
-      this.var_b4 = false;
-      this.var_154 = false;
-      this.var_1c0 = false;
-      this.var_70 = var1;
+   public Class_5a9(Class_5a9 parent) {
+      this.hasLocalTransform = false;
+      this.isWorldValid = false;
+      this.isParentWorldValid = false;
+      this.parent = parent;
    }
 
-   public Class_5a9(Class_5a9 var1, Transform3D var2) {
-      this.var_b4 = true;
-      this.var_154 = false;
-      this.var_1c0 = false;
-      this.var_70 = var1;
-      this.var_124.set(var2);
+   public Class_5a9(Class_5a9 parent, Transform3D local) {
+      this.hasLocalTransform = true;
+      this.isWorldValid = false;
+      this.isParentWorldValid = false;
+      this.parent = parent;
+      this.localTransform.set(local);
    }
 
-   public final void sub_55(Class_5a9 var1) {
-      this.var_154 = false;
-      this.var_1c0 = false;
-      this.var_70 = var1;
+   public final void setParent(Class_5a9 parent) {
+      this.isWorldValid = false;
+      this.isParentWorldValid = false;
+      this.parent = parent;
    }
 
-   public final Class_5a9 sub_ab() {
-      return this.var_70;
+   public final Class_5a9 getParent() {
+      return this.parent;
    }
 
-   public final void sub_d7(Transform3D var1) {
-      this.var_b4 = true;
-      this.var_154 = false;
-      this.var_1c0 = false;
-      this.var_124.set(var1);
+   public final void setLocalTransform(Transform3D local) {
+      this.hasLocalTransform = true;
+      this.isWorldValid = false;
+      this.isParentWorldValid = false;
+      this.localTransform.set(local);
    }
 
-   public final void sub_12f(Transform3D var1) {
-      this.sub_13b(var1, false);
+   public final void getWorldTransform(Transform3D out) {
+      this.computeWorldTransform(out, false);
    }
 
-   protected final boolean sub_13b(Transform3D var1, boolean var2) {
-      Class_8ed.assertTrue(this.var_b4);
-      if (this.var_70 == var_2d) {
-         var1.set(this.var_124);
-         return var2;
+   protected final boolean computeWorldTransform(Transform3D out, boolean isDirty) {
+      Class_8ed.assertTrue(this.hasLocalTransform);
+      if (this.parent == NULL_NODE) {
+         out.set(this.localTransform);
+         return isDirty;
       } else {
-         var2 = this.var_70.sub_13b(var1, var2);
-         if (var2 || !this.var_154) {
-            this.var_196.multiply(var1, this.var_124);
-            var2 = true;
-            this.var_154 = true;
+         isDirty = this.parent.computeWorldTransform(out, isDirty);
+         if (isDirty || !this.isWorldValid) {
+            this.worldTransform.multiply(out, this.localTransform);
+            isDirty = true;
+            this.isWorldValid = true;
          }
 
-         var1.set(this.var_196);
-         return var2;
+         out.set(this.worldTransform);
+         return isDirty;
       }
    }
 
-   public final void sub_16b(Transform3D var1) {
-      this.sub_1ab(var1, false);
+   public final void getTransformRelativeToRoot(Transform3D out) {
+      this.computeTransformRelativeToRoot(out, false);
    }
 
-   protected final boolean sub_1ab(Transform3D var1, boolean var2) {
-      Class_8ed.assertTrue(this.var_70 != var_2d);
-      Class_8ed.assertTrue(this.var_b4);
-      if (this.var_70.var_70 == var_2d) {
-         var1.set(this.var_124);
-         return var2;
+   protected final boolean computeTransformRelativeToRoot(Transform3D out, boolean isDirty) {
+      Class_8ed.assertTrue(this.parent != NULL_NODE);
+      Class_8ed.assertTrue(this.hasLocalTransform);
+      if (this.parent.parent == NULL_NODE) {
+         out.set(this.localTransform);
+         return isDirty;
       } else {
-         var2 = this.var_70.sub_1ab(var1, var2);
-         if (var2 || !this.var_1c0) {
-            this.var_1ea.multiply(var1, this.var_124);
-            var2 = true;
-            this.var_1c0 = true;
+         isDirty = this.parent.computeTransformRelativeToRoot(out, isDirty);
+         if (isDirty || !this.isParentWorldValid) {
+            this.cachedTransform.multiply(out, this.localTransform);
+            isDirty = true;
+            this.isParentWorldValid = true;
          }
 
-         var1.set(this.var_1ea);
-         return var2;
+         out.set(this.cachedTransform);
+         return isDirty;
       }
    }
 }

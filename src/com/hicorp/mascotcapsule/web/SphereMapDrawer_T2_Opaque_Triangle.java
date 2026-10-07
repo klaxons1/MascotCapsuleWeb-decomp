@@ -48,13 +48,13 @@ public final class SphereMapDrawer_T2_Opaque_Triangle extends SphereMapDrawer {
             int dstColor = dstPixels[xLeft];
             int intensityVal = stepDy3 >>> 16;
             int pixelVal2 = spherePixels[pixelVal];
-            int shadedColor2 = ((texelColor & 16711935) * intensityVal & -16711936) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
-            int blendResult = ((shadedColor2 & pixelVal2) << 1) + ((shadedColor2 ^ pixelVal2) & 16711422) & 16843008;
-            blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+            int shadedColor2 = ((texelColor & 0x00FF00FF) * intensityVal & 0xFF00FF00) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
+            int blendResult = ((shadedColor2 & pixelVal2) << 1) + ((shadedColor2 ^ pixelVal2) & 0x00FEFEFE) & 0x01010100;
+            blendResult = (blendResult >>> 8) + 0x007F7F7F ^ 0x007F7F7F;
             blendResult = shadedColor2 + pixelVal2 - blendResult | blendResult;
-            int shadedColor = ((blendResult & 16711935) * blendAlpha & -16711936)
+            int shadedColor = ((blendResult & 0x00FF00FF) * blendAlpha & 0xFF00FF00)
                   + ((blendResult & 0xFF00) * blendAlpha & 0xFF0000)
-                  + ((dstColor & 16711935) * invBlendAlpha & -16711936)
+                  + ((dstColor & 0x00FF00FF) * invBlendAlpha & 0xFF00FF00)
                   + ((dstColor & 0xFF00) * invBlendAlpha & 0xFF0000)
                >>> 8;
             dstPixels[xLeft] = shadedColor | 0xFF000000;

@@ -51,7 +51,7 @@ public final class SphereMapDrawer_T0_Alpha_Quad extends SphereMapDrawer {
          super.duDxFixed = super.duDxFixed + super.sphereUFixed * clipDeltaY;
       }
 
-      for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      for (super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
          super.y < super.yEnd;
          super.duDxFixed = super.duDxFixed + super.sphereUFixed
       ) {
@@ -85,9 +85,9 @@ public final class SphereMapDrawer_T0_Alpha_Quad extends SphereMapDrawer {
                int pixelVal = sphereMipOffset + ((stepDu & sphereMipVMask) >>> sphereMipVShift) + ((stepDy4 & sphereMipUMask) >>> sphereMipUShift);
                int intensityVal = stepDy3 >>> 16;
                int pixelVal2 = spherePixels[pixelVal];
-               int shadedColor = ((texelColor & 16711935) * intensityVal & -16711936) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
-               int blendResult = ((shadedColor & pixelVal2) << 1) + ((shadedColor ^ pixelVal2) & 16711422) & 16843008;
-               blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+               int shadedColor = ((texelColor & 0x00FF00FF) * intensityVal & 0xFF00FF00) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
+               int blendResult = ((shadedColor & pixelVal2) << 1) + ((shadedColor ^ pixelVal2) & 0x00FEFEFE) & 0x01010100;
+               blendResult = (blendResult >>> 8) + 0x007F7F7F ^ 0x007F7F7F;
                blendResult = shadedColor + pixelVal2 - blendResult | blendResult;
                dstPixels[spanPixelIdx] = blendResult | 0xFF000000;
             }

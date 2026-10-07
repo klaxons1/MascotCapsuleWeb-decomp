@@ -35,9 +35,9 @@ public final class UnlitDrawer_T2_Alpha_Triangle extends UnlitDrawer {
             if (texelColor != -1) {
                int dstColor = dstPixels[xLeft];
                int scaledAlpha = stepDy2 * blendAlpha >>> 24;
-               int shadedColor = ((texelColor & 16711935) * scaledAlpha & -16711936)
+               int shadedColor = ((texelColor & 0x00FF00FF) * scaledAlpha & 0xFF00FF00)
                      + ((texelColor & 0xFF00) * scaledAlpha & 0xFF0000)
-                     + ((dstColor & 16711935) * invBlendAlpha & -16711936)
+                     + ((dstColor & 0x00FF00FF) * invBlendAlpha & 0xFF00FF00)
                      + ((dstColor & 0xFF00) * invBlendAlpha & 0xFF0000)
                   >>> 8;
                dstPixels[xLeft] = shadedColor | 0xFF000000;

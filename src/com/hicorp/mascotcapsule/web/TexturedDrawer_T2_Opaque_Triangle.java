@@ -31,9 +31,9 @@ public final class TexturedDrawer_T2_Opaque_Triangle extends TexturedDrawer {
             int texelOffset = mipOffset + ((curV & mipVMask) >>> mipVShift) + ((curU & mipUMask) >>> mipUShift);
             int texelColor = diffusePixels[texelOffset];
             int dstColor = dstPixels[xLeft];
-            int shadedColor = ((texelColor & 16711935) * blendAlpha & -16711936)
+            int shadedColor = ((texelColor & 0x00FF00FF) * blendAlpha & 0xFF00FF00)
                   + ((texelColor & 0xFF00) * blendAlpha & 0xFF0000)
-                  + ((dstColor & 16711935) * invBlendAlpha & -16711936)
+                  + ((dstColor & 0x00FF00FF) * invBlendAlpha & 0xFF00FF00)
                   + ((dstColor & 0xFF00) * invBlendAlpha & 0xFF0000)
                >>> 8;
             dstPixels[xLeft] = shadedColor | 0xFF000000;

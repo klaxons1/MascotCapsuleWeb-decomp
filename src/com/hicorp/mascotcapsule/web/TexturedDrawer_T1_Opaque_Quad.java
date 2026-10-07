@@ -37,7 +37,7 @@ public final class TexturedDrawer_T1_Opaque_Quad extends TexturedDrawer {
          super.vFixed = super.vFixed + super.dvDyFixed * clipDeltaY;
       }
 
-      for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      for (super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
          super.y < super.yEnd;
          super.vFixed = super.vFixed + super.dvDyFixed
       ) {
@@ -62,7 +62,7 @@ public final class TexturedDrawer_T1_Opaque_Quad extends TexturedDrawer {
             int texelOffset = mipOffset + ((curV & mipVMask) >>> mipVShift) + ((curU & mipUMask) >>> mipUShift);
             int texelColor = diffusePixels[texelOffset];
             int dstColor = dstPixels[spanPixelIdx];
-            int pixelVal = (texelColor & 16711422) + (dstColor & 16711422) >>> 1;
+            int pixelVal = (texelColor & 0x00FEFEFE) + (dstColor & 0x00FEFEFE) >>> 1;
             dstPixels[spanPixelIdx] = pixelVal | 0xFF000000;
             curU += stepDu2;
             curV += stepDv;

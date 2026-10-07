@@ -24,7 +24,7 @@ public final class LitDrawer_T1_Alpha_Triangle extends LitDrawer {
       int stepDy = super.dNormalZDyFixed;
       int stepDNormalZ = super.dNormalZDxFixed;
 
-      for (super.dvDyFixed += 8388608; super.y < super.yEnd; super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed) {
+      for (super.dvDyFixed += 0x800000; super.y < super.yEnd; super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed) {
          int xLeft = (super.xLeftFixed >> 16) + super.scanlineOffset;
          int xRight = (super.xRightFixed >> 16) + super.scanlineOffset;
          int curU = super.uFixed >> mipLevel;
@@ -38,11 +38,11 @@ public final class LitDrawer_T1_Alpha_Triangle extends LitDrawer {
                int dstColor = dstPixels[xLeft];
                int lightIntensity = stepDy2 >>> 16;
                int lightIntensity2 = colorTable[stepDy3 >>> 16 & 511];
-               int shadedColor = ((texelColor & 16711935) * lightIntensity & -16711936) + ((texelColor & 0xFF00) * lightIntensity & 0xFF0000) >>> 8;
-               int blendResult = ((shadedColor & lightIntensity2) << 1) + ((shadedColor ^ lightIntensity2) & 16711422) & 16843008;
-               blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+               int shadedColor = ((texelColor & 0x00FF00FF) * lightIntensity & 0xFF00FF00) + ((texelColor & 0xFF00) * lightIntensity & 0xFF0000) >>> 8;
+               int blendResult = ((shadedColor & lightIntensity2) << 1) + ((shadedColor ^ lightIntensity2) & 0x00FEFEFE) & 0x01010100;
+               blendResult = (blendResult >>> 8) + 0x007F7F7F ^ 0x007F7F7F;
                blendResult = shadedColor + lightIntensity2 - blendResult | blendResult;
-               blendResult = (blendResult & 16711422) + (dstColor & 16711422) >>> 1;
+               blendResult = (blendResult & 0x00FEFEFE) + (dstColor & 0x00FEFEFE) >>> 1;
                dstPixels[xLeft] = blendResult | 0xFF000000;
             }
 
@@ -61,6 +61,6 @@ public final class LitDrawer_T1_Alpha_Triangle extends LitDrawer {
          super.duDyFixed = super.duDyFixed + super.lightFixed;
       }
 
-      super.dvDyFixed -= 8388608;
+      super.dvDyFixed -= 0x800000;
    }
 }

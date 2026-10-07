@@ -39,7 +39,7 @@ public final class UnlitDrawer_T1_Opaque_Quad extends UnlitDrawer {
          super.duDyFixed = super.duDyFixed + super.dvDxFixed * clipDeltaY;
       }
 
-      for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      for (super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
          super.y < super.yEnd;
          super.duDyFixed = super.duDyFixed + super.dvDxFixed
       ) {
@@ -67,8 +67,8 @@ public final class UnlitDrawer_T1_Opaque_Quad extends UnlitDrawer {
             int texelColor = diffusePixels[texelOffset];
             int dstColor = dstPixels[spanPixelIdx];
             int intensityVal = stepDy2 >>> 16;
-            int shadedColor = ((texelColor & 16711935) * intensityVal & -16711936) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
-            shadedColor = (shadedColor & 16711422) + (dstColor & 16711422) >>> 1;
+            int shadedColor = ((texelColor & 0x00FF00FF) * intensityVal & 0xFF00FF00) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
+            shadedColor = (shadedColor & 0x00FEFEFE) + (dstColor & 0x00FEFEFE) >>> 1;
             dstPixels[spanPixelIdx] = shadedColor | 0xFF000000;
             curU += curLight2;
             curV += stepDy;

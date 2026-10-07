@@ -26,7 +26,7 @@ public final class FlatDrawer_Opaque_Quad extends FlatDrawer {
          super.xRightFixed = super.xRightFixed + super.dxRightFixed * clipDeltaY;
       }
 
-      for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      for (super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
          super.y < super.yEnd;
          super.xRightFixed = super.xRightFixed + super.dxRightFixed
       ) {

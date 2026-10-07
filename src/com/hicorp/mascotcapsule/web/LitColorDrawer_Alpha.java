@@ -11,7 +11,7 @@ public final class LitColorDrawer_Alpha extends TexturedDrawer {
    public void drawSpan() {
       int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
       int[] colorTable = Config.getColorTable();
-      int fillColor = Config.getFillColor(this.rasterizer) & 16711935;
+      int fillColor = Config.getFillColor(this.rasterizer) & 0x00FF00FF;
       int fillColor2 = Config.getFillColor(this.rasterizer) & 0xFF00;
       int stepDu = super.duDxFixed;
       int stepDv = super.dvDxFixed;
@@ -32,9 +32,9 @@ public final class LitColorDrawer_Alpha extends TexturedDrawer {
          super.vFixed = super.vFixed + super.dvDyFixed * clipDeltaY;
       }
 
-      super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
 
-      for (super.vFixed += 8388608; super.y < super.yEnd; super.vFixed = super.vFixed + super.dvDyFixed) {
+      for (super.vFixed += 0x800000; super.y < super.yEnd; super.vFixed = super.vFixed + super.dvDyFixed) {
          int xLeft = super.xLeftFixed >> 16;
          int xRight = super.xRightFixed >> 16;
          int curU = super.uFixed;
@@ -55,9 +55,9 @@ public final class LitColorDrawer_Alpha extends TexturedDrawer {
          for (int spanEndIdx = super.scanlineOffset + xRight; spanPixelIdx < spanEndIdx; spanPixelIdx++) {
             int lightIntensity = curU >>> 16;
             int lightIntensity2 = colorTable[curV >> 16 & 511];
-            int shadedColor = (fillColor * lightIntensity & -16711936) + (fillColor2 * lightIntensity & 0xFF0000) >>> 8;
-            int blendResult = ((shadedColor & lightIntensity2) << 1) + ((shadedColor ^ lightIntensity2) & 16711422) & 16843008;
-            blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+            int shadedColor = (fillColor * lightIntensity & 0xFF00FF00) + (fillColor2 * lightIntensity & 0xFF0000) >>> 8;
+            int blendResult = ((shadedColor & lightIntensity2) << 1) + ((shadedColor ^ lightIntensity2) & 0x00FEFEFE) & 0x01010100;
+            blendResult = (blendResult >>> 8) + 0x007F7F7F ^ 0x007F7F7F;
             blendResult = shadedColor + lightIntensity2 - blendResult | blendResult;
             dstPixels[spanPixelIdx] = blendResult | 0xFF000000;
             curU += stepDu;
@@ -71,6 +71,6 @@ public final class LitColorDrawer_Alpha extends TexturedDrawer {
          super.uFixed = super.uFixed + super.duDyFixed;
       }
 
-      super.vFixed -= 8388608;
+      super.vFixed -= 0x800000;
    }
 }

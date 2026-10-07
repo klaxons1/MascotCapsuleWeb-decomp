@@ -5,18 +5,18 @@ final class Config {
    private static final int COLOR_SHIFT_8 = 8;
    private static final int BLEND_OPAQUE = 0;
    private static final int FIXED_SHIFT = 16;
-   private static final int FIXED_HALF = 32768;
-   private static final int ALPHA_OPAQUE = -16777216;
-   private static final int RB_MASK = 16711935;
-   private static final int G_MASK = 65280;
-   private static final int COLOR_MASK = 16711422;
-   private static final int COLOR_MASK_ALT = 16711422;
-   private static final int ALPHA_STEP = 16843008;
-   private static final int BLEND_FACTOR = 8355711;
-   private static final int GREEN_ALPHA_MASK = -16711936;
-   private static final int RED_MASK = 16711680;
-   private static final int RED_HIGH_BIT = 8388608;
-   private static final int TABLE_MASK = 511;
+   private static final int FIXED_HALF = 0x8000; // 0.5 in 16.16 fixed-point
+   private static final int ALPHA_OPAQUE = 0xFF000000;
+   private static final int RB_MASK = 0x00FF00FF;
+   private static final int G_MASK = 0x0000FF00;
+   private static final int COLOR_MASK = 0x00FEFEFE;
+   private static final int COLOR_MASK_ALT = 0x00FEFEFE;
+   private static final int ALPHA_STEP = 0x01010100;
+   private static final int BLEND_FACTOR = 0x007F7F7F;
+   private static final int GREEN_ALPHA_MASK = 0xFF00FF00;
+   private static final int RED_MASK = 0x00FF0000;
+   private static final int RED_HIGH_BIT = 0x800000;
+   private static final int TABLE_MASK = 0x1FF;
    private static final int[] blendTable = new int[512];
    private int[] pixelBuffer;
    private int stride;
@@ -972,18 +972,18 @@ final class Config {
    }
 
    static {
-      int colorStep = 65793;
+      int colorStep = 0x00010101;
 
       for (int i = 0; i < 129; i++) {
          blendTable[i] = 0;
       }
 
       for (int i = 1; i < 255; i++) {
-         blendTable[i + 128] = 65793 * i;
+         blendTable[i + 128] = 0x00010101 * i;
       }
 
       for (int i = -1; i < 128; i++) {
-         blendTable[i + 384] = 16777215;
+         blendTable[i + 384] = 0x00FFFFFF;
       }
    }
 }

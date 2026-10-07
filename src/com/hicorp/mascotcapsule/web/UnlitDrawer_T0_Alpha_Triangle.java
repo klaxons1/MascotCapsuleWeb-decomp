@@ -32,7 +32,7 @@ public final class UnlitDrawer_T0_Alpha_Triangle extends UnlitDrawer {
             int texelColor = diffusePixels[texelOffset];
             if (texelColor != -1) {
                int intensityVal = stepDy2 >>> 16;
-               int shadedColor = ((texelColor & 16711935) * intensityVal & -16711936) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
+               int shadedColor = ((texelColor & 0x00FF00FF) * intensityVal & 0xFF00FF00) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
                dstPixels[xLeft] = shadedColor | 0xFF000000;
             }
 

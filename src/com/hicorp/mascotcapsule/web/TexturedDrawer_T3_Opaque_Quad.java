@@ -37,7 +37,7 @@ public final class TexturedDrawer_T3_Opaque_Quad extends TexturedDrawer {
          super.vFixed = super.vFixed + super.dvDyFixed * clipDeltaY;
       }
 
-      for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      for (super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
          super.y < super.yEnd;
          super.vFixed = super.vFixed + super.dvDyFixed
       ) {
@@ -62,8 +62,8 @@ public final class TexturedDrawer_T3_Opaque_Quad extends TexturedDrawer {
             int texelOffset = mipOffset + ((curV & mipVMask) >>> mipVShift) + ((curU & mipUMask) >>> mipUShift);
             int texelColor = diffusePixels[texelOffset];
             int dstColor = dstPixels[spanPixelIdx];
-            int blendResult = ((texelColor & dstColor) << 1) + ((texelColor ^ dstColor) & 16711422) & 16843008;
-            blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+            int blendResult = ((texelColor & dstColor) << 1) + ((texelColor ^ dstColor) & 0x00FEFEFE) & 0x01010100;
+            blendResult = (blendResult >>> 8) + 0x007F7F7F ^ 0x007F7F7F;
             blendResult = texelColor + dstColor - blendResult | blendResult;
             dstPixels[spanPixelIdx] = blendResult | 0xFF000000;
             curU += stepDu2;

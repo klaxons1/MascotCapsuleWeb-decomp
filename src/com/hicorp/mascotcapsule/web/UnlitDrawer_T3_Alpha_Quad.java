@@ -39,7 +39,7 @@ public final class UnlitDrawer_T3_Alpha_Quad extends UnlitDrawer {
          super.duDyFixed = super.duDyFixed + super.dvDxFixed * clipDeltaY;
       }
 
-      for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      for (super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
          super.y < super.yEnd;
          super.duDyFixed = super.duDyFixed + super.dvDxFixed
       ) {
@@ -68,9 +68,9 @@ public final class UnlitDrawer_T3_Alpha_Quad extends UnlitDrawer {
             if (texelColor != -1) {
                int dstColor = dstPixels[spanPixelIdx];
                int intensityVal = stepDy2 >>> 16;
-               int shadedColor = ((texelColor & 16711935) * intensityVal & -16711936) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
-               int blendResult = ((shadedColor & dstColor) << 1) + ((shadedColor ^ dstColor) & 16711422) & 16843008;
-               blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+               int shadedColor = ((texelColor & 0x00FF00FF) * intensityVal & 0xFF00FF00) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
+               int blendResult = ((shadedColor & dstColor) << 1) + ((shadedColor ^ dstColor) & 0x00FEFEFE) & 0x01010100;
+               blendResult = (blendResult >>> 8) + 0x007F7F7F ^ 0x007F7F7F;
                blendResult = shadedColor + dstColor - blendResult | blendResult;
                dstPixels[spanPixelIdx] = blendResult | 0xFF000000;
             }

@@ -10,7 +10,7 @@ public final class LineDrawer_Alpha extends LineDrawer {
 
    public void drawSpan() {
       int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
-      int fillColor = Config.getFillColor(this.rasterizer) & 16711935;
+      int fillColor = Config.getFillColor(this.rasterizer) & 0x00FF00FF;
       int fillColor2 = Config.getFillColor(this.rasterizer) & 0xFF00;
       int stepDz = super.dzDxFixed;
       if (super.y < Config.getClipTop(this.rasterizer)) {
@@ -29,7 +29,7 @@ public final class LineDrawer_Alpha extends LineDrawer {
          super.zFixed = super.zFixed + super.dzDyFixed * clipDeltaY;
       }
 
-      for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      for (super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
          super.y < super.yEnd;
          super.zFixed = super.zFixed + super.dzDyFixed
       ) {
@@ -50,7 +50,7 @@ public final class LineDrawer_Alpha extends LineDrawer {
 
          for (int spanEndIdx = super.scanlineOffset + xRight; spanPixelIdx < spanEndIdx; spanPixelIdx++) {
             int intensityVal = curZ >>> 16;
-            int shadedColor = (fillColor * intensityVal & -16711936) + (fillColor2 * intensityVal & 0xFF0000) >>> 8;
+            int shadedColor = (fillColor * intensityVal & 0xFF00FF00) + (fillColor2 * intensityVal & 0xFF0000) >>> 8;
             dstPixels[spanPixelIdx] = shadedColor | 0xFF000000;
             curZ += stepDz;
          }

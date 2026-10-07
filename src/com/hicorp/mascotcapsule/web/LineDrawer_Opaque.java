@@ -10,7 +10,7 @@ public final class LineDrawer_Opaque extends LineDrawer {
 
    public void drawSpan() {
       int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
-      int fillColor = Config.getFillColor(this.rasterizer) & 16711935;
+      int fillColor = Config.getFillColor(this.rasterizer) & 0x00FF00FF;
       int fillColor2 = Config.getFillColor(this.rasterizer) & 0xFF00;
 
       for (int stepDz = super.dzDxFixed; super.y < super.yEnd; super.zFixed = super.zFixed + super.dzDyFixed) {
@@ -19,7 +19,7 @@ public final class LineDrawer_Opaque extends LineDrawer {
 
          for (int curZ = super.zFixed; xLeft < xRight; xLeft++) {
             int intensityVal = curZ >>> 16;
-            int shadedColor = (fillColor * intensityVal & -16711936) + (fillColor2 * intensityVal & 0xFF0000) >>> 8;
+            int shadedColor = (fillColor * intensityVal & 0xFF00FF00) + (fillColor2 * intensityVal & 0xFF0000) >>> 8;
             dstPixels[xLeft] = shadedColor | 0xFF000000;
             curZ += stepDz;
          }

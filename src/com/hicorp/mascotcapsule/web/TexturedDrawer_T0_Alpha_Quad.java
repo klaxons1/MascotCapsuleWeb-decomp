@@ -37,7 +37,7 @@ public final class TexturedDrawer_T0_Alpha_Quad extends TexturedDrawer {
          super.vFixed = super.vFixed + super.dvDyFixed * clipDeltaY;
       }
 
-      for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      for (super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
          super.y < super.yEnd;
          super.vFixed = super.vFixed + super.dvDyFixed
       ) {

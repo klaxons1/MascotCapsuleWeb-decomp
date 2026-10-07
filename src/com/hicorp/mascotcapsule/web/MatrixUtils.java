@@ -178,16 +178,16 @@ public final class MatrixUtils {
    }
 
    public static int countLeadingZeros(int val) {
-      if ((val & -65536) != 0) {
+      if ((val & 0xFFFF0000) != 0) {
          if ((val & 0xFF000000) != 0) {
-            return (val & -268435456) != 0 ? CLZ_NIBBLE_TABLE[val >>> 28] : CLZ_NIBBLE_TABLE[val >>> 24] + 4;
+            return (val & 0xF0000000) != 0 ? CLZ_NIBBLE_TABLE[val >>> 28] : CLZ_NIBBLE_TABLE[val >>> 24] + 4;
          } else {
-            return (val & 15728640) != 0 ? CLZ_NIBBLE_TABLE[val >>> 20] + 8 : CLZ_NIBBLE_TABLE[val >>> 16] + 12;
+            return (val & 0x00F00000) != 0 ? CLZ_NIBBLE_TABLE[val >>> 20] + 8 : CLZ_NIBBLE_TABLE[val >>> 16] + 12;
          }
-      } else if ((val & 0xFF00) != 0) {
-         return (val & 61440) != 0 ? CLZ_NIBBLE_TABLE[val >>> 12] + 16 : CLZ_NIBBLE_TABLE[val >>> 8] + 20;
+      } else if ((val & 0x0000FF00) != 0) {
+         return (val & 0x0000F000) != 0 ? CLZ_NIBBLE_TABLE[val >>> 12] + 16 : CLZ_NIBBLE_TABLE[val >>> 8] + 20;
       } else {
-         return (val & 240) != 0 ? CLZ_NIBBLE_TABLE[val >>> 4] + 24 : CLZ_NIBBLE_TABLE[val] + 28;
+         return (val & 0x000000F0) != 0 ? CLZ_NIBBLE_TABLE[val >>> 4] + 24 : CLZ_NIBBLE_TABLE[val] + 28;
       }
    }
 
@@ -201,7 +201,7 @@ public final class MatrixUtils {
    }
 
    public static int countLeadingZerosLong(long val) {
-      return (val & -4294967296L) != 0L ? countLeadingZeros((int)(val >>> 32)) : countLeadingZeros((int)val) + 32;
+      return (val & 0xFFFFFFFF00000000L) != 0L ? countLeadingZeros((int)(val >>> 32)) : countLeadingZeros((int)val) + 32;
    }
 
    public static int ceilLog2Long(long val) {

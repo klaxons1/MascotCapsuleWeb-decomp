@@ -42,9 +42,9 @@ public final class LitDrawer_T3_Opaque_Quad extends LitDrawer {
          super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed * clipDeltaY;
       }
 
-      super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
 
-      for (super.dvDyFixed += 8388608; super.y < super.yEnd; super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed) {
+      for (super.dvDyFixed += 0x800000; super.y < super.yEnd; super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed) {
          int xLeft = super.xLeftFixed >> 16;
          int xRight = super.xRightFixed >> 16;
          int curU = super.uFixed >> mipLevel;
@@ -72,12 +72,12 @@ public final class LitDrawer_T3_Opaque_Quad extends LitDrawer {
             int dstColor = dstPixels[spanPixelIdx];
             int lightIntensity = stepDy2 >>> 16;
             int lightIntensity2 = colorTable[stepDy3 >>> 16 & 511];
-            int shadedColor = ((texelColor & 16711935) * lightIntensity & -16711936) + ((texelColor & 0xFF00) * lightIntensity & 0xFF0000) >>> 8;
-            int blendResult = ((shadedColor & lightIntensity2) << 1) + ((shadedColor ^ lightIntensity2) & 16711422) & 16843008;
-            blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+            int shadedColor = ((texelColor & 0x00FF00FF) * lightIntensity & 0xFF00FF00) + ((texelColor & 0xFF00) * lightIntensity & 0xFF0000) >>> 8;
+            int blendResult = ((shadedColor & lightIntensity2) << 1) + ((shadedColor ^ lightIntensity2) & 0x00FEFEFE) & 0x01010100;
+            blendResult = (blendResult >>> 8) + 0x007F7F7F ^ 0x007F7F7F;
             blendResult = shadedColor + lightIntensity2 - blendResult | blendResult;
-            int blendResult2 = ((blendResult & dstColor) << 1) + ((blendResult ^ dstColor) & 16711422) & 16843008;
-            blendResult2 = (blendResult2 >>> 8) + 8355711 ^ 8355711;
+            int blendResult2 = ((blendResult & dstColor) << 1) + ((blendResult ^ dstColor) & 0x00FEFEFE) & 0x01010100;
+            blendResult2 = (blendResult2 >>> 8) + 0x007F7F7F ^ 0x007F7F7F;
             blendResult2 = blendResult + dstColor - blendResult2 | blendResult2;
             dstPixels[spanPixelIdx] = blendResult2 | 0xFF000000;
             curU += stepDLight2;
@@ -95,6 +95,6 @@ public final class LitDrawer_T3_Opaque_Quad extends LitDrawer {
          super.duDyFixed = super.duDyFixed + super.lightFixed;
       }
 
-      super.dvDyFixed -= 8388608;
+      super.dvDyFixed -= 0x800000;
    }
 }

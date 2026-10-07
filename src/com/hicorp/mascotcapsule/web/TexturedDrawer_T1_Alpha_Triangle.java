@@ -30,7 +30,7 @@ public final class TexturedDrawer_T1_Alpha_Triangle extends TexturedDrawer {
             int texelColor = diffusePixels[texelOffset];
             if (texelColor != -1) {
                int dstColor = dstPixels[xLeft];
-               int pixelVal = (texelColor & 16711422) + (dstColor & 16711422) >>> 1;
+               int pixelVal = (texelColor & 0x00FEFEFE) + (dstColor & 0x00FEFEFE) >>> 1;
                dstPixels[xLeft] = pixelVal | 0xFF000000;
             }
 

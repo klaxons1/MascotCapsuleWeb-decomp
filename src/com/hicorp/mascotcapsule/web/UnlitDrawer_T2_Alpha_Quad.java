@@ -41,7 +41,7 @@ public final class UnlitDrawer_T2_Alpha_Quad extends UnlitDrawer {
          super.duDyFixed = super.duDyFixed + super.dvDxFixed * clipDeltaY;
       }
 
-      for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
+      for (super.yEnd = Math.min(super.yEnd, Config.getClipBottom(this.rasterizer));
          super.y < super.yEnd;
          super.duDyFixed = super.duDyFixed + super.dvDxFixed
       ) {
@@ -70,9 +70,9 @@ public final class UnlitDrawer_T2_Alpha_Quad extends UnlitDrawer {
             if (texelColor != -1) {
                int dstColor = dstPixels[spanPixelIdx];
                int scaledAlpha = stepDy2 * blendAlpha >>> 24;
-               int shadedColor = ((texelColor & 16711935) * scaledAlpha & -16711936)
+               int shadedColor = ((texelColor & 0x00FF00FF) * scaledAlpha & 0xFF00FF00)
                      + ((texelColor & 0xFF00) * scaledAlpha & 0xFF0000)
-                     + ((dstColor & 16711935) * invBlendAlpha & -16711936)
+                     + ((dstColor & 0x00FF00FF) * invBlendAlpha & 0xFF00FF00)
                      + ((dstColor & 0xFF00) * invBlendAlpha & 0xFF0000)
                   >>> 8;
                dstPixels[spanPixelIdx] = shadedColor | 0xFF000000;

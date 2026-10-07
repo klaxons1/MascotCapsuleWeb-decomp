@@ -32,8 +32,8 @@ public final class UnlitDrawer_T1_Opaque_Triangle extends UnlitDrawer {
             int texelColor = diffusePixels[texelOffset];
             int dstColor = dstPixels[xLeft];
             int intensityVal = stepDy2 >>> 16;
-            int shadedColor = ((texelColor & 16711935) * intensityVal & -16711936) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
-            shadedColor = (shadedColor & 16711422) + (dstColor & 16711422) >>> 1;
+            int shadedColor = ((texelColor & 0x00FF00FF) * intensityVal & 0xFF00FF00) + ((texelColor & 0xFF00) * intensityVal & 0xFF0000) >>> 8;
+            shadedColor = (shadedColor & 0x00FEFEFE) + (dstColor & 0x00FEFEFE) >>> 1;
             dstPixels[xLeft] = shadedColor | 0xFF000000;
             curU += curLight2;
             curV += stepDy;

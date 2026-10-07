@@ -10,115 +10,119 @@ public final class BoundingBox {
       this.resetEmpty();
    }
 
-   public BoundingBox(int var1, int var2, int var3, int var4) {
-      this.minX = var1;
-      this.minY = var2;
-      this.maxX = var3;
-      this.maxY = var4;
+   public BoundingBox(int minX, int minY, int maxX, int maxY) {
+      this.minX = minX;
+      this.minY = minY;
+      this.maxX = maxX;
+      this.maxY = maxY;
    }
 
-   public void setBounds(int var1, int var2, int var3, int var4) {
-      this.minX = var1;
-      this.minY = var2;
-      this.maxX = var3;
-      this.maxY = var4;
+   public void setBounds(int minX, int minY, int maxX, int maxY) {
+      this.minX = minX;
+      this.minY = minY;
+      this.maxX = maxX;
+      this.maxY = maxY;
    }
 
-   public void setBounds(BoundingBox var1) {
-      this.minX = var1.minX;
-      this.minY = var1.minY;
-      this.maxX = var1.maxX;
-      this.maxY = var1.maxY;
+   public void setBounds(BoundingBox other) {
+      this.minX = other.minX;
+      this.minY = other.minY;
+      this.maxX = other.maxX;
+      this.maxY = other.maxY;
    }
 
    public void resetEmpty() {
-      this.minX = this.minY = Integer.MAX_VALUE;
-      this.maxX = this.maxY = Integer.MIN_VALUE;
+      this.minX = Integer.MAX_VALUE;
+      this.minY = Integer.MAX_VALUE;
+      this.maxX = Integer.MIN_VALUE;
+      this.maxY = Integer.MIN_VALUE;
    }
 
    public void resetInfinite() {
-      this.minX = this.minY = Integer.MIN_VALUE;
-      this.maxX = this.maxY = Integer.MAX_VALUE;
+      this.minX = Integer.MIN_VALUE;
+      this.minY = Integer.MIN_VALUE;
+      this.maxX = Integer.MAX_VALUE;
+      this.maxY = Integer.MAX_VALUE;
    }
 
    public boolean isValid() {
       return this.minX < this.maxX && this.minY < this.maxY;
    }
 
-   public void intersect(int var1, int var2, int var3, int var4) {
+   public void intersect(int left, int top, int right, int bottom) {
       if (this.isValid()) {
-         if (this.minX < var1) {
-            this.minX = var1;
+         if (this.minX < left) {
+            this.minX = left;
          }
 
-         if (this.maxX > var3) {
-            this.maxX = var3;
+         if (this.maxX > right) {
+            this.maxX = right;
          }
 
-         if (this.minY < var2) {
-            this.minY = var2;
+         if (this.minY < top) {
+            this.minY = top;
          }
 
-         if (this.maxY > var4) {
-            this.maxY = var4;
+         if (this.maxY > bottom) {
+            this.maxY = bottom;
          }
       }
    }
 
-   public void intersect(BoundingBox var1) {
+   public void intersect(BoundingBox other) {
       if (this.isValid()) {
-         if (this.minX < var1.minX) {
-            this.minX = var1.minX;
+         if (this.minX < other.minX) {
+            this.minX = other.minX;
          }
 
-         if (this.maxX > var1.maxX) {
-            this.maxX = var1.maxX;
+         if (this.maxX > other.maxX) {
+            this.maxX = other.maxX;
          }
 
-         if (this.minY < var1.minY) {
-            this.minY = var1.minY;
+         if (this.minY < other.minY) {
+            this.minY = other.minY;
          }
 
-         if (this.maxY > var1.maxY) {
-            this.maxY = var1.maxY;
+         if (this.maxY > other.maxY) {
+            this.maxY = other.maxY;
          }
       }
    }
 
-   public void unionPoint(int var1, int var2) {
-      if (var1 < this.minX) {
-         this.minX = var1;
+   public void unionPoint(int x, int y) {
+      if (x < this.minX) {
+         this.minX = x;
       }
 
-      if (var1 > this.maxX) {
-         this.maxX = var1;
+      if (x > this.maxX) {
+         this.maxX = x;
       }
 
-      if (var2 < this.minY) {
-         this.minY = var2;
+      if (y < this.minY) {
+         this.minY = y;
       }
 
-      if (var2 > this.maxY) {
-         this.maxY = var2;
+      if (y > this.maxY) {
+         this.maxY = y;
       }
    }
 
-   public void union(BoundingBox var1) {
-      if (var1 != null) {
-         if (var1.minX < this.minX) {
-            this.minX = var1.minX;
+   public void union(BoundingBox other) {
+      if (other != null) {
+         if (other.minX < this.minX) {
+            this.minX = other.minX;
          }
 
-         if (var1.maxX > this.maxX) {
-            this.maxX = var1.maxX;
+         if (other.maxX > this.maxX) {
+            this.maxX = other.maxX;
          }
 
-         if (var1.minY < this.minY) {
-            this.minY = var1.minY;
+         if (other.minY < this.minY) {
+            this.minY = other.minY;
          }
 
-         if (var1.maxY > this.maxY) {
-            this.maxY = var1.maxY;
+         if (other.maxY > this.maxY) {
+            this.maxY = other.maxY;
          }
       }
    }

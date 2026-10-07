@@ -20,13 +20,13 @@ final class Config {
    private static final int[] blendTable = new int[512];
    private int[] pixelBuffer;
    private int stride;
-   private int bufferWidth;
-   private int bufferHeight;
+   private int pixelOffset;
    private int clipLeft;
-   private int clipRight;
    private int clipTop;
+   private int clipRight;
    private int clipBottom;
-   private int colorKey;
+   private int fillColor;
+   private int blendAlpha;
    private Texture diffuseTexture;
    private Texture sphereMapTexture;
    public final FlatDrawer[][] flatDrawers = new FlatDrawer[2][];
@@ -165,35 +165,35 @@ final class Config {
    public void setRenderTarget(int var1, int[] var2) {
       this.pixelBuffer = var2;
       this.stride = var1;
-      this.bufferWidth = 0;
+      this.pixelOffset = 0;
    }
 
-   public void setClipRect(int var1, int var2, int var3, int var4) {
-      this.bufferHeight = var1;
-      this.clipLeft = var2;
-      this.clipRight = var3;
-      this.clipTop = var4;
+   public void setClipRect(int minX, int minY, int maxX, int maxY) {
+      this.clipLeft = minX;
+      this.clipTop = minY;
+      this.clipRight = maxX;
+      this.clipBottom = maxY;
    }
 
    public void setClipRect(BoundingBox bounds) {
-      this.bufferHeight = bounds.minX;
-      this.clipLeft = bounds.minY;
+      this.clipLeft = bounds.minX;
+      this.clipTop = bounds.minY;
       this.clipRight = bounds.maxX;
-      this.clipTop = bounds.maxY;
+      this.clipBottom = bounds.maxY;
    }
 
-   public void fillColor(int var1) {
-      var1 |= -16777216;
-      int var2 = this.clipLeft * this.stride + this.bufferHeight + this.bufferWidth;
+   public void fillColor(int color) {
+      color |= 0xFF000000;
+      int offset = this.clipTop * this.stride + this.clipLeft + this.pixelOffset;
 
-      for (int var3 = this.clipLeft; var3 < this.clipTop; var3++) {
-         int var4 = var2;
+      for (int y = this.clipTop; y < this.clipBottom; y++) {
+         int row = offset;
 
-         for (int var5 = this.bufferHeight; var5 < this.clipRight; var5++) {
-            this.pixelBuffer[var4++] = var1;
+         for (int x = this.clipLeft; x < this.clipRight; x++) {
+            this.pixelBuffer[row++] = color;
          }
 
-         var2 += this.stride;
+         offset += this.stride;
       }
    }
 
@@ -205,57 +205,57 @@ final class Config {
       this.sphereMapTexture = var1;
    }
 
-   public void setColorKey(int var1) {
-      this.clipBottom = var1 | 0xFF000000;
+   public void setFillColor(int color) {
+      this.fillColor = color | 0xFF000000;
    }
 
-   public void setAlpha(int var1) {
-      this.colorKey = var1;
+   public void setBlendAlpha(int alpha) {
+      this.blendAlpha = alpha;
    }
 
-   public void rasterizeFlatTriangle(FlatDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
-      RasterVertex var5;
-      RasterVertex var6;
-      RasterVertex var7;
-      if (var2.y <= var4.y) {
-         if (var2.y <= var3.y) {
-            var5 = var2;
-            if (var3.y <= var4.y) {
-               var6 = var3;
-               var7 = var4;
+   public void rasterizeFlatTriangle(FlatDrawer drawer, RasterVertex v0, RasterVertex v1, RasterVertex v2) {
+      RasterVertex top;
+      RasterVertex mid;
+      RasterVertex bot;
+      if (v0.y <= v2.y) {
+         if (v0.y <= v1.y) {
+            top = v0;
+            if (v1.y <= v2.y) {
+               mid = v1;
+               bot = v2;
             } else {
-               var6 = var4;
-               var7 = var3;
+               mid = v2;
+               bot = v1;
             }
          } else {
-            var5 = var3;
-            var6 = var2;
-            var7 = var4;
+            top = v1;
+            mid = v0;
+            bot = v2;
          }
-      } else if (var4.y < var3.y) {
-         var5 = var4;
-         if (var2.y < var3.y) {
-            var6 = var2;
-            var7 = var3;
+      } else if (v2.y < v1.y) {
+         top = v2;
+         if (v0.y < v1.y) {
+            mid = v0;
+            bot = v1;
          } else {
-            var6 = var3;
-            var7 = var2;
+            mid = v1;
+            bot = v0;
          }
       } else {
-         var5 = var3;
-         var6 = var4;
-         var7 = var2;
+         top = v1;
+         mid = v2;
+         bot = v0;
       }
 
-      if (var5.y != var7.y) {
-         var1.y = var5.y;
-         var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
-         int var8 = var7.x - var5.x;
-         int var9 = fixedReciprocal(var7.y - var5.y);
+      if (top.y != bot.y) {
+         drawer.y = top.y;
+         drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
+         int var8 = bot.x - top.x;
+         int var9 = fixedReciprocal(bot.y - top.y);
          int var12 = var8 * var9;
-         int var10 = (var5.x << 16) + 32768;
-         var8 = var6.x - var5.x;
-         var9 = var6.y - var5.y;
+         int var10 = (top.x << 16) + 32768;
+         var8 = mid.x - top.x;
+         var9 = mid.y - top.y;
          int var16 = (var8 << 16) - var12 * var9;
          int var17 = var16 >> 16;
          if (var17 == 0) {
@@ -263,91 +263,91 @@ final class Config {
          }
 
          int var15 = fixedReciprocal(var17);
-         var1.xLeftFixed = var10;
-         var1.xRightFixed = var10;
+         drawer.xLeftFixed = var10;
+         drawer.xRightFixed = var10;
          if (var9 > 0) {
             var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
-            var1.yEnd = var6.y;
+            drawer.yEnd = mid.y;
             if (var15 > 0) {
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var13;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var13;
             } else {
-               var1.dxLeftFixed = var13;
-               var1.dxRightFixed = var12;
+               drawer.dxLeftFixed = var13;
+               drawer.dxRightFixed = var12;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
 
-         if (var6.y != var7.y) {
-            var8 = var7.x - var6.x;
-            var9 = fixedReciprocal(var7.y - var6.y);
+         if (mid.y != bot.y) {
+            var8 = bot.x - mid.x;
+            var9 = fixedReciprocal(bot.y - mid.y);
             int var14 = var8 * var9;
-            int var11 = (var6.x << 16) + 32768;
-            var1.yEnd = var7.y;
+            int var11 = (mid.x << 16) + 32768;
+            drawer.yEnd = bot.y;
             if (var15 > 0) {
-               var1.xRightFixed = var11;
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var14;
+               drawer.xRightFixed = var11;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var14;
             } else {
-               var1.xLeftFixed = var11;
-               var1.dxLeftFixed = var14;
-               var1.dxRightFixed = var12;
+               drawer.xLeftFixed = var11;
+               drawer.dxLeftFixed = var14;
+               drawer.dxRightFixed = var12;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
       }
    }
 
-   public void rasterizeLitColorTriangle(LineDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
-      RasterVertex var5;
-      RasterVertex var6;
-      RasterVertex var7;
-      if (var2.y <= var4.y) {
-         if (var2.y <= var3.y) {
-            var5 = var2;
-            if (var3.y <= var4.y) {
-               var6 = var3;
-               var7 = var4;
+   public void rasterizeLitColorTriangle(LineDrawer drawer, RasterVertex v0, RasterVertex v1, RasterVertex v2) {
+      RasterVertex top;
+      RasterVertex mid;
+      RasterVertex bot;
+      if (v0.y <= v2.y) {
+         if (v0.y <= v1.y) {
+            top = v0;
+            if (v1.y <= v2.y) {
+               mid = v1;
+               bot = v2;
             } else {
-               var6 = var4;
-               var7 = var3;
+               mid = v2;
+               bot = v1;
             }
          } else {
-            var5 = var3;
-            var6 = var2;
-            var7 = var4;
+            top = v1;
+            mid = v0;
+            bot = v2;
          }
-      } else if (var4.y < var3.y) {
-         var5 = var4;
-         if (var2.y < var3.y) {
-            var6 = var2;
-            var7 = var3;
+      } else if (v2.y < v1.y) {
+         top = v2;
+         if (v0.y < v1.y) {
+            mid = v0;
+            bot = v1;
          } else {
-            var6 = var3;
-            var7 = var2;
+            mid = v1;
+            bot = v0;
          }
       } else {
-         var5 = var3;
-         var6 = var4;
-         var7 = var2;
+         top = v1;
+         mid = v2;
+         bot = v0;
       }
 
-      if (var5.y != var7.y) {
-         var1.y = var5.y;
-         var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
-         int var8 = var7.x - var5.x;
-         int var9 = fixedReciprocal(var7.y - var5.y);
+      if (top.y != bot.y) {
+         drawer.y = top.y;
+         drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
+         int var8 = bot.x - top.x;
+         int var9 = fixedReciprocal(bot.y - top.y);
          int var12 = var8 * var9;
-         int var10 = (var5.x << 16) + 32768;
-         int var15 = var7.z - var5.z;
+         int var10 = (top.x << 16) + 32768;
+         int var15 = bot.z - top.z;
          int var19 = var15 * var9;
-         int var17 = (var5.z << 16) + 32768;
-         var8 = var6.x - var5.x;
-         var9 = var6.y - var5.y;
-         var15 = var6.z - var5.z;
+         int var17 = (top.z << 16) + 32768;
+         var8 = mid.x - top.x;
+         var9 = mid.y - top.y;
+         var15 = mid.z - top.z;
          int var22 = (var8 << 16) - var12 * var9;
          int var23 = var22 >> 16;
          if (var23 == 0) {
@@ -355,102 +355,102 @@ final class Config {
          }
 
          int var21 = fixedReciprocal(var23);
-         var1.dzDxFixed = (var15 - (var19 * var9 >> 16)) * var21;
-         var1.xLeftFixed = var10;
-         var1.xRightFixed = var10;
-         var1.zFixed = var17;
+         drawer.dzDxFixed = (var15 - (var19 * var9 >> 16)) * var21;
+         drawer.xLeftFixed = var10;
+         drawer.xRightFixed = var10;
+         drawer.zFixed = var17;
          if (var9 > 0) {
             var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
-            var1.yEnd = var6.y;
+            drawer.yEnd = mid.y;
             if (var21 > 0) {
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var13;
-               var1.dzDyFixed = var19;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var13;
+               drawer.dzDyFixed = var19;
             } else {
-               var1.dxLeftFixed = var13;
-               var1.dxRightFixed = var12;
-               var1.dzDyFixed = var15 * var9;
+               drawer.dxLeftFixed = var13;
+               drawer.dxRightFixed = var12;
+               drawer.dzDyFixed = var15 * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
 
-         if (var6.y != var7.y) {
-            var8 = var7.x - var6.x;
-            var9 = fixedReciprocal(var7.y - var6.y);
+         if (mid.y != bot.y) {
+            var8 = bot.x - mid.x;
+            var9 = fixedReciprocal(bot.y - mid.y);
             int var14 = var8 * var9;
-            int var11 = (var6.x << 16) + 32768;
-            var1.yEnd = var7.y;
+            int var11 = (mid.x << 16) + 32768;
+            drawer.yEnd = bot.y;
             if (var21 > 0) {
-               var1.xRightFixed = var11;
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var14;
-               var1.dzDyFixed = var19;
+               drawer.xRightFixed = var11;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var14;
+               drawer.dzDyFixed = var19;
             } else {
-               var1.xLeftFixed = var11;
-               var1.dxLeftFixed = var14;
-               var1.dxRightFixed = var12;
-               var1.zFixed = (var6.z << 16) + 32768;
-               var1.dzDyFixed = (var7.z - var6.z) * var9;
+               drawer.xLeftFixed = var11;
+               drawer.dxLeftFixed = var14;
+               drawer.dxRightFixed = var12;
+               drawer.zFixed = (mid.z << 16) + 32768;
+               drawer.dzDyFixed = (bot.z - mid.z) * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
       }
    }
 
-   public void rasterizeTexturedTriangle(TexturedDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
-      RasterVertex var5;
-      RasterVertex var6;
-      RasterVertex var7;
-      if (var2.y <= var4.y) {
-         if (var2.y <= var3.y) {
-            var5 = var2;
-            if (var3.y <= var4.y) {
-               var6 = var3;
-               var7 = var4;
+   public void rasterizeTexturedTriangle(TexturedDrawer drawer, RasterVertex v0, RasterVertex v1, RasterVertex v2) {
+      RasterVertex top;
+      RasterVertex mid;
+      RasterVertex bot;
+      if (v0.y <= v2.y) {
+         if (v0.y <= v1.y) {
+            top = v0;
+            if (v1.y <= v2.y) {
+               mid = v1;
+               bot = v2;
             } else {
-               var6 = var4;
-               var7 = var3;
+               mid = v2;
+               bot = v1;
             }
          } else {
-            var5 = var3;
-            var6 = var2;
-            var7 = var4;
+            top = v1;
+            mid = v0;
+            bot = v2;
          }
-      } else if (var4.y < var3.y) {
-         var5 = var4;
-         if (var2.y < var3.y) {
-            var6 = var2;
-            var7 = var3;
+      } else if (v2.y < v1.y) {
+         top = v2;
+         if (v0.y < v1.y) {
+            mid = v0;
+            bot = v1;
          } else {
-            var6 = var3;
-            var7 = var2;
+            mid = v1;
+            bot = v0;
          }
       } else {
-         var5 = var3;
-         var6 = var4;
-         var7 = var2;
+         top = v1;
+         mid = v2;
+         bot = v0;
       }
 
-      if (var5.y != var7.y) {
-         var1.y = var5.y;
-         var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
-         int var8 = var7.x - var5.x;
-         int var9 = fixedReciprocal(var7.y - var5.y);
+      if (top.y != bot.y) {
+         drawer.y = top.y;
+         drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
+         int var8 = bot.x - top.x;
+         int var9 = fixedReciprocal(bot.y - top.y);
          int var12 = var8 * var9;
-         int var10 = (var5.x << 16) + 32768;
-         int var15 = var7.z - var5.z;
-         int var16 = var7.u - var5.u;
+         int var10 = (top.x << 16) + 32768;
+         int var15 = bot.z - top.z;
+         int var16 = bot.u - top.u;
          int var19 = var15 * var9;
          int var20 = var16 * var9;
-         int var17 = (var5.z << 16) + 32768;
-         int var18 = (var5.u << 16) + 32768;
-         var8 = var6.x - var5.x;
-         var9 = var6.y - var5.y;
-         var15 = var6.z - var5.z;
-         var16 = var6.u - var5.u;
+         int var17 = (top.z << 16) + 32768;
+         int var18 = (top.u << 16) + 32768;
+         var8 = mid.x - top.x;
+         var9 = mid.y - top.y;
+         var15 = mid.z - top.z;
+         var16 = mid.u - top.u;
          int var22 = (var8 << 16) - var12 * var9;
          int var23 = var22 >> 16;
          if (var23 == 0) {
@@ -458,113 +458,113 @@ final class Config {
          }
 
          int var21 = fixedReciprocal(var23);
-         var1.duDxFixed = (var15 - (var19 * var9 >> 16)) * var21;
-         var1.dvDxFixed = (var16 - (var20 * var9 >> 16)) * var21;
-         var1.xLeftFixed = var10;
-         var1.xRightFixed = var10;
-         var1.uFixed = var17;
-         var1.vFixed = var18;
+         drawer.duDxFixed = (var15 - (var19 * var9 >> 16)) * var21;
+         drawer.dvDxFixed = (var16 - (var20 * var9 >> 16)) * var21;
+         drawer.xLeftFixed = var10;
+         drawer.xRightFixed = var10;
+         drawer.uFixed = var17;
+         drawer.vFixed = var18;
          if (var9 > 0) {
             var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
-            var1.yEnd = var6.y;
+            drawer.yEnd = mid.y;
             if (var21 > 0) {
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var13;
-               var1.duDyFixed = var19;
-               var1.dvDyFixed = var20;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var13;
+               drawer.duDyFixed = var19;
+               drawer.dvDyFixed = var20;
             } else {
-               var1.dxLeftFixed = var13;
-               var1.dxRightFixed = var12;
-               var1.duDyFixed = var15 * var9;
-               var1.dvDyFixed = var16 * var9;
+               drawer.dxLeftFixed = var13;
+               drawer.dxRightFixed = var12;
+               drawer.duDyFixed = var15 * var9;
+               drawer.dvDyFixed = var16 * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
 
-         if (var6.y != var7.y) {
-            var8 = var7.x - var6.x;
-            var9 = fixedReciprocal(var7.y - var6.y);
+         if (mid.y != bot.y) {
+            var8 = bot.x - mid.x;
+            var9 = fixedReciprocal(bot.y - mid.y);
             int var14 = var8 * var9;
-            int var11 = (var6.x << 16) + 32768;
-            var1.yEnd = var7.y;
+            int var11 = (mid.x << 16) + 32768;
+            drawer.yEnd = bot.y;
             if (var21 > 0) {
-               var1.xRightFixed = var11;
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var14;
-               var1.duDyFixed = var19;
-               var1.dvDyFixed = var20;
+               drawer.xRightFixed = var11;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var14;
+               drawer.duDyFixed = var19;
+               drawer.dvDyFixed = var20;
             } else {
-               var1.xLeftFixed = var11;
-               var1.dxLeftFixed = var14;
-               var1.dxRightFixed = var12;
-               var1.uFixed = (var6.z << 16) + 32768;
-               var1.vFixed = (var6.u << 16) + 32768;
-               var1.duDyFixed = (var7.z - var6.z) * var9;
-               var1.dvDyFixed = (var7.u - var6.u) * var9;
+               drawer.xLeftFixed = var11;
+               drawer.dxLeftFixed = var14;
+               drawer.dxRightFixed = var12;
+               drawer.uFixed = (mid.z << 16) + 32768;
+               drawer.vFixed = (mid.u << 16) + 32768;
+               drawer.duDyFixed = (bot.z - mid.z) * var9;
+               drawer.dvDyFixed = (bot.u - mid.u) * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
       }
    }
 
-   public void rasterizeUnlitTriangle(UnlitDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
-      RasterVertex var5;
-      RasterVertex var6;
-      RasterVertex var7;
-      if (var2.y <= var4.y) {
-         if (var2.y <= var3.y) {
-            var5 = var2;
-            if (var3.y <= var4.y) {
-               var6 = var3;
-               var7 = var4;
+   public void rasterizeUnlitTriangle(UnlitDrawer drawer, RasterVertex v0, RasterVertex v1, RasterVertex v2) {
+      RasterVertex top;
+      RasterVertex mid;
+      RasterVertex bot;
+      if (v0.y <= v2.y) {
+         if (v0.y <= v1.y) {
+            top = v0;
+            if (v1.y <= v2.y) {
+               mid = v1;
+               bot = v2;
             } else {
-               var6 = var4;
-               var7 = var3;
+               mid = v2;
+               bot = v1;
             }
          } else {
-            var5 = var3;
-            var6 = var2;
-            var7 = var4;
+            top = v1;
+            mid = v0;
+            bot = v2;
          }
-      } else if (var4.y < var3.y) {
-         var5 = var4;
-         if (var2.y < var3.y) {
-            var6 = var2;
-            var7 = var3;
+      } else if (v2.y < v1.y) {
+         top = v2;
+         if (v0.y < v1.y) {
+            mid = v0;
+            bot = v1;
          } else {
-            var6 = var3;
-            var7 = var2;
+            mid = v1;
+            bot = v0;
          }
       } else {
-         var5 = var3;
-         var6 = var4;
-         var7 = var2;
+         top = v1;
+         mid = v2;
+         bot = v0;
       }
 
-      if (var5.y != var7.y) {
-         var1.y = var5.y;
-         var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
-         int var8 = var7.x - var5.x;
-         int var9 = fixedReciprocal(var7.y - var5.y);
+      if (top.y != bot.y) {
+         drawer.y = top.y;
+         drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
+         int var8 = bot.x - top.x;
+         int var9 = fixedReciprocal(bot.y - top.y);
          int var12 = var8 * var9;
-         int var10 = (var5.x << 16) + 32768;
-         int var15 = var7.z - var5.z;
-         int var16 = var7.u - var5.u;
-         int var17 = var7.v - var5.v;
+         int var10 = (top.x << 16) + 32768;
+         int var15 = bot.z - top.z;
+         int var16 = bot.u - top.u;
+         int var17 = bot.v - top.v;
          int var21 = var15 * var9;
          int var22 = var16 * var9;
          int var23 = var17 * var9;
-         int var18 = (var5.z << 16) + 32768;
-         int var19 = (var5.u << 16) + 32768;
-         int var20 = (var5.v << 16) + 32768;
-         var8 = var6.x - var5.x;
-         var9 = var6.y - var5.y;
-         var15 = var6.z - var5.z;
-         var16 = var6.u - var5.u;
-         var17 = var6.v - var5.v;
+         int var18 = (top.z << 16) + 32768;
+         int var19 = (top.u << 16) + 32768;
+         int var20 = (top.v << 16) + 32768;
+         var8 = mid.x - top.x;
+         var9 = mid.y - top.y;
+         var15 = mid.z - top.z;
+         var16 = mid.u - top.u;
+         var17 = mid.v - top.v;
          int var25 = (var8 << 16) - var12 * var9;
          int var26 = var25 >> 16;
          if (var26 == 0) {
@@ -572,124 +572,124 @@ final class Config {
          }
 
          int var24 = fixedReciprocal(var26);
-         var1.lightFixed = (var15 - (var21 * var9 >> 16)) * var24;
-         var1.dLightDyFixed = (var16 - (var22 * var9 >> 16)) * var24;
-         var1.dLightDxFixed = (var17 - (var23 * var9 >> 16)) * var24;
-         var1.xLeftFixed = var10;
-         var1.xRightFixed = var10;
-         var1.uFixed = var18;
-         var1.vFixed = var19;
-         var1.duDyFixed = var20;
+         drawer.lightFixed = (var15 - (var21 * var9 >> 16)) * var24;
+         drawer.dLightDyFixed = (var16 - (var22 * var9 >> 16)) * var24;
+         drawer.dLightDxFixed = (var17 - (var23 * var9 >> 16)) * var24;
+         drawer.xLeftFixed = var10;
+         drawer.xRightFixed = var10;
+         drawer.uFixed = var18;
+         drawer.vFixed = var19;
+         drawer.duDyFixed = var20;
          if (var9 > 0) {
             var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
-            var1.yEnd = var6.y;
+            drawer.yEnd = mid.y;
             if (var24 > 0) {
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var13;
-               var1.dvDyFixed = var21;
-               var1.duDxFixed = var22;
-               var1.dvDxFixed = var23;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var13;
+               drawer.dvDyFixed = var21;
+               drawer.duDxFixed = var22;
+               drawer.dvDxFixed = var23;
             } else {
-               var1.dxLeftFixed = var13;
-               var1.dxRightFixed = var12;
-               var1.dvDyFixed = var15 * var9;
-               var1.duDxFixed = var16 * var9;
-               var1.dvDxFixed = var17 * var9;
+               drawer.dxLeftFixed = var13;
+               drawer.dxRightFixed = var12;
+               drawer.dvDyFixed = var15 * var9;
+               drawer.duDxFixed = var16 * var9;
+               drawer.dvDxFixed = var17 * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
 
-         if (var6.y != var7.y) {
-            var8 = var7.x - var6.x;
-            var9 = fixedReciprocal(var7.y - var6.y);
+         if (mid.y != bot.y) {
+            var8 = bot.x - mid.x;
+            var9 = fixedReciprocal(bot.y - mid.y);
             int var14 = var8 * var9;
-            int var11 = (var6.x << 16) + 32768;
-            var1.yEnd = var7.y;
+            int var11 = (mid.x << 16) + 32768;
+            drawer.yEnd = bot.y;
             if (var24 > 0) {
-               var1.xRightFixed = var11;
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var14;
-               var1.dvDyFixed = var21;
-               var1.duDxFixed = var22;
-               var1.dvDxFixed = var23;
+               drawer.xRightFixed = var11;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var14;
+               drawer.dvDyFixed = var21;
+               drawer.duDxFixed = var22;
+               drawer.dvDxFixed = var23;
             } else {
-               var1.xLeftFixed = var11;
-               var1.dxLeftFixed = var14;
-               var1.dxRightFixed = var12;
-               var1.uFixed = (var6.z << 16) + 32768;
-               var1.vFixed = (var6.u << 16) + 32768;
-               var1.duDyFixed = (var6.v << 16) + 32768;
-               var1.dvDyFixed = (var7.z - var6.z) * var9;
-               var1.duDxFixed = (var7.u - var6.u) * var9;
-               var1.dvDxFixed = (var7.v - var6.v) * var9;
+               drawer.xLeftFixed = var11;
+               drawer.dxLeftFixed = var14;
+               drawer.dxRightFixed = var12;
+               drawer.uFixed = (mid.z << 16) + 32768;
+               drawer.vFixed = (mid.u << 16) + 32768;
+               drawer.duDyFixed = (mid.v << 16) + 32768;
+               drawer.dvDyFixed = (bot.z - mid.z) * var9;
+               drawer.duDxFixed = (bot.u - mid.u) * var9;
+               drawer.dvDxFixed = (bot.v - mid.v) * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
       }
    }
 
-   public void rasterizeLitTriangle(LitDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
-      RasterVertex var5;
-      RasterVertex var6;
-      RasterVertex var7;
-      if (var2.y <= var4.y) {
-         if (var2.y <= var3.y) {
-            var5 = var2;
-            if (var3.y <= var4.y) {
-               var6 = var3;
-               var7 = var4;
+   public void rasterizeLitTriangle(LitDrawer drawer, RasterVertex v0, RasterVertex v1, RasterVertex v2) {
+      RasterVertex top;
+      RasterVertex mid;
+      RasterVertex bot;
+      if (v0.y <= v2.y) {
+         if (v0.y <= v1.y) {
+            top = v0;
+            if (v1.y <= v2.y) {
+               mid = v1;
+               bot = v2;
             } else {
-               var6 = var4;
-               var7 = var3;
+               mid = v2;
+               bot = v1;
             }
          } else {
-            var5 = var3;
-            var6 = var2;
-            var7 = var4;
+            top = v1;
+            mid = v0;
+            bot = v2;
          }
-      } else if (var4.y < var3.y) {
-         var5 = var4;
-         if (var2.y < var3.y) {
-            var6 = var2;
-            var7 = var3;
+      } else if (v2.y < v1.y) {
+         top = v2;
+         if (v0.y < v1.y) {
+            mid = v0;
+            bot = v1;
          } else {
-            var6 = var3;
-            var7 = var2;
+            mid = v1;
+            bot = v0;
          }
       } else {
-         var5 = var3;
-         var6 = var4;
-         var7 = var2;
+         top = v1;
+         mid = v2;
+         bot = v0;
       }
 
-      if (var5.y != var7.y) {
-         var1.y = var5.y;
-         var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
-         int var8 = var7.x - var5.x;
-         int var9 = fixedReciprocal(var7.y - var5.y);
+      if (top.y != bot.y) {
+         drawer.y = top.y;
+         drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
+         int var8 = bot.x - top.x;
+         int var9 = fixedReciprocal(bot.y - top.y);
          int var12 = var8 * var9;
-         int var10 = (var5.x << 16) + 32768;
-         int var15 = var7.z - var5.z;
-         int var16 = var7.u - var5.u;
-         int var17 = var7.v - var5.v;
-         int var18 = var7.light - var5.light;
+         int var10 = (top.x << 16) + 32768;
+         int var15 = bot.z - top.z;
+         int var16 = bot.u - top.u;
+         int var17 = bot.v - top.v;
+         int var18 = bot.light - top.light;
          int var23 = var15 * var9;
          int var24 = var16 * var9;
          int var25 = var17 * var9;
          int var26 = var18 * var9;
-         int var19 = (var5.z << 16) + 32768;
-         int var20 = (var5.u << 16) + 32768;
-         int var21 = (var5.v << 16) + 32768;
-         int var22 = (var5.light << 16) + 32768;
-         var8 = var6.x - var5.x;
-         var9 = var6.y - var5.y;
-         var15 = var6.z - var5.z;
-         var16 = var6.u - var5.u;
-         var17 = var6.v - var5.v;
-         var18 = var6.light - var5.light;
+         int var19 = (top.z << 16) + 32768;
+         int var20 = (top.u << 16) + 32768;
+         int var21 = (top.v << 16) + 32768;
+         int var22 = (top.light << 16) + 32768;
+         var8 = mid.x - top.x;
+         var9 = mid.y - top.y;
+         var15 = mid.z - top.z;
+         var16 = mid.u - top.u;
+         var17 = mid.v - top.v;
+         var18 = mid.light - top.light;
          int var28 = (var8 << 16) - var12 * var9;
          int var29 = var28 >> 16;
          if (var29 == 0) {
@@ -697,135 +697,135 @@ final class Config {
          }
 
          int var27 = fixedReciprocal(var29);
-         var1.dLightDxFixed = (var15 - (var23 * var9 >> 16)) * var27;
-         var1.normalZFixed = (var16 - (var24 * var9 >> 16)) * var27;
-         var1.dNormalZDyFixed = (var17 - (var25 * var9 >> 16)) * var27;
-         var1.dNormalZDxFixed = (var18 - (var26 * var9 >> 16)) * var27;
-         var1.xLeftFixed = var10;
-         var1.xRightFixed = var10;
-         var1.uFixed = var19;
-         var1.vFixed = var20;
-         var1.duDyFixed = var21;
-         var1.dvDyFixed = var22;
+         drawer.dLightDxFixed = (var15 - (var23 * var9 >> 16)) * var27;
+         drawer.normalZFixed = (var16 - (var24 * var9 >> 16)) * var27;
+         drawer.dNormalZDyFixed = (var17 - (var25 * var9 >> 16)) * var27;
+         drawer.dNormalZDxFixed = (var18 - (var26 * var9 >> 16)) * var27;
+         drawer.xLeftFixed = var10;
+         drawer.xRightFixed = var10;
+         drawer.uFixed = var19;
+         drawer.vFixed = var20;
+         drawer.duDyFixed = var21;
+         drawer.dvDyFixed = var22;
          if (var9 > 0) {
             var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
-            var1.yEnd = var6.y;
+            drawer.yEnd = mid.y;
             if (var27 > 0) {
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var13;
-               var1.duDxFixed = var23;
-               var1.dvDxFixed = var24;
-               var1.lightFixed = var25;
-               var1.dLightDyFixed = var26;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var13;
+               drawer.duDxFixed = var23;
+               drawer.dvDxFixed = var24;
+               drawer.lightFixed = var25;
+               drawer.dLightDyFixed = var26;
             } else {
-               var1.dxLeftFixed = var13;
-               var1.dxRightFixed = var12;
-               var1.duDxFixed = var15 * var9;
-               var1.dvDxFixed = var16 * var9;
-               var1.lightFixed = var17 * var9;
-               var1.dLightDyFixed = var18 * var9;
+               drawer.dxLeftFixed = var13;
+               drawer.dxRightFixed = var12;
+               drawer.duDxFixed = var15 * var9;
+               drawer.dvDxFixed = var16 * var9;
+               drawer.lightFixed = var17 * var9;
+               drawer.dLightDyFixed = var18 * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
 
-         if (var6.y != var7.y) {
-            var8 = var7.x - var6.x;
-            var9 = fixedReciprocal(var7.y - var6.y);
+         if (mid.y != bot.y) {
+            var8 = bot.x - mid.x;
+            var9 = fixedReciprocal(bot.y - mid.y);
             int var14 = var8 * var9;
-            int var11 = (var6.x << 16) + 32768;
-            var1.yEnd = var7.y;
+            int var11 = (mid.x << 16) + 32768;
+            drawer.yEnd = bot.y;
             if (var27 > 0) {
-               var1.xRightFixed = var11;
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var14;
-               var1.duDxFixed = var23;
-               var1.dvDxFixed = var24;
-               var1.lightFixed = var25;
-               var1.dLightDyFixed = var26;
+               drawer.xRightFixed = var11;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var14;
+               drawer.duDxFixed = var23;
+               drawer.dvDxFixed = var24;
+               drawer.lightFixed = var25;
+               drawer.dLightDyFixed = var26;
             } else {
-               var1.xLeftFixed = var11;
-               var1.dxLeftFixed = var14;
-               var1.dxRightFixed = var12;
-               var1.uFixed = (var6.z << 16) + 32768;
-               var1.vFixed = (var6.u << 16) + 32768;
-               var1.duDyFixed = (var6.v << 16) + 32768;
-               var1.dvDyFixed = (var6.light << 16) + 32768;
-               var1.duDxFixed = (var7.z - var6.z) * var9;
-               var1.dvDxFixed = (var7.u - var6.u) * var9;
-               var1.lightFixed = (var7.v - var6.v) * var9;
-               var1.dLightDyFixed = (var7.light - var6.light) * var9;
+               drawer.xLeftFixed = var11;
+               drawer.dxLeftFixed = var14;
+               drawer.dxRightFixed = var12;
+               drawer.uFixed = (mid.z << 16) + 32768;
+               drawer.vFixed = (mid.u << 16) + 32768;
+               drawer.duDyFixed = (mid.v << 16) + 32768;
+               drawer.dvDyFixed = (mid.light << 16) + 32768;
+               drawer.duDxFixed = (bot.z - mid.z) * var9;
+               drawer.dvDxFixed = (bot.u - mid.u) * var9;
+               drawer.lightFixed = (bot.v - mid.v) * var9;
+               drawer.dLightDyFixed = (bot.light - mid.light) * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
       }
    }
 
-   public void rasterizeSphereMapTriangle(SphereMapDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
-      RasterVertex var5;
-      RasterVertex var6;
-      RasterVertex var7;
-      if (var2.y <= var4.y) {
-         if (var2.y <= var3.y) {
-            var5 = var2;
-            if (var3.y <= var4.y) {
-               var6 = var3;
-               var7 = var4;
+   public void rasterizeSphereMapTriangle(SphereMapDrawer drawer, RasterVertex v0, RasterVertex v1, RasterVertex v2) {
+      RasterVertex top;
+      RasterVertex mid;
+      RasterVertex bot;
+      if (v0.y <= v2.y) {
+         if (v0.y <= v1.y) {
+            top = v0;
+            if (v1.y <= v2.y) {
+               mid = v1;
+               bot = v2;
             } else {
-               var6 = var4;
-               var7 = var3;
+               mid = v2;
+               bot = v1;
             }
          } else {
-            var5 = var3;
-            var6 = var2;
-            var7 = var4;
+            top = v1;
+            mid = v0;
+            bot = v2;
          }
-      } else if (var4.y < var3.y) {
-         var5 = var4;
-         if (var2.y < var3.y) {
-            var6 = var2;
-            var7 = var3;
+      } else if (v2.y < v1.y) {
+         top = v2;
+         if (v0.y < v1.y) {
+            mid = v0;
+            bot = v1;
          } else {
-            var6 = var3;
-            var7 = var2;
+            mid = v1;
+            bot = v0;
          }
       } else {
-         var5 = var3;
-         var6 = var4;
-         var7 = var2;
+         top = v1;
+         mid = v2;
+         bot = v0;
       }
 
-      if (var5.y != var7.y) {
-         var1.y = var5.y;
-         var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
-         int var8 = var7.x - var5.x;
-         int var9 = fixedReciprocal(var7.y - var5.y);
+      if (top.y != bot.y) {
+         drawer.y = top.y;
+         drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
+         int var8 = bot.x - top.x;
+         int var9 = fixedReciprocal(bot.y - top.y);
          int var12 = var8 * var9;
-         int var10 = (var5.x << 16) + 32768;
-         int var15 = var7.z - var5.z;
-         int var16 = var7.u - var5.u;
-         int var17 = var7.v - var5.v;
-         int var18 = var7.light - var5.light;
-         int var19 = var7.normalZ - var5.normalZ;
+         int var10 = (top.x << 16) + 32768;
+         int var15 = bot.z - top.z;
+         int var16 = bot.u - top.u;
+         int var17 = bot.v - top.v;
+         int var18 = bot.light - top.light;
+         int var19 = bot.normalZ - top.normalZ;
          int var25 = var15 * var9;
          int var26 = var16 * var9;
          int var27 = var17 * var9;
          int var28 = var18 * var9;
          int var29 = var19 * var9;
-         int var20 = (var5.z << 16) + 32768;
-         int var21 = (var5.u << 16) + 32768;
-         int var22 = (var5.v << 16) + 32768;
-         int var23 = (var5.light << 16) + 32768;
-         int var24 = (var5.normalZ << 16) + 32768;
-         var8 = var6.x - var5.x;
-         var9 = var6.y - var5.y;
-         var15 = var6.z - var5.z;
-         var16 = var6.u - var5.u;
-         var17 = var6.v - var5.v;
-         var18 = var6.light - var5.light;
-         var19 = var6.normalZ - var5.normalZ;
+         int var20 = (top.z << 16) + 32768;
+         int var21 = (top.u << 16) + 32768;
+         int var22 = (top.v << 16) + 32768;
+         int var23 = (top.light << 16) + 32768;
+         int var24 = (top.normalZ << 16) + 32768;
+         var8 = mid.x - top.x;
+         var9 = mid.y - top.y;
+         var15 = mid.z - top.z;
+         var16 = mid.u - top.u;
+         var17 = mid.v - top.v;
+         var18 = mid.light - top.light;
+         var19 = mid.normalZ - top.normalZ;
          int var31 = (var8 << 16) - var12 * var9;
          int var32 = var31 >> 16;
          if (var32 == 0) {
@@ -833,142 +833,142 @@ final class Config {
          }
 
          int var30 = fixedReciprocal(var32);
-         var1.sphereVFixed = (var15 - (var25 * var9 >> 16)) * var30;
-         var1.dSphereUDyFixed = (var16 - (var26 * var9 >> 16)) * var30;
-         var1.dSphereVDyFixed = (var17 - (var27 * var9 >> 16)) * var30;
-         var1.dSphereUDxFixed = (var18 - (var28 * var9 >> 16)) * var30;
-         var1.dSphereVDxFixed = (var19 - (var29 * var9 >> 16)) * var30;
-         var1.xLeftFixed = var10;
-         var1.xRightFixed = var10;
-         var1.uFixed = var20;
-         var1.vFixed = var21;
-         var1.duDyFixed = var22;
-         var1.dvDyFixed = var23;
-         var1.duDxFixed = var24;
+         drawer.sphereVFixed = (var15 - (var25 * var9 >> 16)) * var30;
+         drawer.dSphereUDyFixed = (var16 - (var26 * var9 >> 16)) * var30;
+         drawer.dSphereVDyFixed = (var17 - (var27 * var9 >> 16)) * var30;
+         drawer.dSphereUDxFixed = (var18 - (var28 * var9 >> 16)) * var30;
+         drawer.dSphereVDxFixed = (var19 - (var29 * var9 >> 16)) * var30;
+         drawer.xLeftFixed = var10;
+         drawer.xRightFixed = var10;
+         drawer.uFixed = var20;
+         drawer.vFixed = var21;
+         drawer.duDyFixed = var22;
+         drawer.dvDyFixed = var23;
+         drawer.duDxFixed = var24;
          if (var9 > 0) {
             var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
-            var1.yEnd = var6.y;
+            drawer.yEnd = mid.y;
             if (var30 > 0) {
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var13;
-               var1.dvDxFixed = var25;
-               var1.lightFixed = var26;
-               var1.dLightDyFixed = var27;
-               var1.dLightDxFixed = var28;
-               var1.sphereUFixed = var29;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var13;
+               drawer.dvDxFixed = var25;
+               drawer.lightFixed = var26;
+               drawer.dLightDyFixed = var27;
+               drawer.dLightDxFixed = var28;
+               drawer.sphereUFixed = var29;
             } else {
-               var1.dxLeftFixed = var13;
-               var1.dxRightFixed = var12;
-               var1.dvDxFixed = var15 * var9;
-               var1.lightFixed = var16 * var9;
-               var1.dLightDyFixed = var17 * var9;
-               var1.dLightDxFixed = var18 * var9;
-               var1.sphereUFixed = var19 * var9;
+               drawer.dxLeftFixed = var13;
+               drawer.dxRightFixed = var12;
+               drawer.dvDxFixed = var15 * var9;
+               drawer.lightFixed = var16 * var9;
+               drawer.dLightDyFixed = var17 * var9;
+               drawer.dLightDxFixed = var18 * var9;
+               drawer.sphereUFixed = var19 * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
 
-         if (var6.y != var7.y) {
-            var8 = var7.x - var6.x;
-            var9 = fixedReciprocal(var7.y - var6.y);
+         if (mid.y != bot.y) {
+            var8 = bot.x - mid.x;
+            var9 = fixedReciprocal(bot.y - mid.y);
             int var14 = var8 * var9;
-            int var11 = (var6.x << 16) + 32768;
-            var1.yEnd = var7.y;
+            int var11 = (mid.x << 16) + 32768;
+            drawer.yEnd = bot.y;
             if (var30 > 0) {
-               var1.xRightFixed = var11;
-               var1.dxLeftFixed = var12;
-               var1.dxRightFixed = var14;
-               var1.dvDxFixed = var25;
-               var1.lightFixed = var26;
-               var1.dLightDyFixed = var27;
-               var1.dLightDxFixed = var28;
-               var1.sphereUFixed = var29;
+               drawer.xRightFixed = var11;
+               drawer.dxLeftFixed = var12;
+               drawer.dxRightFixed = var14;
+               drawer.dvDxFixed = var25;
+               drawer.lightFixed = var26;
+               drawer.dLightDyFixed = var27;
+               drawer.dLightDxFixed = var28;
+               drawer.sphereUFixed = var29;
             } else {
-               var1.xLeftFixed = var11;
-               var1.dxLeftFixed = var14;
-               var1.dxRightFixed = var12;
-               var1.uFixed = (var6.z << 16) + 32768;
-               var1.vFixed = (var6.u << 16) + 32768;
-               var1.duDyFixed = (var6.v << 16) + 32768;
-               var1.dvDyFixed = (var6.light << 16) + 32768;
-               var1.duDxFixed = (var6.normalZ << 16) + 32768;
-               var1.dvDxFixed = (var7.z - var6.z) * var9;
-               var1.lightFixed = (var7.u - var6.u) * var9;
-               var1.dLightDyFixed = (var7.v - var6.v) * var9;
-               var1.dLightDxFixed = (var7.light - var6.light) * var9;
-               var1.sphereUFixed = (var7.normalZ - var6.normalZ) * var9;
+               drawer.xLeftFixed = var11;
+               drawer.dxLeftFixed = var14;
+               drawer.dxRightFixed = var12;
+               drawer.uFixed = (mid.z << 16) + 32768;
+               drawer.vFixed = (mid.u << 16) + 32768;
+               drawer.duDyFixed = (mid.v << 16) + 32768;
+               drawer.dvDyFixed = (mid.light << 16) + 32768;
+               drawer.duDxFixed = (mid.normalZ << 16) + 32768;
+               drawer.dvDxFixed = (bot.z - mid.z) * var9;
+               drawer.lightFixed = (bot.u - mid.u) * var9;
+               drawer.dLightDyFixed = (bot.v - mid.v) * var9;
+               drawer.dLightDxFixed = (bot.light - mid.light) * var9;
+               drawer.sphereUFixed = (bot.normalZ - mid.normalZ) * var9;
             }
 
-            var1.drawSpan();
+            drawer.drawSpan();
          }
       }
    }
 
-   public int computeOutcode(RasterVertex var1) {
-      byte var2 = 0;
-      if (var1.x < this.bufferHeight) {
-         var2 |= 1;
-      } else if (this.clipRight <= var1.x) {
-         var2 |= 2;
+   public int computeOutcode(RasterVertex vertex) {
+      byte outcode = 0;
+      if (vertex.x < this.clipLeft) {
+         outcode |= 1;
+      } else if (this.clipRight <= vertex.x) {
+         outcode |= 2;
       }
 
-      if (var1.y < this.clipLeft) {
-         var2 |= 4;
-      } else if (this.clipTop <= var1.y) {
-         var2 |= 8;
+      if (vertex.y < this.clipTop) {
+         outcode |= 4;
+      } else if (this.clipBottom <= vertex.y) {
+         outcode |= 8;
       }
 
-      return var2;
+      return outcode;
    }
 
    private static int fixedReciprocal(int var0) {
       return 65536 / var0;
    }
 
-   static int[] getPixelBuffer(Config var0) {
-      return var0.pixelBuffer;
+   static int[] getPixelBuffer(Config rasterizer) {
+      return rasterizer.pixelBuffer;
    }
 
-   static int getClipBottom(Config var0) {
-      return var0.clipBottom;
+   static int getFillColor(Config rasterizer) {
+      return rasterizer.fillColor;
    }
 
-   static int getStride(Config var0) {
-      return var0.stride;
+   static int getStride(Config rasterizer) {
+      return rasterizer.stride;
    }
 
-   static int getClipLeft(Config var0) {
-      return var0.clipLeft;
+   static int getClipTop(Config rasterizer) {
+      return rasterizer.clipTop;
    }
 
-   static int getClipBottom(Config var0) {
-      return var0.clipTop;
+   static int getClipBottom(Config rasterizer) {
+      return rasterizer.clipBottom;
    }
 
-   static int getBufferHeight(Config var0) {
-      return var0.bufferHeight;
+   static int getClipLeft(Config rasterizer) {
+      return rasterizer.clipLeft;
    }
 
-   static int getClipRight(Config var0) {
-      return var0.clipRight;
+   static int getClipRight(Config rasterizer) {
+      return rasterizer.clipRight;
    }
 
    static int[] getColorTable() {
       return blendTable;
    }
 
-   static Texture getDiffuseTexture(Config var0) {
-      return var0.diffuseTexture;
+   static Texture getDiffuseTexture(Config rasterizer) {
+      return rasterizer.diffuseTexture;
    }
 
-   static int getColorKey(Config var0) {
-      return var0.colorKey;
+   static int getBlendAlpha(Config rasterizer) {
+      return rasterizer.blendAlpha;
    }
 
-   static Texture getSphereMapTexture(Config var0) {
-      return var0.sphereMapTexture;
+   static Texture getSphereMapTexture(Config rasterizer) {
+      return rasterizer.sphereMapTexture;
    }
 
    static {

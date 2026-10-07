@@ -4,8 +4,8 @@ public final class TexturedDrawer_T2_Alpha_Quad extends TexturedDrawer {
    private final Config rasterizer;
 
    public TexturedDrawer_T2_Alpha_Quad(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
@@ -20,16 +20,16 @@ public final class TexturedDrawer_T2_Alpha_Quad extends TexturedDrawer {
       int var9 = Config.getDiffuseTexture(this.rasterizer).getMipVShift(var3);
       int var10 = super.duDxFixed >> var3;
       int var11 = super.dvDxFixed >> var3;
-      int var12 = Config.getColorKey(this.rasterizer);
-      int var13 = 255 - Config.getColorKey(this.rasterizer);
-      if (super.y < Config.getClipLeft(this.rasterizer)) {
+      int var12 = Config.getBlendAlpha(this.rasterizer);
+      int var13 = 255 - Config.getBlendAlpha(this.rasterizer);
+      if (super.y < Config.getClipTop(this.rasterizer)) {
          int var14;
-         if (super.yEnd < Config.getClipLeft(this.rasterizer)) {
+         if (super.yEnd < Config.getClipTop(this.rasterizer)) {
             var14 = super.yEnd - super.y;
             super.y = super.yEnd;
          } else {
-            var14 = Config.getClipLeft(this.rasterizer) - super.y;
-            super.y = Config.getClipLeft(this.rasterizer);
+            var14 = Config.getClipTop(this.rasterizer) - super.y;
+            super.y = Config.getClipTop(this.rasterizer);
          }
 
          super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * var14;
@@ -47,9 +47,9 @@ public final class TexturedDrawer_T2_Alpha_Quad extends TexturedDrawer {
          int var15 = super.xRightFixed >> 16;
          int var16 = super.uFixed >> var3;
          int var17 = super.vFixed >> var3;
-         if (var24 < Config.getBufferHeight(this.rasterizer)) {
-            int var18 = Config.getBufferHeight(this.rasterizer) - var24;
-            var24 = Config.getBufferHeight(this.rasterizer);
+         if (var24 < Config.getClipLeft(this.rasterizer)) {
+            int var18 = Config.getClipLeft(this.rasterizer) - var24;
+            var24 = Config.getClipLeft(this.rasterizer);
             var16 += var10 * var18;
             var17 += var11 * var18;
          }

@@ -1,6 +1,6 @@
 package com.hicorp.mascotcapsule.web;
 
-final class RenderContext {
+public class RenderContext {
    public static final int FLAG_DOUBLE_SIDED = 1;
    public static final int FLAG_BLEND_TRANSPARENT = 2;
    public static final int FLAG_ALPHA_BLEND = 4096;
@@ -36,7 +36,7 @@ final class RenderContext {
    protected boolean lightingEnabled;
    protected float ambientIntensity;
    protected final Vector3f lightDirection = new Vector3f();
-   float lightIntensity;
+   protected float lightIntensity;
    private float focalLength;
    private boolean perspectiveEnabled;
    private float perspectiveScale;
@@ -50,7 +50,7 @@ final class RenderContext {
       return (float)(this.viewportWidth / 2.0 / Math.tan(this.fov / 2.0));
    }
 
-   public RenderContext(Config var1) {
+   public RenderContext(Config rasterizer) {
       this.screenCoords = new int[512];
       this.vertexDepths = new float[256];
       this.vertexLighting = new float[0];
@@ -59,7 +59,7 @@ final class RenderContext {
       this.viewportOffsetY = 0;
       this.renderBounds.resetEmpty();
       this.diffuseTexture = null;
-      this.rasterizer = var1;
+      this.rasterizer = rasterizer;
       this.lightingEnabled = false;
       this.ambientIntensity = 0.4F;
       this.lightDirection.set(1.0F, -1.0F, 0.0F);
@@ -72,9 +72,9 @@ final class RenderContext {
       this.perspectiveScale = 1.0F;
    }
 
-   public final void enablePerspective(float var1) {
+   public final void enablePerspective(float scale) {
       this.perspectiveEnabled = true;
-      this.perspectiveScale = var1;
+      this.perspectiveScale = scale;
    }
 
    public final void disablePerspective() {
@@ -83,471 +83,467 @@ final class RenderContext {
    }
 
    protected PolygonRenderCommand obtainPolygonCommand() {
-      PolygonRenderCommand var1 = this.freeCommandHead;
-      if (var1 != null) {
-         this.freeCommandHead = (PolygonRenderCommand)var1.next;
-         return var1;
+      PolygonRenderCommand cmd = this.freeCommandHead;
+      if (cmd != null) {
+         this.freeCommandHead = (PolygonRenderCommand)cmd.next;
+         return cmd;
       } else {
          return new PolygonRenderCommand(this);
       }
    }
 
-   protected void recyclePolygonCommand(PolygonRenderCommand var1) {
-      var1.next = this.freeCommandHead;
-      this.freeCommandHead = var1;
+   protected void recyclePolygonCommand(PolygonRenderCommand command) {
+      command.next = this.freeCommandHead;
+      this.freeCommandHead = command;
    }
 
-   protected void ensureCapacity(BacModel var1, boolean var2) {
-      if (this.vertexDepths.length < var1.getVertexCount()) {
-         this.screenCoords = new int[var1.getVertexCount() * 2];
-         this.vertexDepths = new float[var1.getVertexCount()];
+   protected void ensureCapacity(BacModel model, boolean hasLighting) {
+      if (this.vertexDepths.length < model.getVertexCount()) {
+         this.screenCoords = new int[model.getVertexCount() * 2];
+         this.vertexDepths = new float[model.getVertexCount()];
       }
 
-      if (var2 && this.vertexLighting.length < var1.getVertexCount() * 3) {
-         this.vertexLighting = new float[var1.getVertexCount() * 3];
+      if (hasLighting && this.vertexLighting.length < model.getVertexCount() * 3) {
+         this.vertexLighting = new float[model.getVertexCount() * 3];
       }
    }
 
-   public void initPacketTable(int var1, float var2, float var3) {
+   public void initPacketTable(int capacity, float nearZ, float farZ) {
       Debug.assertTrue(this.packetTableEmpty);
-      Debug.assertTrue(var1 > 0);
-      Debug.assertTrue(var2 > 0.0F && var2 < var3);
-      this.packetTable = new RenderCommand[var1];
-      this.nearZ = var2;
-      this.farZ = var3;
+      Debug.assertTrue(capacity > 0);
+      Debug.assertTrue(nearZ > 0.0F && nearZ < farZ);
+      this.packetTable = new RenderCommand[capacity];
+      this.nearZ = nearZ;
+      this.farZ = farZ;
       this.depthBucketSize = (this.farZ - this.nearZ) / this.packetTable.length;
    }
 
-   public void setDepthRange(float var1, float var2) {
-      Debug.assertTrue(var1 > 0.0F && var1 < var2);
+   public void setDepthRange(float nearZ, float farZ) {
+      Debug.assertTrue(nearZ > 0.0F && nearZ < farZ);
       Debug.assertTrue(this.packetTable.length > 0);
-      this.nearZ = var1;
-      this.farZ = var2;
+      this.nearZ = nearZ;
+      this.farZ = farZ;
       this.depthBucketSize = (this.farZ - this.nearZ) / this.packetTable.length;
    }
 
-   public void setViewportOffset(int var1, int var2) {
-      this.viewportOffsetX = var1;
-      this.viewportOffsetY = var2;
+   public void setViewportOffset(int offsetX, int offsetY) {
+      this.viewportOffsetX = offsetX;
+      this.viewportOffsetY = offsetY;
    }
 
-   private final int computeDepthBucket(float var1) {
-      return !(var1 < this.nearZ) && !(var1 >= this.farZ) ? (int)((var1 - this.nearZ) / this.depthBucketSize) : -1;
+   private final int computeDepthBucket(float depth) {
+      return !(depth < this.nearZ) && !(depth >= this.farZ) ? (int)((depth - this.nearZ) / this.depthBucketSize) : -1;
    }
 
    public final void resetRenderBounds() {
       this.renderBounds.resetEmpty();
    }
 
-   public final void getRenderBounds(BoundingBox var1) {
-      var1.setBounds(this.renderBounds);
+   public final void getRenderBounds(BoundingBox outBounds) {
+      outBounds.setBounds(this.renderBounds);
    }
 
-   public void setDiffuseTexture(Texture var1) {
-      this.diffuseTexture = var1;
+   public void setDiffuseTexture(Texture texture) {
+      this.diffuseTexture = texture;
    }
 
-   public void setSphereMapTexture(Texture var1) {
-      this.sphereMapTexture = var1;
+   public void setSphereMapTexture(Texture texture) {
+      this.sphereMapTexture = texture;
    }
 
-   public void setProjection(BacModel var1, CameraNode var2) {
+   public void setProjection(BacModel model, CameraNode camera) {
       try {
          this.packetTableEmpty = false;
-         boolean var3 = this.lightingEnabled && var1.getNormals() != null;
-         this.ensureCapacity(var1, var3);
-         Transform3D var4 = new Transform3D();
-         Transform3D var5 = new Transform3D();
-         Transform3D var6 = new Transform3D();
-         Transform3D var7 = new Transform3D();
-         Transform3D var8 = new Transform3D();
-         Transform3D var9 = new Transform3D();
-         Transform3D var10 = new Transform3D();
-         Vector3f var11 = new Vector3f();
-         Vector3f var12 = new Vector3f();
-         Vector3f var13 = new Vector3f();
-         int[] var14 = this.screenCoords;
-         float[] var15 = this.vertexDepths;
-         var2.computeModelViewTransform(var1.getRootNode(), var4);
-         int var16 = var1.getBoneCount();
-         int var17 = 0;
-         new Vector3f();
+         boolean hasLighting = this.lightingEnabled && model.getNormals() != null;
+         this.ensureCapacity(model, hasLighting);
+         Transform3D modelView = new Transform3D();
+         Transform3D boneTransform = new Transform3D();
+         Transform3D worldTransform = new Transform3D();
+         Transform3D relBoneTransform = new Transform3D();
+         Transform3D invWorld = new Transform3D();
+         Transform3D invModelView = new Transform3D();
+         Transform3D normalMatrix = new Transform3D();
+         Vector3f localLightDir = new Vector3f();
+         Vector3f scaledLightDir = new Vector3f();
+         Vector3f localViewDir = new Vector3f();
+         int[] coords = this.screenCoords;
+         float[] depths = this.vertexDepths;
+         camera.computeModelViewTransform(model.getRootNode(), modelView);
+         int boneCount = model.getBoneCount();
+         int vertOffset = 0;
 
-         for (int var19 = 0; var19 < var16; var19++) {
-            BoneNode var20 = var1.getBone(var19);
-            var20.getTransformRelativeToRoot(var7);
-            var5.multiply(var4, var7);
+         for (int i = 0; i < boneCount; i++) {
+            BoneNode bone = model.getBone(i);
+            bone.getTransformRelativeToRoot(relBoneTransform);
+            boneTransform.multiply(modelView, relBoneTransform);
             if (this.perspectiveEnabled) {
-               var5.transformAndProjectPerspective(var1.getVertices(), var14, var15, var17, var20.getIndex(), this.perspectiveScale);
+               boneTransform.transformAndProjectPerspective(model.getVertices(), coords, depths, vertOffset, bone.getIndex(), this.perspectiveScale);
             } else {
-               var5.transformAndProjectOrthographic(var1.getVertices(), var14, var15, var17, var20.getIndex(), this.focalLength);
+               boneTransform.transformAndProjectOrthographic(model.getVertices(), coords, depths, vertOffset, bone.getIndex(), this.focalLength);
             }
 
-            if (var3) {
-               var1.getRootNode().getWorldTransform(var6);
-               var6.multiply(var7);
-               var8.invert(var6);
-               var8.normalizeColumns();
-               var8.rotateVector(this.lightDirection, var11);
-               var12.setScaled(var11, this.lightIntensity);
-               var9.invert(var5);
-               var9.normalizeColumns();
-               var9.rotateVector(VIEW_DIR_Z, var13);
-               var10.set(var5);
-               var10.normalizeColumns();
+            if (hasLighting) {
+               model.getRootNode().getWorldTransform(worldTransform);
+               worldTransform.multiply(relBoneTransform);
+               invWorld.invert(worldTransform);
+               invWorld.normalizeColumns();
+               invWorld.rotateVector(this.lightDirection, localLightDir);
+               scaledLightDir.setScaled(localLightDir, this.lightIntensity);
+               invModelView.invert(boneTransform);
+               invModelView.normalizeColumns();
+               invModelView.rotateVector(VIEW_DIR_Z, localViewDir);
+               normalMatrix.set(boneTransform);
+               normalMatrix.normalizeColumns();
                if (this.sphereMapTexture != null) {
-                  this.computeSphereMapLighting(var12, var10, var1.getNormals(), var17, var20.getIndex());
+                  this.computeSphereMapLighting(scaledLightDir, normalMatrix, model.getNormals(), vertOffset, bone.getIndex());
                } else {
-                  this.computeVertexLighting(var11, var12, var13, var1.getNormals(), var17, var20.getIndex());
+                  this.computeVertexLighting(localLightDir, scaledLightDir, localViewDir, model.getNormals(), vertOffset, bone.getIndex());
                }
             }
 
-            var17 += var20.getIndex();
+            vertOffset += bone.getIndex();
          }
 
-         int var48 = this.sphereMapTexture != null ? this.sphereMapTexture.getWidth() : 0;
-         int var21 = this.sphereMapTexture != null ? this.sphereMapTexture.getHeight() : 0;
-         RasterVertex[] var22 = new RasterVertex[4];
-         PolygonRenderCommand var23 = this.obtainPolygonCommand();
-         var22[0] = var23.v0;
-         var22[1] = var23.v1;
-         var22[2] = var23.v2;
-         var22[3] = var23.v3;
+         int sphereW = this.sphereMapTexture != null ? this.sphereMapTexture.getWidth() : 0;
+         int sphereH = this.sphereMapTexture != null ? this.sphereMapTexture.getHeight() : 0;
+         RasterVertex[] tempVerts = new RasterVertex[4];
+         PolygonRenderCommand cmd = this.obtainPolygonCommand();
+         tempVerts[0] = cmd.v0;
+         tempVerts[1] = cmd.v1;
+         tempVerts[2] = cmd.v2;
+         tempVerts[3] = cmd.v3;
 
-         for (int var24 = 0; var24 < var1.getPolygonCount(); var24++) {
-            ModelPolygon var25 = var1.getPolygon(var24);
-            int var26 = var25.vertexCount;
-            Debug.assertTrue(var26 >= 3 && var26 <= 4);
-            int var27 = var25.flags;
-            int var28 = var25.vert0 * 2;
-            int var29 = var25.vert1 * 2;
-            int var30 = var25.vert2 * 2;
-            if ((var27 & 1) == 0) {
-               int var31 = (var14[var29 + 0] - var14[var28 + 0]) * (var14[var30 + 1] - var14[var29 + 1])
-                  - (var14[var29 + 1] - var14[var28 + 1]) * (var14[var30 + 0] - var14[var29 + 0]);
-               if (var26 == 3) {
-                  if (var31 <= 0) {
+         for (int pIdx = 0; pIdx < model.getPolygonCount(); pIdx++) {
+            ModelPolygon poly = model.getPolygon(pIdx);
+            int vCount = poly.vertexCount;
+            Debug.assertTrue(vCount >= 3 && vCount <= 4);
+            int flags = poly.flags;
+            int p0 = poly.vert0 * 2;
+            int p1 = poly.vert1 * 2;
+            int p2 = poly.vert2 * 2;
+            if ((flags & FLAG_DOUBLE_SIDED) == 0) {
+               int cross = (coords[p1 + 0] - coords[p0 + 0]) * (coords[p2 + 1] - coords[p1 + 1])
+                  - (coords[p1 + 1] - coords[p0 + 1]) * (coords[p2 + 0] - coords[p1 + 0]);
+               if (vCount == 3) {
+                  if (cross <= 0) {
                      continue;
                   }
                } else {
-                  int var32 = var25.vert3 * 2;
-                  int var33 = (var14[var30 + 0] - var14[var29 + 0]) * (var14[var32 + 1] - var14[var30 + 1])
-                     - (var14[var30 + 1] - var14[var29 + 1]) * (var14[var32 + 0] - var14[var30 + 0]);
-                  if (var31 - var33 <= 0) {
+                  int p3 = poly.vert3 * 2;
+                  int cross2 = (coords[p2 + 0] - coords[p1 + 0]) * (coords[p3 + 1] - coords[p2 + 1])
+                     - (coords[p2 + 1] - coords[p1 + 1]) * (coords[p3 + 0] - coords[p2 + 0]);
+                  if (cross - cross2 <= 0) {
                      continue;
                   }
                }
             }
 
-            float var49 = Float.MAX_VALUE;
-            float var50 = -Float.MAX_VALUE;
-            var22[0].x = var14[var28 + 0] + this.viewportOffsetX;
-            var22[0].y = var14[var28 + 1] + this.viewportOffsetY;
-            var22[1].x = var14[var29 + 0] + this.viewportOffsetX;
-            var22[1].y = var14[var29 + 1] + this.viewportOffsetY;
-            var22[2].x = var14[var30 + 0] + this.viewportOffsetX;
-            var22[2].y = var14[var30 + 1] + this.viewportOffsetY;
-            if (var15[var25.vert0] < var49) {
-               var49 = var15[var25.vert0];
+            float minZ = Float.MAX_VALUE;
+            float maxZ = -Float.MAX_VALUE;
+            tempVerts[0].x = coords[p0 + 0] + this.viewportOffsetX;
+            tempVerts[0].y = coords[p0 + 1] + this.viewportOffsetY;
+            tempVerts[1].x = coords[p1 + 0] + this.viewportOffsetX;
+            tempVerts[1].y = coords[p1 + 1] + this.viewportOffsetY;
+            tempVerts[2].x = coords[p2 + 0] + this.viewportOffsetX;
+            tempVerts[2].y = coords[p2 + 1] + this.viewportOffsetY;
+            if (depths[poly.vert0] < minZ) {
+               minZ = depths[poly.vert0];
             }
 
-            if (var15[var25.vert1] < var49) {
-               var49 = var15[var25.vert1];
+            if (depths[poly.vert1] < minZ) {
+               minZ = depths[poly.vert1];
             }
 
-            if (var15[var25.vert2] < var49) {
-               var49 = var15[var25.vert2];
+            if (depths[poly.vert2] < minZ) {
+               minZ = depths[poly.vert2];
             }
 
-            if (var15[var25.vert0] > var50) {
-               var50 = var15[var25.vert0];
+            if (depths[poly.vert0] > maxZ) {
+               maxZ = depths[poly.vert0];
             }
 
-            if (var15[var25.vert1] > var50) {
-               var50 = var15[var25.vert1];
+            if (depths[poly.vert1] > maxZ) {
+               maxZ = depths[poly.vert1];
             }
 
-            if (var15[var25.vert2] > var50) {
-               var50 = var15[var25.vert2];
+            if (depths[poly.vert2] > maxZ) {
+               maxZ = depths[poly.vert2];
             }
 
-            int var35 = this.rasterizer.computeOutcode(var22[0]);
-            int var36 = this.rasterizer.computeOutcode(var22[1]);
-            int var37 = this.rasterizer.computeOutcode(var22[2]);
-            int var51 = var35 | var36 | var37;
-            int var34 = var35 & var36 & var37;
-            if (var26 == 4) {
-               var35 = var25.vert3 * 2;
-               var22[3].x = var14[var35 + 0] + this.viewportOffsetX;
-               var22[3].y = var14[var35 + 1] + this.viewportOffsetY;
-               if (var15[var25.vert3] < var49) {
-                  var49 = var15[var25.vert3];
+            int code0 = this.rasterizer.computeOutcode(tempVerts[0]);
+            int code1 = this.rasterizer.computeOutcode(tempVerts[1]);
+            int code2 = this.rasterizer.computeOutcode(tempVerts[2]);
+            int outcodeOr = code0 | code1 | code2;
+            int outcodeAnd = code0 & code1 & code2;
+            if (vCount == 4) {
+               int p3 = poly.vert3 * 2;
+               tempVerts[3].x = coords[p3 + 0] + this.viewportOffsetX;
+               tempVerts[3].y = coords[p3 + 1] + this.viewportOffsetY;
+               if (depths[poly.vert3] < minZ) {
+                  minZ = depths[poly.vert3];
                }
 
-               if (var15[var25.vert3] > var50) {
-                  var50 = var15[var25.vert3];
+               if (depths[poly.vert3] > maxZ) {
+                  maxZ = depths[poly.vert3];
                }
 
-               var36 = this.rasterizer.computeOutcode(var22[3]);
-               var51 |= var36;
-               var34 &= var36;
+               int code3 = this.rasterizer.computeOutcode(tempVerts[3]);
+               outcodeOr |= code3;
+               outcodeAnd &= code3;
             }
 
-            var35 = this.computeDepthBucket((var49 + var50) / 2.0F);
-            if (var34 == 0 && var35 >= 0) {
-               boolean var55;
-               if (!var3) {
-                  var27 &= -32769;
-                  var55 = false;
+            int bucket = this.computeDepthBucket((minZ + maxZ) / 2.0F);
+            if (outcodeAnd == 0 && bucket >= 0) {
+               boolean litMode;
+               if (!hasLighting) {
+                  flags &= ~FLAG_SPHERE_MAP;
+                  flags &= ~FLAG_LIGHTING;
+                  flags &= ~FLAG_SPECULAR;
+                  litMode = false;
                } else {
-                  var55 = (var27 & 32768) != 0;
+                  litMode = (flags & FLAG_LIGHTING) != 0;
                }
 
-               if (!var55) {
-                  var22[0].u = var25.u0;
-                  var22[0].v = var25.vert0;
-                  var22[1].u = var25.u1;
-                  var22[1].v = var25.vert1;
-                  var22[2].u = var25.u2;
-                  var22[2].v = var25.vert2;
-                  if (var26 == 4) {
-                     var22[3].u = var25.u3;
-                     var22[3].v = var25.vert3;
+               if (!litMode) {
+                  tempVerts[0].u = poly.u0;
+                  tempVerts[0].v = poly.v0;
+                  tempVerts[1].u = poly.u1;
+                  tempVerts[1].v = poly.v1;
+                  tempVerts[2].u = poly.u2;
+                  tempVerts[2].v = poly.v2;
+                  if (vCount == 4) {
+                     tempVerts[3].u = poly.u3;
+                     tempVerts[3].v = poly.v3;
                   }
                } else {
-                  var37 = var27 >>> 16 & 0xFF;
-                  int var38 = 255 - var37;
-                  if (var37 <= 0) {
-                     var23.sphereMapTexture = null;
-                     var22[0].u = var25.u0;
-                     var22[0].v = var25.vert0;
-                     var22[1].u = var25.u1;
-                     var22[1].v = var25.vert1;
-                     var22[2].u = var25.u2;
-                     var22[2].v = var25.vert2;
-                     var22[0].normalZ = var22[1].normalZ = var22[2].normalZ = 0;
-                     int var39 = (int)(this.vertexLighting[var25.vert0 * 3] * var38);
-                     if (var39 > 255) {
-                        var39 = 255;
+                  int l0 = poly.vert0 * 3;
+                  int l1 = poly.vert1 * 3;
+                  int l2 = poly.vert2 * 3;
+                  int l3 = vCount == 4 ? poly.vert3 * 3 : 0;
+                  if ((flags & FLAG_SPHERE_MAP) == 0) {
+                     tempVerts[0].u = poly.u0;
+                     tempVerts[0].v = poly.v0;
+                     tempVerts[1].u = poly.u1;
+                     tempVerts[1].v = poly.v1;
+                     tempVerts[2].u = poly.u2;
+                     tempVerts[2].v = poly.v2;
+                     tempVerts[0].normalZ = tempVerts[1].normalZ = tempVerts[2].normalZ = 0;
+                     int lightVal = (int)(this.vertexLighting[l0 + 0] * 255.0F);
+                     if (lightVal < 0) {
+                        lightVal = 0;
+                     } else if (lightVal > 255) {
+                        lightVal = 255;
                      }
 
-                     var22[0].light = var39;
-                     var39 = (int)(this.vertexLighting[var25.vert1 * 3] * var38);
-                     if (var39 > 255) {
-                        var39 = 255;
+                     tempVerts[0].light = lightVal;
+                     lightVal = (int)(this.vertexLighting[l1 + 0] * 255.0F);
+                     if (lightVal < 0) {
+                        lightVal = 0;
+                     } else if (lightVal > 255) {
+                        lightVal = 255;
                      }
 
-                     var22[1].light = var39;
-                     var39 = (int)(this.vertexLighting[var25.vert2 * 3] * var38);
-                     if (var39 > 255) {
-                        var39 = 255;
+                     tempVerts[1].light = lightVal;
+                     lightVal = (int)(this.vertexLighting[l2 + 0] * 255.0F);
+                     if (lightVal < 0) {
+                        lightVal = 0;
+                     } else if (lightVal > 255) {
+                        lightVal = 255;
                      }
 
-                     var22[2].light = var39;
-                     if (var26 == 4) {
-                        var22[3].u = var25.u3;
-                        var22[3].v = var25.vert3;
-                        var22[3].normalZ = 0;
-                        var39 = (int)(this.vertexLighting[var25.vert3 * 3] * var38);
-                        if (var39 > 255) {
-                           var39 = 255;
+                     tempVerts[2].light = lightVal;
+                     if (vCount == 4) {
+                        tempVerts[3].u = poly.u3;
+                        tempVerts[3].v = poly.v3;
+                        tempVerts[3].normalZ = 0;
+                        lightVal = (int)(this.vertexLighting[l3 + 0] * 255.0F);
+                        if (lightVal < 0) {
+                           lightVal = 0;
+                        } else if (lightVal > 255) {
+                           lightVal = 255;
                         }
 
-                        var22[3].light = var39;
+                        tempVerts[3].light = lightVal;
                      }
                   } else if (this.sphereMapTexture != null) {
-                     var23.sphereMapTexture = this.sphereMapTexture;
-                     var22[0].u = var25.u0;
-                     var22[0].v = var25.vert0;
-                     var22[1].u = var25.u1;
-                     var22[1].v = var25.vert1;
-                     var22[2].u = var25.u2;
-                     var22[2].v = var25.vert2;
-                     int var40 = var25.vert0 * 3;
-                     int var41 = var25.vert1 * 3;
-                     int var42 = var25.vert2 * 3;
-                     int var60 = (int)(this.vertexLighting[var40 + 0] * var38);
-                     if (var60 > 255) {
-                        var60 = 255;
+                     tempVerts[0].u = poly.u0;
+                     tempVerts[0].v = poly.v0;
+                     tempVerts[1].u = poly.u1;
+                     tempVerts[1].v = poly.v1;
+                     tempVerts[2].u = poly.u2;
+                     tempVerts[2].v = poly.v2;
+                     int lightVal = (int)(this.vertexLighting[l0 + 0] * 255.0F);
+                     if (lightVal < 0) {
+                        lightVal = 0;
+                     } else if (lightVal > 255) {
+                        lightVal = 255;
                      }
 
-                     var22[0].light = var60;
-                     var60 = (int)(this.vertexLighting[var41 + 0] * var38);
-                     if (var60 > 255) {
-                        var60 = 255;
+                     tempVerts[0].light = lightVal;
+                     lightVal = (int)(this.vertexLighting[l1 + 0] * 255.0F);
+                     if (lightVal < 0) {
+                        lightVal = 0;
+                     } else if (lightVal > 255) {
+                        lightVal = 255;
                      }
 
-                     var22[1].light = var60;
-                     var60 = (int)(this.vertexLighting[var42 + 0] * var38);
-                     if (var60 > 255) {
-                        var60 = 255;
+                     tempVerts[1].light = lightVal;
+                     lightVal = (int)(this.vertexLighting[l2 + 0] * 255.0F);
+                     if (lightVal < 0) {
+                        lightVal = 0;
+                     } else if (lightVal > 255) {
+                        lightVal = 255;
                      }
 
-                     var22[2].light = var60;
-                     var22[0].normalZ = (int)(this.vertexLighting[var40 + 1] * var48);
-                     var22[0].sphereV = (int)(this.vertexLighting[var40 + 2] * var21);
-                     var22[1].normalZ = (int)(this.vertexLighting[var41 + 1] * var48);
-                     var22[1].sphereV = (int)(this.vertexLighting[var41 + 2] * var21);
-                     var22[2].normalZ = (int)(this.vertexLighting[var42 + 1] * var48);
-                     var22[2].sphereV = (int)(this.vertexLighting[var42 + 2] * var21);
-                     if (var26 == 4) {
-                        var22[3].u = var25.u3;
-                        var22[3].v = var25.vert3;
-                        int var43 = var25.vert3 * 3;
-                        var60 = (int)(this.vertexLighting[var43 + 0] * var38);
-                        if (var60 > 255) {
-                           var60 = 255;
+                     tempVerts[2].light = lightVal;
+                     tempVerts[0].normalZ = (int)(this.vertexLighting[l0 + 1] * sphereW);
+                     tempVerts[0].sphereV = (int)(this.vertexLighting[l0 + 2] * sphereH);
+                     tempVerts[1].normalZ = (int)(this.vertexLighting[l1 + 1] * sphereW);
+                     tempVerts[1].sphereV = (int)(this.vertexLighting[l1 + 2] * sphereH);
+                     tempVerts[2].normalZ = (int)(this.vertexLighting[l2 + 1] * sphereW);
+                     tempVerts[2].sphereV = (int)(this.vertexLighting[l2 + 2] * sphereH);
+                     if (vCount == 4) {
+                        tempVerts[3].u = poly.u3;
+                        tempVerts[3].v = poly.v3;
+                        lightVal = (int)(this.vertexLighting[l3 + 0] * 255.0F);
+                        if (lightVal < 0) {
+                           lightVal = 0;
+                        } else if (lightVal > 255) {
+                           lightVal = 255;
                         }
 
-                        var22[3].light = var60;
-                        var22[3].normalZ = (int)(this.vertexLighting[var43 + 1] * var48);
-                        var22[3].sphereV = (int)(this.vertexLighting[var43 + 2] * var21);
+                        tempVerts[3].light = lightVal;
+                        tempVerts[3].normalZ = (int)(this.vertexLighting[l3 + 1] * sphereW);
+                        tempVerts[3].sphereV = (int)(this.vertexLighting[l3 + 2] * sphereH);
                      }
                   } else {
-                     var23.sphereMapTexture = null;
-                     var22[0].u = var25.u0;
-                     var22[0].v = var25.vert0;
-                     var22[1].u = var25.u1;
-                     var22[1].v = var25.vert1;
-                     var22[2].u = var25.u2;
-                     var22[2].v = var25.vert2;
-                     int var76 = var25.vert0 * 3;
-                     int var77 = var25.vert1 * 3;
-                     int var44 = var25.vert2 * 3;
-                     int var64 = (int)(this.vertexLighting[var76 + 0] * var38);
-                     if (var64 > 255) {
-                        var64 = 255;
+                     tempVerts[0].u = poly.u0;
+                     tempVerts[0].v = poly.v0;
+                     tempVerts[1].u = poly.u1;
+                     tempVerts[1].v = poly.v1;
+                     tempVerts[2].u = poly.u2;
+                     tempVerts[2].v = poly.v2;
+                     int lightVal = (int)(this.vertexLighting[l0 + 0] * 255.0F);
+                     if (lightVal < 0) {
+                        lightVal = 0;
+                     } else if (lightVal > 255) {
+                        lightVal = 255;
                      }
 
-                     var22[0].light = var64;
-                     var64 = (int)(this.vertexLighting[var77 + 0] * var38);
-                     if (var64 > 255) {
-                        var64 = 255;
+                     tempVerts[0].light = lightVal;
+                     lightVal = (int)(this.vertexLighting[l1 + 0] * 255.0F);
+                     if (lightVal < 0) {
+                        lightVal = 0;
+                     } else if (lightVal > 255) {
+                        lightVal = 255;
                      }
 
-                     var22[1].light = var64;
-                     var64 = (int)(this.vertexLighting[var44 + 0] * var38);
-                     if (var64 > 255) {
-                        var64 = 255;
+                     tempVerts[1].light = lightVal;
+                     lightVal = (int)(this.vertexLighting[l2 + 0] * 255.0F);
+                     if (lightVal < 0) {
+                        lightVal = 0;
+                     } else if (lightVal > 255) {
+                        lightVal = 255;
                      }
 
-                     var22[2].light = var64;
-                     float var72 = this.vertexLighting[var76 + 1];
-                     int var68;
-                     if (var72 > 0.0F) {
-                        int var45 = var27 >>> 24 & 0xFF;
-                        var68 = (int)((float)Math.pow(var72, 0.25 * var45) * this.lightIntensity * var37);
-                        if (var68 > 255) {
-                           var68 = 255;
+                     tempVerts[2].light = lightVal;
+                     int specVal = 0;
+                     if ((flags & FLAG_SPECULAR) != 0) {
+                        specVal = (int)(this.vertexLighting[l0 + 1] * 255.0F);
+                        if (specVal < 0) {
+                           specVal = 0;
+                        } else if (specVal > 255) {
+                           specVal = 255;
                         }
-
-                        if (var68 < 0) {
-                           var68 = 0;
-                        }
-                     } else {
-                        var68 = 0;
                      }
 
-                     var22[0].normalZ = var68;
-                     var72 = this.vertexLighting[var77 + 1];
-                     if (var72 > 0.0F) {
-                        int var78 = var27 >>> 24 & 0xFF;
-                        var68 = (int)((float)Math.pow(var72, 0.25 * var78) * this.lightIntensity * var37);
-                        if (var68 > 255) {
-                           var68 = 255;
+                     tempVerts[0].normalZ = specVal;
+                     specVal = 0;
+                     if ((flags & FLAG_SPECULAR) != 0) {
+                        specVal = (int)(this.vertexLighting[l1 + 1] * 255.0F);
+                        if (specVal < 0) {
+                           specVal = 0;
+                        } else if (specVal > 255) {
+                           specVal = 255;
                         }
-
-                        if (var68 < 0) {
-                           var68 = 0;
-                        }
-                     } else {
-                        var68 = 0;
                      }
 
-                     var22[1].normalZ = var68;
-                     var72 = this.vertexLighting[var44 + 1];
-                     if (var72 > 0.0F) {
-                        int var79 = var27 >>> 24 & 0xFF;
-                        var68 = (int)((float)Math.pow(var72, 0.25 * var79) * this.lightIntensity * var37);
-                        if (var68 > 255) {
-                           var68 = 255;
+                     tempVerts[1].normalZ = specVal;
+                     specVal = 0;
+                     if ((flags & FLAG_SPECULAR) != 0) {
+                        specVal = (int)(this.vertexLighting[l2 + 1] * 255.0F);
+                        if (specVal < 0) {
+                           specVal = 0;
+                        } else if (specVal > 255) {
+                           specVal = 255;
                         }
-
-                        if (var68 < 0) {
-                           var68 = 0;
-                        }
-                     } else {
-                        var68 = 0;
                      }
 
-                     var22[2].normalZ = var68;
-                     if (var26 == 4) {
-                        var22[3].u = var25.u3;
-                        var22[3].v = var25.vert3;
-                        int var80 = var25.vert3 * 3;
-                        var64 = (int)(this.vertexLighting[var80 + 0] * var38);
-                        if (var64 > 255) {
-                           var64 = 255;
+                     tempVerts[2].normalZ = specVal;
+                     if (vCount == 4) {
+                        tempVerts[3].u = poly.u3;
+                        tempVerts[3].v = poly.v3;
+                        lightVal = (int)(this.vertexLighting[l3 + 0] * 255.0F);
+                        if (lightVal < 0) {
+                           lightVal = 0;
+                        } else if (lightVal > 255) {
+                           lightVal = 255;
                         }
 
-                        var22[3].light = var64;
-                        var72 = this.vertexLighting[var80 + 1];
-                        if (var72 > 0.0F) {
-                           int var46 = var27 >>> 24 & 0xFF;
-                           var68 = (int)((float)Math.pow(var72, 0.25 * var46) * this.lightIntensity * var37);
-                           if (var68 > 255) {
-                              var68 = 255;
+                        tempVerts[3].light = lightVal;
+                        specVal = 0;
+                        if ((flags & FLAG_SPECULAR) != 0) {
+                           specVal = (int)(this.vertexLighting[l3 + 1] * 255.0F);
+                           if (specVal < 0) {
+                              specVal = 0;
+                           } else if (specVal > 255) {
+                              specVal = 255;
                            }
-
-                           if (var68 < 0) {
-                              var68 = 0;
-                           }
-                        } else {
-                           var68 = 0;
                         }
 
-                        var22[3].normalZ = var68;
+                        tempVerts[3].normalZ = specVal;
                      }
                   }
                }
 
-               var23.vertexCount = var26;
-               var23.clipped = var51;
-               var23.renderFlags = var27;
-               var23.diffuseTexture = this.diffuseTexture;
-               var23.updateBounds(this.renderBounds);
-               var23.next = this.packetTable[var35];
-               this.packetTable[var35] = var23;
-               var23 = this.obtainPolygonCommand();
-               var22[0] = var23.v0;
-               var22[1] = var23.v1;
-               var22[2] = var23.v2;
-               var22[3] = var23.v3;
+               cmd.vertexCount = vCount;
+               cmd.diffuseTexture = this.diffuseTexture;
+               cmd.sphereMapTexture = this.sphereMapTexture;
+               cmd.renderFlags = flags;
+               cmd.clipped = outcodeOr;
+               cmd.next = this.packetTable[bucket];
+               cmd.updateBounds(this.renderBounds);
+               this.packetTable[bucket] = cmd;
+               cmd = this.obtainPolygonCommand();
+               tempVerts[0] = cmd.v0;
+               tempVerts[1] = cmd.v1;
+               tempVerts[2] = cmd.v2;
+               tempVerts[3] = cmd.v3;
             }
          }
 
-         this.recyclePolygonCommand(var23);
-      } catch (NullPointerException var47) {
+         this.recyclePolygonCommand(cmd);
+      } catch (NullPointerException e) {
       }
    }
 
    public void clearPacketTable() {
       if (!this.packetTableEmpty) {
-         for (int var1 = this.packetTable.length - 1; var1 >= 0; var1--) {
-            RenderCommand var2 = this.packetTable[var1];
+         for (int i = this.packetTable.length - 1; i >= 0; i--) {
+            RenderCommand cmd = this.packetTable[i];
 
-            while (var2 != null) {
-               RenderCommand var3 = var2.next;
-               switch (var2.commandType) {
-                  case 1:
-                     this.drawPolygon((PolygonRenderCommand)var2);
-                     this.recyclePolygonCommand((PolygonRenderCommand)var2);
+            while (cmd != null) {
+               RenderCommand next = cmd.next;
+               switch (cmd.commandType) {
+                  case COMMAND_TYPE_LINE:
+                     this.drawPolygon((PolygonRenderCommand)cmd);
+                     this.recyclePolygonCommand((PolygonRenderCommand)cmd);
                   default:
-                     var2 = var3;
+                     cmd = next;
                }
             }
 
-            this.packetTable[var1] = null;
+            this.packetTable[i] = null;
          }
 
          this.packetTableEmpty = true;
@@ -556,157 +552,156 @@ final class RenderContext {
 
    public void flush() {
       if (!this.packetTableEmpty) {
-         for (int var1 = this.packetTable.length - 1; var1 >= 0; var1--) {
-            RenderCommand var2 = this.packetTable[var1];
+         for (int i = this.packetTable.length - 1; i >= 0; i--) {
+            RenderCommand cmd = this.packetTable[i];
 
-            while (var2 != null) {
-               RenderCommand var3 = var2.next;
-               switch (var2.commandType) {
-                  case 1:
-                     this.recyclePolygonCommand((PolygonRenderCommand)var2);
+            while (cmd != null) {
+               RenderCommand next = cmd.next;
+               switch (cmd.commandType) {
+                  case COMMAND_TYPE_LINE:
+                     this.recyclePolygonCommand((PolygonRenderCommand)cmd);
                   default:
-                     var2 = var3;
+                     cmd = next;
                }
             }
 
-            this.packetTable[var1] = null;
+            this.packetTable[i] = null;
          }
 
          this.packetTableEmpty = true;
       }
    }
 
-   protected void drawPolygon(PolygonRenderCommand var1) {
-      int var2 = var1.renderFlags;
-      this.rasterizer.setDiffuseTexture(var1.diffuseTexture);
-      int var3 = (var2 & 2) != 0 ? 1 : 0;
-      int var4 = var1.clipped != 0 ? 1 : 0;
-      int var5 = (var2 & 4080) >>> 4;
-      int var6;
-      if ((var2 & 4096) != 0 && var5 != 255) {
-         var6 = var5 != 0 && var5 != 128 ? 2 : 1;
-      } else if ((var2 & 8192) != 0) {
-         var6 = 3;
+   protected void drawPolygon(PolygonRenderCommand command) {
+      int flags = command.renderFlags;
+      this.rasterizer.setDiffuseTexture(command.diffuseTexture);
+      int blendIndex = (flags & FLAG_BLEND_TRANSPARENT) != 0 ? 1 : 0;
+      int clipIndex = command.clipped != 0 ? 1 : 0;
+      int alpha = (flags & 4080) >>> 4;
+      int modMode;
+      if ((flags & FLAG_ALPHA_BLEND) != 0 && alpha != MAX_ALPHA) {
+         modMode = alpha != 0 && alpha != 128 ? 2 : 1;
+      } else if ((flags & FLAG_LIGHTING) != 0) {
+         modMode = 3;
       } else {
-         var6 = 0;
+         modMode = 0;
       }
 
-      this.rasterizer.setAlpha(var5);
+      this.rasterizer.setBlendAlpha(alpha);
 
       try {
-         if ((var2 & 32768) != 0) {
-            if (var1.sphereMapTexture != null) {
-               this.rasterizer.setSphereMapTexture(var1.sphereMapTexture);
-               SphereMapDrawer var7 = this.rasterizer.sphereMapDrawers[var6][var3][var4];
-               this.rasterizer.rasterizeSphereMapTriangle(var7, var1.v0, var1.v1, var1.v2);
-               if (var1.vertexCount == 4) {
-                  this.rasterizer.rasterizeSphereMapTriangle(var7, var1.v1, var1.v2, var1.v3);
+         if ((flags & FLAG_SPHERE_MAP) != 0) {
+            if (command.sphereMapTexture != null) {
+               this.rasterizer.setSphereMapTexture(command.sphereMapTexture);
+               SphereMapDrawer drawer = this.rasterizer.sphereMapDrawers[modMode][blendIndex][clipIndex];
+               this.rasterizer.rasterizeSphereMapTriangle(drawer, command.v0, command.v1, command.v2);
+               if (command.vertexCount == 4) {
+                  this.rasterizer.rasterizeSphereMapTriangle(drawer, command.v1, command.v2, command.v3);
                }
             } else {
-               int var9 = var1.v1.light + var1.v2.light;
-               if (var1.v0.light + var9 == 0) {
-                  this.rasterizer.rasterizeUnlitTriangle(this.rasterizer.unlitDrawers[var6][var3][var4], var1.v0, var1.v1, var1.v2);
+               int totalLight = command.v1.light + command.v2.light;
+               if (command.v0.light + totalLight == 0) {
+                  this.rasterizer.rasterizeUnlitTriangle(this.rasterizer.unlitDrawers[modMode][blendIndex][clipIndex], command.v0, command.v1, command.v2);
                } else {
-                  this.rasterizer.rasterizeLitTriangle(this.rasterizer.litDrawers[var6][var3][var4], var1.v0, var1.v1, var1.v2);
+                  this.rasterizer.rasterizeLitTriangle(this.rasterizer.litDrawers[modMode][blendIndex][clipIndex], command.v0, command.v1, command.v2);
                }
 
-               if (var1.vertexCount == 4) {
-                  if (var1.v3.light + var9 == 0) {
-                     this.rasterizer.rasterizeUnlitTriangle(this.rasterizer.unlitDrawers[var6][var3][var4], var1.v1, var1.v2, var1.v3);
+               if (command.vertexCount == 4) {
+                  if (command.v3.light + totalLight == 0) {
+                     this.rasterizer.rasterizeUnlitTriangle(this.rasterizer.unlitDrawers[modMode][blendIndex][clipIndex], command.v1, command.v2, command.v3);
                   } else {
-                     this.rasterizer.rasterizeLitTriangle(this.rasterizer.litDrawers[var6][var3][var4], var1.v1, var1.v2, var1.v3);
+                     this.rasterizer.rasterizeLitTriangle(this.rasterizer.litDrawers[modMode][blendIndex][clipIndex], command.v1, command.v2, command.v3);
                   }
                }
             }
          } else {
-            TexturedDrawer var10 = this.rasterizer.texturedDrawers[var6][var3][var4];
-            this.rasterizer.rasterizeTexturedTriangle(var10, var1.v0, var1.v1, var1.v2);
-            if (var1.vertexCount == 4) {
-               this.rasterizer.rasterizeTexturedTriangle(var10, var1.v1, var1.v2, var1.v3);
+            TexturedDrawer drawer = this.rasterizer.texturedDrawers[modMode][blendIndex][clipIndex];
+            this.rasterizer.rasterizeTexturedTriangle(drawer, command.v0, command.v1, command.v2);
+            if (command.vertexCount == 4) {
+               this.rasterizer.rasterizeTexturedTriangle(drawer, command.v1, command.v2, command.v3);
             }
          }
-      } catch (ArrayIndexOutOfBoundsException var8) {
+      } catch (ArrayIndexOutOfBoundsException e) {
       }
    }
 
-   public void setLightingEnabled(boolean var1) {
-      this.lightingEnabled = var1;
+   public void setLightingEnabled(boolean enabled) {
+      this.lightingEnabled = enabled;
    }
 
-   public void setAmbientIntensity(float var1) {
-      this.ambientIntensity = var1;
+   public void setAmbientIntensity(float intensity) {
+      this.ambientIntensity = intensity;
    }
 
-   public void setDirectionalLight(Vector3f var1, float var2) {
-      this.lightDirection.set(var1);
+   public void setDirectionalLight(Vector3f direction, float intensity) {
+      this.lightDirection.setNegative(direction);
       this.lightDirection.normalize();
-      this.lightDirection.negate();
-      this.lightIntensity = var2;
+      this.lightIntensity = intensity;
    }
 
-   protected void computeVertexLighting(Vector3f var1, Vector3f var2, Vector3f var3, Vector3f[] var4, int var5, int var6) {
-      float var7 = var1.x;
-      float var8 = var1.y;
-      float var9 = var1.z;
-      float var10 = var7 + var3.x;
-      float var11 = var8 + var3.y;
-      float var12 = var9 + var3.z;
-      float var13 = 1.0F / (float)Math.sqrt(var10 * var10 + var11 * var11 + var12 * var12);
-      var10 *= var13;
-      var11 *= var13;
-      var12 *= var13;
-      int var14 = var5;
-      int var15 = var5 * 3;
+   protected void computeVertexLighting(Vector3f lightDir, Vector3f scaledLightDir, Vector3f viewDir, Vector3f[] normals, int normalOffset, int count) {
+      float lx = lightDir.x;
+      float ly = lightDir.y;
+      float lz = lightDir.z;
+      float hx = lx + viewDir.x;
+      float hy = ly + viewDir.y;
+      float hz = lz + viewDir.z;
+      float invLen = 1.0F / (float)Math.sqrt(hx * hx + hy * hy + hz * hz);
+      hx *= invLen;
+      hy *= invLen;
+      hz *= invLen;
+      int srcIdx = normalOffset;
+      int dstIdx = normalOffset * 3;
 
-      for (int var16 = 0; var16 < var6; var16++) {
-         Vector3f var17 = var4[var14];
-         float var18 = this.ambientIntensity;
-         float var19 = var17.dot(var2);
-         if (var19 > 0.0F) {
-            var18 += var19;
+      for (int i = 0; i < count; i++) {
+         Vector3f normal = normals[srcIdx];
+         float diffuse = this.ambientIntensity;
+         float dotLight = normal.dot(scaledLightDir);
+         if (dotLight > 0.0F) {
+            diffuse += dotLight;
          }
 
-         this.vertexLighting[var15 + 0] = var18;
-         float var20 = 0.0F;
-         if (var19 > 0.0F) {
-            float var21 = var17.x * var10 + var17.y * var11 + var17.z * var12;
-            if (var21 > 0.0F) {
-               var20 = var21;
+         this.vertexLighting[dstIdx + 0] = diffuse;
+         float specular = 0.0F;
+         if (dotLight > 0.0F) {
+            float dotHalf = normal.x * hx + normal.y * hy + normal.z * hz;
+            if (dotHalf > 0.0F) {
+               specular = dotHalf;
             }
          }
 
-         this.vertexLighting[var15 + 1] = var20;
-         var14++;
-         var15 += 3;
+         this.vertexLighting[dstIdx + 1] = specular;
+         srcIdx++;
+         dstIdx += 3;
       }
    }
 
-   protected void computeSphereMapLighting(Vector3f var1, Transform3D var2, Vector3f[] var3, int var4, int var5) {
-      float var6 = var1.x;
-      float var7 = var1.y;
-      float var8 = var1.z;
-      float var9 = var2.m00 * 0.5F;
-      float var10 = var2.m01 * 0.5F;
-      float var11 = var2.m02 * 0.5F;
-      float var12 = var2.m10 * 0.5F;
-      float var13 = var2.m11 * 0.5F;
-      float var14 = var2.m12 * 0.5F;
-      int var15 = var4;
-      int var16 = var4 * 3;
+   protected void computeSphereMapLighting(Vector3f scaledLightDir, Transform3D normalMatrix, Vector3f[] normals, int normalOffset, int count) {
+      float lx = scaledLightDir.x;
+      float ly = scaledLightDir.y;
+      float lz = scaledLightDir.z;
+      float m00Half = normalMatrix.m00 * 0.5F;
+      float m01Half = normalMatrix.m01 * 0.5F;
+      float m02Half = normalMatrix.m02 * 0.5F;
+      float m10Half = normalMatrix.m10 * 0.5F;
+      float m11Half = normalMatrix.m11 * 0.5F;
+      float m12Half = normalMatrix.m12 * 0.5F;
+      int srcIdx = normalOffset;
+      int dstIdx = normalOffset * 3;
 
-      for (int var17 = 0; var17 < var5; var17++) {
-         Vector3f var18 = var3[var15];
-         float var19 = this.ambientIntensity;
-         float var20 = var6 * var18.x + var7 * var18.y + var8 * var18.z;
-         if (var20 > 0.0F) {
-            var19 += var20;
+      for (int i = 0; i < count; i++) {
+         Vector3f normal = normals[srcIdx];
+         float diffuse = this.ambientIntensity;
+         float dotLight = lx * normal.x + ly * normal.y + lz * normal.z;
+         if (dotLight > 0.0F) {
+            diffuse += dotLight;
          }
 
-         this.vertexLighting[var16 + 0] = var19;
-         this.vertexLighting[var16 + 1] = var9 * var18.x + var10 * var18.y + var11 * var18.z + 0.5F;
-         this.vertexLighting[var16 + 2] = var12 * var18.x + var13 * var18.y + var14 * var18.z + 0.5F;
-         var15++;
-         var16 += 3;
+         this.vertexLighting[dstIdx + 0] = diffuse;
+         this.vertexLighting[dstIdx + 1] = m00Half * normal.x + m01Half * normal.y + m02Half * normal.z + 0.5F;
+         this.vertexLighting[dstIdx + 2] = m10Half * normal.x + m11Half * normal.y + m12Half * normal.z + 0.5F;
+         srcIdx++;
+         dstIdx += 3;
       }
    }
 }

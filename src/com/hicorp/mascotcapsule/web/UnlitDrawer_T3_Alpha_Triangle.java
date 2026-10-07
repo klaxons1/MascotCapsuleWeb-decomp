@@ -4,8 +4,8 @@ public final class UnlitDrawer_T3_Alpha_Triangle extends UnlitDrawer {
    private final Config rasterizer;
 
    public UnlitDrawer_T3_Alpha_Triangle(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {

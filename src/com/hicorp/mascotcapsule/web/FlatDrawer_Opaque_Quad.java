@@ -4,21 +4,21 @@ public final class FlatDrawer_Opaque_Quad extends FlatDrawer {
    private final Config rasterizer;
 
    public FlatDrawer_Opaque_Quad(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
       int[] var1 = Config.getPixelBuffer(this.rasterizer);
-      int var2 = Config.getClipBottom(this.rasterizer);
-      if (super.y < Config.getClipLeft(this.rasterizer)) {
+      int var2 = Config.getFillColor(this.rasterizer);
+      if (super.y < Config.getClipTop(this.rasterizer)) {
          int var3;
-         if (super.yEnd < Config.getClipLeft(this.rasterizer)) {
+         if (super.yEnd < Config.getClipTop(this.rasterizer)) {
             var3 = super.yEnd - super.y;
             super.y = super.yEnd;
          } else {
-            var3 = Config.getClipLeft(this.rasterizer) - super.y;
-            super.y = Config.getClipLeft(this.rasterizer);
+            var3 = Config.getClipTop(this.rasterizer) - super.y;
+            super.y = Config.getClipTop(this.rasterizer);
          }
 
          super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * var3;
@@ -32,8 +32,8 @@ public final class FlatDrawer_Opaque_Quad extends FlatDrawer {
       ) {
          int var7 = super.xLeftFixed >> 16;
          int var4 = super.xRightFixed >> 16;
-         if (var7 < Config.getBufferHeight(this.rasterizer)) {
-            var7 = Config.getBufferHeight(this.rasterizer);
+         if (var7 < Config.getClipLeft(this.rasterizer)) {
+            var7 = Config.getClipLeft(this.rasterizer);
          }
 
          if (var4 > Config.getClipRight(this.rasterizer)) {

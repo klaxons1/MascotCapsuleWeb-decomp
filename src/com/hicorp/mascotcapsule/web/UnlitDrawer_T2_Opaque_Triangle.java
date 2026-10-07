@@ -4,8 +4,8 @@ public final class UnlitDrawer_T2_Opaque_Triangle extends UnlitDrawer {
    private final Config rasterizer;
 
    public UnlitDrawer_T2_Opaque_Triangle(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
@@ -21,9 +21,9 @@ public final class UnlitDrawer_T2_Opaque_Triangle extends UnlitDrawer {
       int var10 = super.lightFixed >> var3;
       int var11 = super.dLightDyFixed >> var3;
       int var12 = super.dLightDxFixed;
-      int var13 = Config.getColorKey(this.rasterizer);
+      int var13 = Config.getBlendAlpha(this.rasterizer);
 
-      for (int var14 = 255 - Config.getColorKey(this.rasterizer); super.y < super.yEnd; super.duDyFixed = super.duDyFixed + super.dvDxFixed) {
+      for (int var14 = 255 - Config.getBlendAlpha(this.rasterizer); super.y < super.yEnd; super.duDyFixed = super.duDyFixed + super.dvDxFixed) {
          int var15 = (super.xLeftFixed >> 16) + super.scanlineOffset;
          int var16 = (super.xRightFixed >> 16) + super.scanlineOffset;
          int var17 = super.uFixed >> var3;

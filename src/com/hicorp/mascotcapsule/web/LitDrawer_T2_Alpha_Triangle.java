@@ -4,8 +4,8 @@ public final class LitDrawer_T2_Alpha_Triangle extends LitDrawer {
    private final Config rasterizer;
 
    public LitDrawer_T2_Alpha_Triangle(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
@@ -23,8 +23,8 @@ public final class LitDrawer_T2_Alpha_Triangle extends LitDrawer {
       int var12 = super.normalZFixed >> var4;
       int var13 = super.dNormalZDyFixed;
       int var14 = super.dNormalZDxFixed;
-      int var15 = Config.getColorKey(this.rasterizer);
-      int var16 = 255 - Config.getColorKey(this.rasterizer);
+      int var15 = Config.getBlendAlpha(this.rasterizer);
+      int var16 = 255 - Config.getBlendAlpha(this.rasterizer);
 
       for (super.dvDyFixed += 8388608; super.y < super.yEnd; super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed) {
          int var17 = (super.xLeftFixed >> 16) + super.scanlineOffset;

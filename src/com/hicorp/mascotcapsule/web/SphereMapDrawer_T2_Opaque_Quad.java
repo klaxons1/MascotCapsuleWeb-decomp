@@ -4,8 +4,8 @@ public final class SphereMapDrawer_T2_Opaque_Quad extends SphereMapDrawer {
    private final Config rasterizer;
 
    public SphereMapDrawer_T2_Opaque_Quad(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
@@ -31,16 +31,16 @@ public final class SphereMapDrawer_T2_Opaque_Quad extends SphereMapDrawer {
       int var19 = Config.getSphereMapTexture(this.rasterizer).getMipVShift(var13);
       int var20 = super.dSphereUDxFixed >> var13;
       int var21 = super.dSphereVDxFixed >> var13;
-      int var22 = Config.getColorKey(this.rasterizer);
-      int var23 = 255 - Config.getColorKey(this.rasterizer);
-      if (super.y < Config.getClipLeft(this.rasterizer)) {
+      int var22 = Config.getBlendAlpha(this.rasterizer);
+      int var23 = 255 - Config.getBlendAlpha(this.rasterizer);
+      if (super.y < Config.getClipTop(this.rasterizer)) {
          int var24;
-         if (super.yEnd < Config.getClipLeft(this.rasterizer)) {
+         if (super.yEnd < Config.getClipTop(this.rasterizer)) {
             var24 = super.yEnd - super.y;
             super.y = super.yEnd;
          } else {
-            var24 = Config.getClipLeft(this.rasterizer) - super.y;
-            super.y = Config.getClipLeft(this.rasterizer);
+            var24 = Config.getClipTop(this.rasterizer) - super.y;
+            super.y = Config.getClipTop(this.rasterizer);
          }
 
          super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * var24;
@@ -64,9 +64,9 @@ public final class SphereMapDrawer_T2_Opaque_Quad extends SphereMapDrawer {
          int var28 = super.duDyFixed;
          int var29 = super.dvDyFixed >> var13;
          int var30 = super.duDxFixed >> var13;
-         if (var43 < Config.getBufferHeight(this.rasterizer)) {
-            int var31 = Config.getBufferHeight(this.rasterizer) - var43;
-            var43 = Config.getBufferHeight(this.rasterizer);
+         if (var43 < Config.getClipLeft(this.rasterizer)) {
+            int var31 = Config.getClipLeft(this.rasterizer) - var43;
+            var43 = Config.getClipLeft(this.rasterizer);
             var26 += var10 * var31;
             var27 += var11 * var31;
             var28 += var12 * var31;

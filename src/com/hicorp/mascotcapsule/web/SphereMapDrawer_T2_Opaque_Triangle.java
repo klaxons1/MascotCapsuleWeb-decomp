@@ -4,8 +4,8 @@ public final class SphereMapDrawer_T2_Opaque_Triangle extends SphereMapDrawer {
    private final Config rasterizer;
 
    public SphereMapDrawer_T2_Opaque_Triangle(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
@@ -31,9 +31,9 @@ public final class SphereMapDrawer_T2_Opaque_Triangle extends SphereMapDrawer {
       int var19 = Config.getSphereMapTexture(this.rasterizer).getMipVShift(var13);
       int var20 = super.dSphereUDxFixed >> var13;
       int var21 = super.dSphereVDxFixed >> var13;
-      int var22 = Config.getColorKey(this.rasterizer);
+      int var22 = Config.getBlendAlpha(this.rasterizer);
 
-      for (int var23 = 255 - Config.getColorKey(this.rasterizer); super.y < super.yEnd; super.duDxFixed = super.duDxFixed + super.sphereUFixed) {
+      for (int var23 = 255 - Config.getBlendAlpha(this.rasterizer); super.y < super.yEnd; super.duDxFixed = super.duDxFixed + super.sphereUFixed) {
          int var24 = (super.xLeftFixed >> 16) + super.scanlineOffset;
          int var25 = (super.xRightFixed >> 16) + super.scanlineOffset;
          int var26 = super.uFixed >> var3;

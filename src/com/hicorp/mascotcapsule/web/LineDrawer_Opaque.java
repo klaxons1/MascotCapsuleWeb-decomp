@@ -4,14 +4,14 @@ public final class LineDrawer_Opaque extends LineDrawer {
    private final Config rasterizer;
 
    public LineDrawer_Opaque(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
       int[] var1 = Config.getPixelBuffer(this.rasterizer);
-      int var2 = Config.getClipBottom(this.rasterizer) & 16711935;
-      int var3 = Config.getClipBottom(this.rasterizer) & 0xFF00;
+      int var2 = Config.getFillColor(this.rasterizer) & 16711935;
+      int var3 = Config.getFillColor(this.rasterizer) & 0xFF00;
 
       for (int var4 = super.dzDxFixed; super.y < super.yEnd; super.zFixed = super.zFixed + super.dzDyFixed) {
          int var5 = (super.xLeftFixed >> 16) + super.scanlineOffset;

@@ -4,8 +4,8 @@ public final class TexturedDrawer_T1_Opaque_Triangle extends TexturedDrawer {
    private final Config rasterizer;
 
    public TexturedDrawer_T1_Opaque_Triangle(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {

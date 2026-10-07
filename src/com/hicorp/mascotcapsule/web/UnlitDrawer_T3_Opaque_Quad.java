@@ -4,8 +4,8 @@ public final class UnlitDrawer_T3_Opaque_Quad extends UnlitDrawer {
    private final Config rasterizer;
 
    public UnlitDrawer_T3_Opaque_Quad(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
@@ -21,14 +21,14 @@ public final class UnlitDrawer_T3_Opaque_Quad extends UnlitDrawer {
       int var10 = super.lightFixed >> var3;
       int var11 = super.dLightDyFixed >> var3;
       int var12 = super.dLightDxFixed;
-      if (super.y < Config.getClipLeft(this.rasterizer)) {
+      if (super.y < Config.getClipTop(this.rasterizer)) {
          int var13;
-         if (super.yEnd < Config.getClipLeft(this.rasterizer)) {
+         if (super.yEnd < Config.getClipTop(this.rasterizer)) {
             var13 = super.yEnd - super.y;
             super.y = super.yEnd;
          } else {
-            var13 = Config.getClipLeft(this.rasterizer) - super.y;
-            super.y = Config.getClipLeft(this.rasterizer);
+            var13 = Config.getClipTop(this.rasterizer) - super.y;
+            super.y = Config.getClipTop(this.rasterizer);
          }
 
          super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * var13;
@@ -48,9 +48,9 @@ public final class UnlitDrawer_T3_Opaque_Quad extends UnlitDrawer {
          int var15 = super.uFixed >> var3;
          int var16 = super.vFixed >> var3;
          int var17 = super.duDyFixed;
-         if (var26 < Config.getBufferHeight(this.rasterizer)) {
-            int var18 = Config.getBufferHeight(this.rasterizer) - var26;
-            var26 = Config.getBufferHeight(this.rasterizer);
+         if (var26 < Config.getClipLeft(this.rasterizer)) {
+            int var18 = Config.getClipLeft(this.rasterizer) - var26;
+            var26 = Config.getClipLeft(this.rasterizer);
             var15 += var10 * var18;
             var16 += var11 * var18;
             var17 += var12 * var18;

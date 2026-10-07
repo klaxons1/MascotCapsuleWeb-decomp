@@ -4,14 +4,14 @@ public final class FlatDrawer_Alpha_Triangle extends FlatDrawer {
    private final Config rasterizer;
 
    public FlatDrawer_Alpha_Triangle(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
       int[] var1 = Config.getPixelBuffer(this.rasterizer);
 
-      for (int var2 = Config.getClipBottom(this.rasterizer); super.y < super.yEnd; super.xRightFixed = super.xRightFixed + super.dxRightFixed) {
+      for (int var2 = Config.getFillColor(this.rasterizer); super.y < super.yEnd; super.xRightFixed = super.xRightFixed + super.dxRightFixed) {
          int var3 = (super.xLeftFixed >> 16) + super.scanlineOffset;
          int var4 = (super.xRightFixed >> 16) + super.scanlineOffset;
          if ((var3 & 1 ^ super.y & 1) != 0) {

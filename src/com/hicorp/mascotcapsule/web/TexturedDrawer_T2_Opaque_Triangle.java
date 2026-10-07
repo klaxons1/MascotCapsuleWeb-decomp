@@ -4,8 +4,8 @@ public final class TexturedDrawer_T2_Opaque_Triangle extends TexturedDrawer {
    private final Config rasterizer;
 
    public TexturedDrawer_T2_Opaque_Triangle(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
@@ -20,9 +20,9 @@ public final class TexturedDrawer_T2_Opaque_Triangle extends TexturedDrawer {
       int var9 = Config.getDiffuseTexture(this.rasterizer).getMipVShift(var3);
       int var10 = super.duDxFixed >> var3;
       int var11 = super.dvDxFixed >> var3;
-      int var12 = Config.getColorKey(this.rasterizer);
+      int var12 = Config.getBlendAlpha(this.rasterizer);
 
-      for (int var13 = 255 - Config.getColorKey(this.rasterizer); super.y < super.yEnd; super.vFixed = super.vFixed + super.dvDyFixed) {
+      for (int var13 = 255 - Config.getBlendAlpha(this.rasterizer); super.y < super.yEnd; super.vFixed = super.vFixed + super.dvDyFixed) {
          int var14 = (super.xLeftFixed >> 16) + super.scanlineOffset;
          int var15 = (super.xRightFixed >> 16) + super.scanlineOffset;
          int var16 = super.uFixed >> var3;

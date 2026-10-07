@@ -4,15 +4,15 @@ public final class LitColorDrawer_Opaque extends TexturedDrawer {
    private final Config rasterizer;
 
    public LitColorDrawer_Opaque(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
       int[] var1 = Config.getPixelBuffer(this.rasterizer);
       int[] var2 = Config.getColorTable();
-      int var3 = Config.getClipBottom(this.rasterizer) & 16711935;
-      int var4 = Config.getClipBottom(this.rasterizer) & 0xFF00;
+      int var3 = Config.getFillColor(this.rasterizer) & 16711935;
+      int var4 = Config.getFillColor(this.rasterizer) & 0xFF00;
       int var5 = super.duDxFixed;
       int var6 = super.dvDxFixed;
 

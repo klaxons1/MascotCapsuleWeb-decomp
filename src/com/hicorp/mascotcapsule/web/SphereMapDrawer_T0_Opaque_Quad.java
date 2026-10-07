@@ -4,8 +4,8 @@ public final class SphereMapDrawer_T0_Opaque_Quad extends SphereMapDrawer {
    private final Config rasterizer;
 
    public SphereMapDrawer_T0_Opaque_Quad(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
@@ -31,14 +31,14 @@ public final class SphereMapDrawer_T0_Opaque_Quad extends SphereMapDrawer {
       int var19 = Config.getSphereMapTexture(this.rasterizer).getMipVShift(var13);
       int var20 = super.dSphereUDxFixed >> var13;
       int var21 = super.dSphereVDxFixed >> var13;
-      if (super.y < Config.getClipLeft(this.rasterizer)) {
+      if (super.y < Config.getClipTop(this.rasterizer)) {
          int var22;
-         if (super.yEnd < Config.getClipLeft(this.rasterizer)) {
+         if (super.yEnd < Config.getClipTop(this.rasterizer)) {
             var22 = super.yEnd - super.y;
             super.y = super.yEnd;
          } else {
-            var22 = Config.getClipLeft(this.rasterizer) - super.y;
-            super.y = Config.getClipLeft(this.rasterizer);
+            var22 = Config.getClipTop(this.rasterizer) - super.y;
+            super.y = Config.getClipTop(this.rasterizer);
          }
 
          super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * var22;
@@ -62,9 +62,9 @@ public final class SphereMapDrawer_T0_Opaque_Quad extends SphereMapDrawer {
          int var26 = super.duDyFixed;
          int var27 = super.dvDyFixed >> var13;
          int var28 = super.duDxFixed >> var13;
-         if (var39 < Config.getBufferHeight(this.rasterizer)) {
-            int var29 = Config.getBufferHeight(this.rasterizer) - var39;
-            var39 = Config.getBufferHeight(this.rasterizer);
+         if (var39 < Config.getClipLeft(this.rasterizer)) {
+            int var29 = Config.getClipLeft(this.rasterizer) - var39;
+            var39 = Config.getClipLeft(this.rasterizer);
             var24 += var10 * var29;
             var25 += var11 * var29;
             var26 += var12 * var29;

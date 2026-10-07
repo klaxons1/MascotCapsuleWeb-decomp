@@ -4,8 +4,8 @@ public final class SphereMapDrawer_T0_Opaque_Triangle extends SphereMapDrawer {
    private final Config rasterizer;
 
    public SphereMapDrawer_T0_Opaque_Triangle(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {

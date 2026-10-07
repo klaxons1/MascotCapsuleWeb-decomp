@@ -60,7 +60,7 @@ public class MainCanvas extends Canvas {
          }
 
          this.damageBounds.setBounds(this.accumulatedBounds);
-         this.renderContext.flushToDirtyRect(this.accumulatedBounds);
+         this.renderContext.getRenderBounds(this.accumulatedBounds);
          this.renderContext.resetRenderBounds();
          this.damageBounds.union(this.accumulatedBounds);
          this.damageBounds.intersect(this.screenBounds);

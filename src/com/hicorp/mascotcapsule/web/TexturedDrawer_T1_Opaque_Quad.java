@@ -4,8 +4,8 @@ public final class TexturedDrawer_T1_Opaque_Quad extends TexturedDrawer {
    private final Config rasterizer;
 
    public TexturedDrawer_T1_Opaque_Quad(Config rasterizer) {
-      super(var1);
-      this.rasterizer = var1;
+      super(rasterizer);
+      this.rasterizer = rasterizer;
    }
 
    public void drawSpan() {
@@ -20,14 +20,14 @@ public final class TexturedDrawer_T1_Opaque_Quad extends TexturedDrawer {
       int var9 = Config.getDiffuseTexture(this.rasterizer).getMipVShift(var3);
       int var10 = super.duDxFixed >> var3;
       int var11 = super.dvDxFixed >> var3;
-      if (super.y < Config.getClipLeft(this.rasterizer)) {
+      if (super.y < Config.getClipTop(this.rasterizer)) {
          int var12;
-         if (super.yEnd < Config.getClipLeft(this.rasterizer)) {
+         if (super.yEnd < Config.getClipTop(this.rasterizer)) {
             var12 = super.yEnd - super.y;
             super.y = super.yEnd;
          } else {
-            var12 = Config.getClipLeft(this.rasterizer) - super.y;
-            super.y = Config.getClipLeft(this.rasterizer);
+            var12 = Config.getClipTop(this.rasterizer) - super.y;
+            super.y = Config.getClipTop(this.rasterizer);
          }
 
          super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * var12;
@@ -45,9 +45,9 @@ public final class TexturedDrawer_T1_Opaque_Quad extends TexturedDrawer {
          int var13 = super.xRightFixed >> 16;
          int var14 = super.uFixed >> var3;
          int var15 = super.vFixed >> var3;
-         if (var22 < Config.getBufferHeight(this.rasterizer)) {
-            int var16 = Config.getBufferHeight(this.rasterizer) - var22;
-            var22 = Config.getBufferHeight(this.rasterizer);
+         if (var22 < Config.getClipLeft(this.rasterizer)) {
+            int var16 = Config.getClipLeft(this.rasterizer) - var22;
+            var22 = Config.getClipLeft(this.rasterizer);
             var14 += var10 * var16;
             var15 += var11 * var16;
          }

@@ -9,50 +9,50 @@ public final class LineDrawer_Alpha extends LineDrawer {
    }
 
    public void drawSpan() {
-      int[] var1 = Config.getPixelBuffer(this.rasterizer);
-      int var2 = Config.getFillColor(this.rasterizer) & 16711935;
-      int var3 = Config.getFillColor(this.rasterizer) & 0xFF00;
-      int var4 = super.dzDxFixed;
+      int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
+      int fillColor = Config.getFillColor(this.rasterizer) & 16711935;
+      int fillColor2 = Config.getFillColor(this.rasterizer) & 0xFF00;
+      int stepDz = super.dzDxFixed;
       if (super.y < Config.getClipTop(this.rasterizer)) {
-         int var5;
+         int clipDeltaY;
          if (super.yEnd < Config.getClipTop(this.rasterizer)) {
-            var5 = super.yEnd - super.y;
+            clipDeltaY = super.yEnd - super.y;
             super.y = super.yEnd;
          } else {
-            var5 = Config.getClipTop(this.rasterizer) - super.y;
+            clipDeltaY = Config.getClipTop(this.rasterizer) - super.y;
             super.y = Config.getClipTop(this.rasterizer);
          }
 
-         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * var5;
-         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed * var5;
-         super.xRightFixed = super.xRightFixed + super.dxRightFixed * var5;
-         super.zFixed = super.zFixed + super.dzDyFixed * var5;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * clipDeltaY;
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed * clipDeltaY;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed * clipDeltaY;
+         super.zFixed = super.zFixed + super.dzDyFixed * clipDeltaY;
       }
 
       for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
          super.y < super.yEnd;
          super.zFixed = super.zFixed + super.dzDyFixed
       ) {
-         int var12 = super.xLeftFixed >> 16;
-         int var6 = super.xRightFixed >> 16;
-         int var7 = super.zFixed;
-         if (var12 < Config.getClipLeft(this.rasterizer)) {
-            int var8 = Config.getClipLeft(this.rasterizer) - var12;
-            var12 = Config.getClipLeft(this.rasterizer);
-            var7 += var4 * var8;
+         int xLeft = super.xLeftFixed >> 16;
+         int xRight = super.xRightFixed >> 16;
+         int curZ = super.zFixed;
+         if (xLeft < Config.getClipLeft(this.rasterizer)) {
+            int clipDeltaX = Config.getClipLeft(this.rasterizer) - xLeft;
+            xLeft = Config.getClipLeft(this.rasterizer);
+            curZ += stepDz * clipDeltaX;
          }
 
-         if (var6 > Config.getClipRight(this.rasterizer)) {
-            var6 = Config.getClipRight(this.rasterizer);
+         if (xRight > Config.getClipRight(this.rasterizer)) {
+            xRight = Config.getClipRight(this.rasterizer);
          }
 
-         int var13 = super.scanlineOffset + var12;
+         int spanPixelIdx = super.scanlineOffset + xLeft;
 
-         for (int var9 = super.scanlineOffset + var6; var13 < var9; var13++) {
-            int var10 = var7 >>> 16;
-            int var11 = (var2 * var10 & -16711936) + (var3 * var10 & 0xFF0000) >>> 8;
-            var1[var13] = var11 | 0xFF000000;
-            var7 += var4;
+         for (int spanEndIdx = super.scanlineOffset + xRight; spanPixelIdx < spanEndIdx; spanPixelIdx++) {
+            int intensityVal = curZ >>> 16;
+            int shadedColor = (fillColor * intensityVal & -16711936) + (fillColor2 * intensityVal & 0xFF0000) >>> 8;
+            dstPixels[spanPixelIdx] = shadedColor | 0xFF000000;
+            curZ += stepDz;
          }
 
          super.y++;

@@ -9,32 +9,32 @@ public final class TexturedDrawer_T3_Opaque_Triangle extends TexturedDrawer {
    }
 
    public void drawSpan() {
-      int[] var1 = Config.getPixelBuffer(this.rasterizer);
-      int var2 = (super.duDxFixed > 0 ? super.duDxFixed : -super.duDxFixed) + (super.dvDxFixed > 0 ? super.dvDxFixed : -super.dvDxFixed) + 32768;
-      int var3 = Config.getDiffuseTexture(this.rasterizer).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
-      int[] var4 = Config.getDiffuseTexture(this.rasterizer).getPixels();
-      int var5 = Config.getDiffuseTexture(this.rasterizer).getMipOffset(var3);
-      int var6 = Config.getDiffuseTexture(this.rasterizer).getMipUMask(var3);
-      int var7 = Config.getDiffuseTexture(this.rasterizer).getMipVMask(var3);
-      int var8 = Config.getDiffuseTexture(this.rasterizer).getMipUShift(var3);
-      int var9 = Config.getDiffuseTexture(this.rasterizer).getMipVShift(var3);
-      int var10 = super.duDxFixed >> var3;
+      int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
+      int stepDu = (super.duDxFixed > 0 ? super.duDxFixed : -super.duDxFixed) + (super.dvDxFixed > 0 ? super.dvDxFixed : -super.dvDxFixed) + 32768;
+      int mipLevel = Config.getDiffuseTexture(this.rasterizer).selectMipLevel(MatrixUtils.ceilLog2(stepDu) - 17);
+      int[] diffusePixels = Config.getDiffuseTexture(this.rasterizer).getPixels();
+      int mipOffset = Config.getDiffuseTexture(this.rasterizer).getMipOffset(mipLevel);
+      int mipUMask = Config.getDiffuseTexture(this.rasterizer).getMipUMask(mipLevel);
+      int mipVMask = Config.getDiffuseTexture(this.rasterizer).getMipVMask(mipLevel);
+      int mipUShift = Config.getDiffuseTexture(this.rasterizer).getMipUShift(mipLevel);
+      int mipVShift = Config.getDiffuseTexture(this.rasterizer).getMipVShift(mipLevel);
+      int stepDu2 = super.duDxFixed >> mipLevel;
 
-      for (int var11 = super.dvDxFixed >> var3; super.y < super.yEnd; super.vFixed = super.vFixed + super.dvDyFixed) {
-         int var12 = (super.xLeftFixed >> 16) + super.scanlineOffset;
-         int var13 = (super.xRightFixed >> 16) + super.scanlineOffset;
-         int var14 = super.uFixed >> var3;
+      for (int stepDv = super.dvDxFixed >> mipLevel; super.y < super.yEnd; super.vFixed = super.vFixed + super.dvDyFixed) {
+         int xLeft = (super.xLeftFixed >> 16) + super.scanlineOffset;
+         int xRight = (super.xRightFixed >> 16) + super.scanlineOffset;
+         int curU = super.uFixed >> mipLevel;
 
-         for (int var15 = super.vFixed >> var3; var12 < var13; var12++) {
-            int var16 = var5 + ((var15 & var7) >>> var9) + ((var14 & var6) >>> var8);
-            int var17 = var4[var16];
-            int var18 = var1[var12];
-            int var19 = ((var17 & var18) << 1) + ((var17 ^ var18) & 16711422) & 16843008;
-            var19 = (var19 >>> 8) + 8355711 ^ 8355711;
-            var19 = var17 + var18 - var19 | var19;
-            var1[var12] = var19 | 0xFF000000;
-            var14 += var10;
-            var15 += var11;
+         for (int curV = super.vFixed >> mipLevel; xLeft < xRight; xLeft++) {
+            int texelOffset = mipOffset + ((curV & mipVMask) >>> mipVShift) + ((curU & mipUMask) >>> mipUShift);
+            int texelColor = diffusePixels[texelOffset];
+            int dstColor = dstPixels[xLeft];
+            int blendResult = ((texelColor & dstColor) << 1) + ((texelColor ^ dstColor) & 16711422) & 16843008;
+            blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+            blendResult = texelColor + dstColor - blendResult | blendResult;
+            dstPixels[xLeft] = blendResult | 0xFF000000;
+            curU += stepDu2;
+            curV += stepDv;
          }
 
          super.y++;

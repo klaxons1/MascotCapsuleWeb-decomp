@@ -9,18 +9,18 @@ public final class FlatDrawer_Alpha_Triangle extends FlatDrawer {
    }
 
    public void drawSpan() {
-      int[] var1 = Config.getPixelBuffer(this.rasterizer);
+      int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
 
-      for (int var2 = Config.getFillColor(this.rasterizer); super.y < super.yEnd; super.xRightFixed = super.xRightFixed + super.dxRightFixed) {
-         int var3 = (super.xLeftFixed >> 16) + super.scanlineOffset;
-         int var4 = (super.xRightFixed >> 16) + super.scanlineOffset;
-         if ((var3 & 1 ^ super.y & 1) != 0) {
-            var3++;
+      for (int fillColor = Config.getFillColor(this.rasterizer); super.y < super.yEnd; super.xRightFixed = super.xRightFixed + super.dxRightFixed) {
+         int xLeft = (super.xLeftFixed >> 16) + super.scanlineOffset;
+         int xRight = (super.xRightFixed >> 16) + super.scanlineOffset;
+         if ((xLeft & 1 ^ super.y & 1) != 0) {
+            xLeft++;
          }
 
-         while (var3 < var4) {
-            var1[var3] = var2;
-            var3 += 2;
+         while (xLeft < xRight) {
+            dstPixels[xLeft] = fillColor;
+            xLeft += 2;
          }
 
          super.y++;

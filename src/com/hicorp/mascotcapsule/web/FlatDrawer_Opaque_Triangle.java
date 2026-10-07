@@ -9,13 +9,13 @@ public final class FlatDrawer_Opaque_Triangle extends FlatDrawer {
    }
 
    public void drawSpan() {
-      int[] var1 = Config.getPixelBuffer(this.rasterizer);
+      int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
 
-      for (int var2 = Config.getFillColor(this.rasterizer); super.y < super.yEnd; super.xRightFixed = super.xRightFixed + super.dxRightFixed) {
-         int var3 = (super.xLeftFixed >> 16) + super.scanlineOffset;
+      for (int fillColor = Config.getFillColor(this.rasterizer); super.y < super.yEnd; super.xRightFixed = super.xRightFixed + super.dxRightFixed) {
+         int xLeft = (super.xLeftFixed >> 16) + super.scanlineOffset;
 
-         for (int var4 = (super.xRightFixed >> 16) + super.scanlineOffset; var3 < var4; var3++) {
-            var1[var3] = var2;
+         for (int xRight = (super.xRightFixed >> 16) + super.scanlineOffset; xLeft < xRight; xLeft++) {
+            dstPixels[xLeft] = fillColor;
          }
 
          super.y++;

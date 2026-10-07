@@ -43,9 +43,9 @@ One of the most consequential bugs discovered during the rasterizer audit was an
 
 ### 3. Inverted Perspective vs. Parallel (Orthographic) Projection
 In `RenderContext.java`:
-- Bytecode method `sub_249` divided transformed coordinates by $Z$ using focal length (`sub_1f` = `(height / 2) / tan(fov / 2)`), which is **perspective projection**.
-- Bytecode method `sub_212` applied a constant scale multiplier without dividing by $Z$, which is **parallel (orthographic) projection**.
-- The initial decompilation swapped these two methods, naming `sub_73` `enablePerspective` (which was actually enabling parallel projection) and passing a unit scale of `1.0F`, causing all perspective coordinates to truncate to `(0, 0)`.
+- Bytecode perspective projection method divided transformed coordinates by $Z$ using focal length (`computeFocalLength` = `(height / 2) / tan(fov / 2)`), which is **perspective projection**.
+- Bytecode parallel projection method applied a constant scale multiplier without dividing by $Z$, which is **parallel (orthographic) projection**.
+- The initial decompilation swapped these two methods, naming the parallel projection setup `enablePerspective` (which was actually enabling parallel projection) and passing a unit scale of `1.0F`, causing all perspective coordinates to truncate to `(0, 0)`.
 - **Resolution**: Corrected the method semantics to `enableParallelProjection(float scale)` and `disableParallelProjection()`, ensuring that perspective rendering correctly applies the camera focal length (~346 pixels for a 400x400 canvas at 60° FOV).
 
 ### 4. Bone Node Hierarchy & Rest Pose Initialization

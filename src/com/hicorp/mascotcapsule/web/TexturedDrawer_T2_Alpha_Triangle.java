@@ -9,39 +9,39 @@ public final class TexturedDrawer_T2_Alpha_Triangle extends TexturedDrawer {
    }
 
    public void drawSpan() {
-      int[] var1 = Config.getPixelBuffer(this.rasterizer);
-      int var2 = (super.duDxFixed > 0 ? super.duDxFixed : -super.duDxFixed) + (super.dvDxFixed > 0 ? super.dvDxFixed : -super.dvDxFixed) + 32768;
-      int var3 = Config.getDiffuseTexture(this.rasterizer).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
-      int[] var4 = Config.getDiffuseTexture(this.rasterizer).getPixels();
-      int var5 = Config.getDiffuseTexture(this.rasterizer).getMipOffset(var3);
-      int var6 = Config.getDiffuseTexture(this.rasterizer).getMipUMask(var3);
-      int var7 = Config.getDiffuseTexture(this.rasterizer).getMipVMask(var3);
-      int var8 = Config.getDiffuseTexture(this.rasterizer).getMipUShift(var3);
-      int var9 = Config.getDiffuseTexture(this.rasterizer).getMipVShift(var3);
-      int var10 = super.duDxFixed >> var3;
-      int var11 = super.dvDxFixed >> var3;
-      int var12 = Config.getBlendAlpha(this.rasterizer);
+      int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
+      int stepDu = (super.duDxFixed > 0 ? super.duDxFixed : -super.duDxFixed) + (super.dvDxFixed > 0 ? super.dvDxFixed : -super.dvDxFixed) + 32768;
+      int mipLevel = Config.getDiffuseTexture(this.rasterizer).selectMipLevel(MatrixUtils.ceilLog2(stepDu) - 17);
+      int[] diffusePixels = Config.getDiffuseTexture(this.rasterizer).getPixels();
+      int mipOffset = Config.getDiffuseTexture(this.rasterizer).getMipOffset(mipLevel);
+      int mipUMask = Config.getDiffuseTexture(this.rasterizer).getMipUMask(mipLevel);
+      int mipVMask = Config.getDiffuseTexture(this.rasterizer).getMipVMask(mipLevel);
+      int mipUShift = Config.getDiffuseTexture(this.rasterizer).getMipUShift(mipLevel);
+      int mipVShift = Config.getDiffuseTexture(this.rasterizer).getMipVShift(mipLevel);
+      int stepDu2 = super.duDxFixed >> mipLevel;
+      int stepDv = super.dvDxFixed >> mipLevel;
+      int blendAlpha = Config.getBlendAlpha(this.rasterizer);
 
-      for (int var13 = 255 - Config.getBlendAlpha(this.rasterizer); super.y < super.yEnd; super.vFixed = super.vFixed + super.dvDyFixed) {
-         int var14 = (super.xLeftFixed >> 16) + super.scanlineOffset;
-         int var15 = (super.xRightFixed >> 16) + super.scanlineOffset;
-         int var16 = super.uFixed >> var3;
+      for (int invBlendAlpha = 255 - Config.getBlendAlpha(this.rasterizer); super.y < super.yEnd; super.vFixed = super.vFixed + super.dvDyFixed) {
+         int xLeft = (super.xLeftFixed >> 16) + super.scanlineOffset;
+         int xRight = (super.xRightFixed >> 16) + super.scanlineOffset;
+         int curU = super.uFixed >> mipLevel;
 
-         for (int var17 = super.vFixed >> var3; var14 < var15; var14++) {
-            int var18 = var5 + ((var17 & var7) >>> var9) + ((var16 & var6) >>> var8);
-            int var19 = var4[var18];
-            if (var19 != -1) {
-               int var20 = var1[var14];
-               int var21 = ((var19 & 16711935) * var12 & -16711936)
-                     + ((var19 & 0xFF00) * var12 & 0xFF0000)
-                     + ((var20 & 16711935) * var13 & -16711936)
-                     + ((var20 & 0xFF00) * var13 & 0xFF0000)
+         for (int curV = super.vFixed >> mipLevel; xLeft < xRight; xLeft++) {
+            int texelOffset = mipOffset + ((curV & mipVMask) >>> mipVShift) + ((curU & mipUMask) >>> mipUShift);
+            int texelColor = diffusePixels[texelOffset];
+            if (texelColor != -1) {
+               int dstColor = dstPixels[xLeft];
+               int shadedColor = ((texelColor & 16711935) * blendAlpha & -16711936)
+                     + ((texelColor & 0xFF00) * blendAlpha & 0xFF0000)
+                     + ((dstColor & 16711935) * invBlendAlpha & -16711936)
+                     + ((dstColor & 0xFF00) * invBlendAlpha & 0xFF0000)
                   >>> 8;
-               var1[var14] = var21 | 0xFF000000;
+               dstPixels[xLeft] = shadedColor | 0xFF000000;
             }
 
-            var16 += var10;
-            var17 += var11;
+            curU += stepDu2;
+            curV += stepDv;
          }
 
          super.y++;

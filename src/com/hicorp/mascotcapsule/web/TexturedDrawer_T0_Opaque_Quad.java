@@ -9,61 +9,61 @@ public final class TexturedDrawer_T0_Opaque_Quad extends TexturedDrawer {
    }
 
    public void drawSpan() {
-      int[] var1 = Config.getPixelBuffer(this.rasterizer);
-      int var2 = (super.duDxFixed > 0 ? super.duDxFixed : -super.duDxFixed) + (super.dvDxFixed > 0 ? super.dvDxFixed : -super.dvDxFixed) + 32768;
-      int var3 = Config.getDiffuseTexture(this.rasterizer).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
-      int[] var4 = Config.getDiffuseTexture(this.rasterizer).getPixels();
-      int var5 = Config.getDiffuseTexture(this.rasterizer).getMipOffset(var3);
-      int var6 = Config.getDiffuseTexture(this.rasterizer).getMipUMask(var3);
-      int var7 = Config.getDiffuseTexture(this.rasterizer).getMipVMask(var3);
-      int var8 = Config.getDiffuseTexture(this.rasterizer).getMipUShift(var3);
-      int var9 = Config.getDiffuseTexture(this.rasterizer).getMipVShift(var3);
-      int var10 = super.duDxFixed >> var3;
-      int var11 = super.dvDxFixed >> var3;
+      int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
+      int stepDu = (super.duDxFixed > 0 ? super.duDxFixed : -super.duDxFixed) + (super.dvDxFixed > 0 ? super.dvDxFixed : -super.dvDxFixed) + 32768;
+      int mipLevel = Config.getDiffuseTexture(this.rasterizer).selectMipLevel(MatrixUtils.ceilLog2(stepDu) - 17);
+      int[] diffusePixels = Config.getDiffuseTexture(this.rasterizer).getPixels();
+      int mipOffset = Config.getDiffuseTexture(this.rasterizer).getMipOffset(mipLevel);
+      int mipUMask = Config.getDiffuseTexture(this.rasterizer).getMipUMask(mipLevel);
+      int mipVMask = Config.getDiffuseTexture(this.rasterizer).getMipVMask(mipLevel);
+      int mipUShift = Config.getDiffuseTexture(this.rasterizer).getMipUShift(mipLevel);
+      int mipVShift = Config.getDiffuseTexture(this.rasterizer).getMipVShift(mipLevel);
+      int stepDu2 = super.duDxFixed >> mipLevel;
+      int stepDv = super.dvDxFixed >> mipLevel;
       if (super.y < Config.getClipTop(this.rasterizer)) {
-         int var12;
+         int clipDeltaY;
          if (super.yEnd < Config.getClipTop(this.rasterizer)) {
-            var12 = super.yEnd - super.y;
+            clipDeltaY = super.yEnd - super.y;
             super.y = super.yEnd;
          } else {
-            var12 = Config.getClipTop(this.rasterizer) - super.y;
+            clipDeltaY = Config.getClipTop(this.rasterizer) - super.y;
             super.y = Config.getClipTop(this.rasterizer);
          }
 
-         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * var12;
-         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed * var12;
-         super.xRightFixed = super.xRightFixed + super.dxRightFixed * var12;
-         super.uFixed = super.uFixed + super.duDyFixed * var12;
-         super.vFixed = super.vFixed + super.dvDyFixed * var12;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * clipDeltaY;
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed * clipDeltaY;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed * clipDeltaY;
+         super.uFixed = super.uFixed + super.duDyFixed * clipDeltaY;
+         super.vFixed = super.vFixed + super.dvDyFixed * clipDeltaY;
       }
 
       for (super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
          super.y < super.yEnd;
          super.vFixed = super.vFixed + super.dvDyFixed
       ) {
-         int var20 = super.xLeftFixed >> 16;
-         int var13 = super.xRightFixed >> 16;
-         int var14 = super.uFixed >> var3;
-         int var15 = super.vFixed >> var3;
-         if (var20 < Config.getClipLeft(this.rasterizer)) {
-            int var16 = Config.getClipLeft(this.rasterizer) - var20;
-            var20 = Config.getClipLeft(this.rasterizer);
-            var14 += var10 * var16;
-            var15 += var11 * var16;
+         int xLeft = super.xLeftFixed >> 16;
+         int xRight = super.xRightFixed >> 16;
+         int curU = super.uFixed >> mipLevel;
+         int curV = super.vFixed >> mipLevel;
+         if (xLeft < Config.getClipLeft(this.rasterizer)) {
+            int clipDeltaX = Config.getClipLeft(this.rasterizer) - xLeft;
+            xLeft = Config.getClipLeft(this.rasterizer);
+            curU += stepDu2 * clipDeltaX;
+            curV += stepDv * clipDeltaX;
          }
 
-         if (var13 > Config.getClipRight(this.rasterizer)) {
-            var13 = Config.getClipRight(this.rasterizer);
+         if (xRight > Config.getClipRight(this.rasterizer)) {
+            xRight = Config.getClipRight(this.rasterizer);
          }
 
-         int var21 = super.scanlineOffset + var20;
+         int spanPixelIdx = super.scanlineOffset + xLeft;
 
-         for (int var17 = super.scanlineOffset + var13; var21 < var17; var21++) {
-            int var18 = var5 + ((var15 & var7) >>> var9) + ((var14 & var6) >>> var8);
-            int var19 = var4[var18];
-            var1[var21] = var19;
-            var14 += var10;
-            var15 += var11;
+         for (int spanEndIdx = super.scanlineOffset + xRight; spanPixelIdx < spanEndIdx; spanPixelIdx++) {
+            int texelOffset = mipOffset + ((curV & mipVMask) >>> mipVShift) + ((curU & mipUMask) >>> mipUShift);
+            int texelColor = diffusePixels[texelOffset];
+            dstPixels[spanPixelIdx] = texelColor;
+            curU += stepDu2;
+            curV += stepDv;
          }
 
          super.y++;

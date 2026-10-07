@@ -9,28 +9,28 @@ public final class LitColorDrawer_Opaque extends TexturedDrawer {
    }
 
    public void drawSpan() {
-      int[] var1 = Config.getPixelBuffer(this.rasterizer);
-      int[] var2 = Config.getColorTable();
-      int var3 = Config.getFillColor(this.rasterizer) & 16711935;
-      int var4 = Config.getFillColor(this.rasterizer) & 0xFF00;
-      int var5 = super.duDxFixed;
-      int var6 = super.dvDxFixed;
+      int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
+      int[] colorTable = Config.getColorTable();
+      int fillColor = Config.getFillColor(this.rasterizer) & 16711935;
+      int fillColor2 = Config.getFillColor(this.rasterizer) & 0xFF00;
+      int stepDu = super.duDxFixed;
+      int stepDv = super.dvDxFixed;
 
       for (super.vFixed += 8388608; super.y < super.yEnd; super.vFixed = super.vFixed + super.dvDyFixed) {
-         int var7 = (super.xLeftFixed >> 16) + super.scanlineOffset;
-         int var8 = (super.xRightFixed >> 16) + super.scanlineOffset;
-         int var9 = super.uFixed;
+         int xLeft = (super.xLeftFixed >> 16) + super.scanlineOffset;
+         int xRight = (super.xRightFixed >> 16) + super.scanlineOffset;
+         int curU = super.uFixed;
 
-         for (int var10 = super.vFixed; var7 < var8; var7++) {
-            int var11 = var9 >>> 16;
-            int var12 = var2[var10 >> 16 & 511];
-            int var14 = (var3 * var11 & -16711936) + (var4 * var11 & 0xFF0000) >>> 8;
-            int var13 = ((var14 & var12) << 1) + ((var14 ^ var12) & 16711422) & 16843008;
-            var13 = (var13 >>> 8) + 8355711 ^ 8355711;
-            var13 = var14 + var12 - var13 | var13;
-            var1[var7] = var13 | 0xFF000000;
-            var9 += var5;
-            var10 += var6;
+         for (int curV = super.vFixed; xLeft < xRight; xLeft++) {
+            int lightIntensity = curU >>> 16;
+            int lightIntensity2 = colorTable[curV >> 16 & 511];
+            int shadedColor = (fillColor * lightIntensity & -16711936) + (fillColor2 * lightIntensity & 0xFF0000) >>> 8;
+            int blendResult = ((shadedColor & lightIntensity2) << 1) + ((shadedColor ^ lightIntensity2) & 16711422) & 16843008;
+            blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+            blendResult = shadedColor + lightIntensity2 - blendResult | blendResult;
+            dstPixels[xLeft] = blendResult | 0xFF000000;
+            curU += stepDu;
+            curV += stepDv;
          }
 
          super.y++;

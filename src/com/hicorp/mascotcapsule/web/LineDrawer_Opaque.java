@@ -9,19 +9,19 @@ public final class LineDrawer_Opaque extends LineDrawer {
    }
 
    public void drawSpan() {
-      int[] var1 = Config.getPixelBuffer(this.rasterizer);
-      int var2 = Config.getFillColor(this.rasterizer) & 16711935;
-      int var3 = Config.getFillColor(this.rasterizer) & 0xFF00;
+      int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
+      int fillColor = Config.getFillColor(this.rasterizer) & 16711935;
+      int fillColor2 = Config.getFillColor(this.rasterizer) & 0xFF00;
 
-      for (int var4 = super.dzDxFixed; super.y < super.yEnd; super.zFixed = super.zFixed + super.dzDyFixed) {
-         int var5 = (super.xLeftFixed >> 16) + super.scanlineOffset;
-         int var6 = (super.xRightFixed >> 16) + super.scanlineOffset;
+      for (int stepDz = super.dzDxFixed; super.y < super.yEnd; super.zFixed = super.zFixed + super.dzDyFixed) {
+         int xLeft = (super.xLeftFixed >> 16) + super.scanlineOffset;
+         int xRight = (super.xRightFixed >> 16) + super.scanlineOffset;
 
-         for (int var7 = super.zFixed; var5 < var6; var5++) {
-            int var8 = var7 >>> 16;
-            int var9 = (var2 * var8 & -16711936) + (var3 * var8 & 0xFF0000) >>> 8;
-            var1[var5] = var9 | 0xFF000000;
-            var7 += var4;
+         for (int curZ = super.zFixed; xLeft < xRight; xLeft++) {
+            int intensityVal = curZ >>> 16;
+            int shadedColor = (fillColor * intensityVal & -16711936) + (fillColor2 * intensityVal & 0xFF0000) >>> 8;
+            dstPixels[xLeft] = shadedColor | 0xFF000000;
+            curZ += stepDz;
          }
 
          super.y++;

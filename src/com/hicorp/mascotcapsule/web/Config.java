@@ -162,9 +162,9 @@ final class Config {
       this.sphereMapDrawers[3][1][1] = new SphereMapDrawer_T3_Alpha_Quad(this);
    }
 
-   public void setRenderTarget(int var1, int[] var2) {
-      this.pixelBuffer = var2;
-      this.stride = var1;
+   public void setRenderTarget(int targetStride, int[] targetBuffer) {
+      this.pixelBuffer = targetBuffer;
+      this.stride = targetStride;
       this.pixelOffset = 0;
    }
 
@@ -197,12 +197,12 @@ final class Config {
       }
    }
 
-   public void setDiffuseTexture(Texture var1) {
-      this.diffuseTexture = var1;
+   public void setDiffuseTexture(Texture texture) {
+      this.diffuseTexture = texture;
    }
 
-   public void setSphereMapTexture(Texture var1) {
-      this.sphereMapTexture = var1;
+   public void setSphereMapTexture(Texture texture) {
+      this.sphereMapTexture = texture;
    }
 
    public void setFillColor(int color) {
@@ -250,50 +250,50 @@ final class Config {
       if (top.y != bot.y) {
          drawer.y = top.y;
          drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
-         int var8 = bot.x - top.x;
-         int var9 = fixedReciprocal(bot.y - top.y);
-         int var12 = var8 * var9;
-         int var10 = (top.x << 16) + 32768;
-         var8 = mid.x - top.x;
-         var9 = mid.y - top.y;
-         int var16 = (var8 << 16) - var12 * var9;
-         int var17 = var16 >> 16;
-         if (var17 == 0) {
-            var17 = var16 > 0 ? 1 : -1;
+         int dx = bot.x - top.x;
+         int invDy = fixedReciprocal(bot.y - top.y);
+         int dxLeftStep = dx * invDy;
+         int xTopFixed = (top.x << 16) + 32768;
+         dx = mid.x - top.x;
+         invDy = mid.y - top.y;
+         int crossArea = (dx << 16) - dxLeftStep * invDy;
+         int det = crossArea >> 16;
+         if (det == 0) {
+            det = crossArea > 0 ? 1 : -1;
          }
 
-         int var15 = fixedReciprocal(var17);
-         drawer.xLeftFixed = var10;
-         drawer.xRightFixed = var10;
-         if (var9 > 0) {
-            var9 = fixedReciprocal(var9);
-            int var13 = var8 * var9;
+         int invDet = fixedReciprocal(det);
+         drawer.xLeftFixed = xTopFixed;
+         drawer.xRightFixed = xTopFixed;
+         if (invDy > 0) {
+            invDy = fixedReciprocal(invDy);
+            int dxMidStep = dx * invDy;
             drawer.yEnd = mid.y;
-            if (var15 > 0) {
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var13;
+            if (invDet > 0) {
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxMidStep;
             } else {
-               drawer.dxLeftFixed = var13;
-               drawer.dxRightFixed = var12;
+               drawer.dxLeftFixed = dxMidStep;
+               drawer.dxRightFixed = dxLeftStep;
             }
 
             drawer.drawSpan();
          }
 
          if (mid.y != bot.y) {
-            var8 = bot.x - mid.x;
-            var9 = fixedReciprocal(bot.y - mid.y);
-            int var14 = var8 * var9;
-            int var11 = (mid.x << 16) + 32768;
+            dx = bot.x - mid.x;
+            invDy = fixedReciprocal(bot.y - mid.y);
+            int dxBotStep = dx * invDy;
+            int xMidFixed = (mid.x << 16) + 32768;
             drawer.yEnd = bot.y;
-            if (var15 > 0) {
-               drawer.xRightFixed = var11;
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var14;
+            if (invDet > 0) {
+               drawer.xRightFixed = xMidFixed;
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxBotStep;
             } else {
-               drawer.xLeftFixed = var11;
-               drawer.dxLeftFixed = var14;
-               drawer.dxRightFixed = var12;
+               drawer.xLeftFixed = xMidFixed;
+               drawer.dxLeftFixed = dxBotStep;
+               drawer.dxRightFixed = dxLeftStep;
             }
 
             drawer.drawSpan();
@@ -338,61 +338,61 @@ final class Config {
       if (top.y != bot.y) {
          drawer.y = top.y;
          drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
-         int var8 = bot.x - top.x;
-         int var9 = fixedReciprocal(bot.y - top.y);
-         int var12 = var8 * var9;
-         int var10 = (top.x << 16) + 32768;
-         int var15 = bot.u - top.u;
-         int var19 = var15 * var9;
-         int var17 = (top.u << 16) + 32768;
-         var8 = mid.x - top.x;
-         var9 = mid.y - top.y;
-         var15 = mid.u - top.u;
-         int var22 = (var8 << 16) - var12 * var9;
-         int var23 = var22 >> 16;
-         if (var23 == 0) {
-            var23 = var22 > 0 ? 1 : -1;
+         int dx = bot.x - top.x;
+         int invDy = fixedReciprocal(bot.y - top.y);
+         int dxLeftStep = dx * invDy;
+         int xTopFixed = (top.x << 16) + 32768;
+         int du = bot.u - top.u;
+         int duLeftStep = du * invDy;
+         int uTopFixed = (top.u << 16) + 32768;
+         dx = mid.x - top.x;
+         invDy = mid.y - top.y;
+         du = mid.u - top.u;
+         int crossArea = (dx << 16) - dxLeftStep * invDy;
+         int det = crossArea >> 16;
+         if (det == 0) {
+            det = crossArea > 0 ? 1 : -1;
          }
 
-         int var21 = fixedReciprocal(var23);
-         drawer.dzDxFixed = (var15 - (var19 * var9 >> 16)) * var21;
-         drawer.xLeftFixed = var10;
-         drawer.xRightFixed = var10;
-         drawer.zFixed = var17;
-         if (var9 > 0) {
-            var9 = fixedReciprocal(var9);
-            int var13 = var8 * var9;
+         int invDet = fixedReciprocal(det);
+         drawer.dzDxFixed = (du - (duLeftStep * invDy >> 16)) * invDet;
+         drawer.xLeftFixed = xTopFixed;
+         drawer.xRightFixed = xTopFixed;
+         drawer.zFixed = uTopFixed;
+         if (invDy > 0) {
+            invDy = fixedReciprocal(invDy);
+            int dxMidStep = dx * invDy;
             drawer.yEnd = mid.y;
-            if (var21 > 0) {
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var13;
-               drawer.dzDyFixed = var19;
+            if (invDet > 0) {
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxMidStep;
+               drawer.dzDyFixed = duLeftStep;
             } else {
-               drawer.dxLeftFixed = var13;
-               drawer.dxRightFixed = var12;
-               drawer.dzDyFixed = var15 * var9;
+               drawer.dxLeftFixed = dxMidStep;
+               drawer.dxRightFixed = dxLeftStep;
+               drawer.dzDyFixed = du * invDy;
             }
 
             drawer.drawSpan();
          }
 
          if (mid.y != bot.y) {
-            var8 = bot.x - mid.x;
-            var9 = fixedReciprocal(bot.y - mid.y);
-            int var14 = var8 * var9;
-            int var11 = (mid.x << 16) + 32768;
+            dx = bot.x - mid.x;
+            invDy = fixedReciprocal(bot.y - mid.y);
+            int dxBotStep = dx * invDy;
+            int xMidFixed = (mid.x << 16) + 32768;
             drawer.yEnd = bot.y;
-            if (var21 > 0) {
-               drawer.xRightFixed = var11;
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var14;
-               drawer.dzDyFixed = var19;
+            if (invDet > 0) {
+               drawer.xRightFixed = xMidFixed;
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxBotStep;
+               drawer.dzDyFixed = duLeftStep;
             } else {
-               drawer.xLeftFixed = var11;
-               drawer.dxLeftFixed = var14;
-               drawer.dxRightFixed = var12;
+               drawer.xLeftFixed = xMidFixed;
+               drawer.dxLeftFixed = dxBotStep;
+               drawer.dxRightFixed = dxLeftStep;
                drawer.zFixed = (mid.u << 16) + 32768;
-               drawer.dzDyFixed = (bot.u - mid.u) * var9;
+               drawer.dzDyFixed = (bot.u - mid.u) * invDy;
             }
 
             drawer.drawSpan();
@@ -437,72 +437,72 @@ final class Config {
       if (top.y != bot.y) {
          drawer.y = top.y;
          drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
-         int var8 = bot.x - top.x;
-         int var9 = fixedReciprocal(bot.y - top.y);
-         int var12 = var8 * var9;
-         int var10 = (top.x << 16) + 32768;
-         int var15 = bot.u - top.u;
-         int var16 = bot.v - top.v;
-         int var19 = var15 * var9;
-         int var20 = var16 * var9;
-         int var17 = (top.u << 16) + 32768;
-         int var18 = (top.v << 16) + 32768;
-         var8 = mid.x - top.x;
-         var9 = mid.y - top.y;
-         var15 = mid.u - top.u;
-         var16 = mid.v - top.v;
-         int var22 = (var8 << 16) - var12 * var9;
-         int var23 = var22 >> 16;
-         if (var23 == 0) {
-            var23 = var22 > 0 ? 1 : -1;
+         int dx = bot.x - top.x;
+         int invDy = fixedReciprocal(bot.y - top.y);
+         int dxLeftStep = dx * invDy;
+         int xTopFixed = (top.x << 16) + 32768;
+         int du = bot.u - top.u;
+         int dv = bot.v - top.v;
+         int duLeftStep = du * invDy;
+         int dvLeftStep = dv * invDy;
+         int uTopFixed = (top.u << 16) + 32768;
+         int vTopFixed = (top.v << 16) + 32768;
+         dx = mid.x - top.x;
+         invDy = mid.y - top.y;
+         du = mid.u - top.u;
+         dv = mid.v - top.v;
+         int crossArea = (dx << 16) - dxLeftStep * invDy;
+         int det = crossArea >> 16;
+         if (det == 0) {
+            det = crossArea > 0 ? 1 : -1;
          }
 
-         int var21 = fixedReciprocal(var23);
-         drawer.duDxFixed = (var15 - (var19 * var9 >> 16)) * var21;
-         drawer.dvDxFixed = (var16 - (var20 * var9 >> 16)) * var21;
-         drawer.xLeftFixed = var10;
-         drawer.xRightFixed = var10;
-         drawer.uFixed = var17;
-         drawer.vFixed = var18;
-         if (var9 > 0) {
-            var9 = fixedReciprocal(var9);
-            int var13 = var8 * var9;
+         int invDet = fixedReciprocal(det);
+         drawer.duDxFixed = (du - (duLeftStep * invDy >> 16)) * invDet;
+         drawer.dvDxFixed = (dv - (dvLeftStep * invDy >> 16)) * invDet;
+         drawer.xLeftFixed = xTopFixed;
+         drawer.xRightFixed = xTopFixed;
+         drawer.uFixed = uTopFixed;
+         drawer.vFixed = vTopFixed;
+         if (invDy > 0) {
+            invDy = fixedReciprocal(invDy);
+            int dxMidStep = dx * invDy;
             drawer.yEnd = mid.y;
-            if (var21 > 0) {
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var13;
-               drawer.duDyFixed = var19;
-               drawer.dvDyFixed = var20;
+            if (invDet > 0) {
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxMidStep;
+               drawer.duDyFixed = duLeftStep;
+               drawer.dvDyFixed = dvLeftStep;
             } else {
-               drawer.dxLeftFixed = var13;
-               drawer.dxRightFixed = var12;
-               drawer.duDyFixed = var15 * var9;
-               drawer.dvDyFixed = var16 * var9;
+               drawer.dxLeftFixed = dxMidStep;
+               drawer.dxRightFixed = dxLeftStep;
+               drawer.duDyFixed = du * invDy;
+               drawer.dvDyFixed = dv * invDy;
             }
 
             drawer.drawSpan();
          }
 
          if (mid.y != bot.y) {
-            var8 = bot.x - mid.x;
-            var9 = fixedReciprocal(bot.y - mid.y);
-            int var14 = var8 * var9;
-            int var11 = (mid.x << 16) + 32768;
+            dx = bot.x - mid.x;
+            invDy = fixedReciprocal(bot.y - mid.y);
+            int dxBotStep = dx * invDy;
+            int xMidFixed = (mid.x << 16) + 32768;
             drawer.yEnd = bot.y;
-            if (var21 > 0) {
-               drawer.xRightFixed = var11;
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var14;
-               drawer.duDyFixed = var19;
-               drawer.dvDyFixed = var20;
+            if (invDet > 0) {
+               drawer.xRightFixed = xMidFixed;
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxBotStep;
+               drawer.duDyFixed = duLeftStep;
+               drawer.dvDyFixed = dvLeftStep;
             } else {
-               drawer.xLeftFixed = var11;
-               drawer.dxLeftFixed = var14;
-               drawer.dxRightFixed = var12;
+               drawer.xLeftFixed = xMidFixed;
+               drawer.dxLeftFixed = dxBotStep;
+               drawer.dxRightFixed = dxLeftStep;
                drawer.uFixed = (mid.u << 16) + 32768;
                drawer.vFixed = (mid.v << 16) + 32768;
-               drawer.duDyFixed = (bot.u - mid.u) * var9;
-               drawer.dvDyFixed = (bot.v - mid.v) * var9;
+               drawer.duDyFixed = (bot.u - mid.u) * invDy;
+               drawer.dvDyFixed = (bot.v - mid.v) * invDy;
             }
 
             drawer.drawSpan();
@@ -547,83 +547,83 @@ final class Config {
       if (top.y != bot.y) {
          drawer.y = top.y;
          drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
-         int var8 = bot.x - top.x;
-         int var9 = fixedReciprocal(bot.y - top.y);
-         int var12 = var8 * var9;
-         int var10 = (top.x << 16) + 32768;
-         int var15 = bot.u - top.u;
-         int var16 = bot.v - top.v;
-         int var17 = bot.light - top.light;
-         int var21 = var15 * var9;
-         int var22 = var16 * var9;
-         int var23 = var17 * var9;
-         int var18 = (top.u << 16) + 32768;
-         int var19 = (top.v << 16) + 32768;
-         int var20 = (top.light << 16) + 32768;
-         var8 = mid.x - top.x;
-         var9 = mid.y - top.y;
-         var15 = mid.u - top.u;
-         var16 = mid.v - top.v;
-         var17 = mid.light - top.light;
-         int var25 = (var8 << 16) - var12 * var9;
-         int var26 = var25 >> 16;
-         if (var26 == 0) {
-            var26 = var25 > 0 ? 1 : -1;
+         int dx = bot.x - top.x;
+         int invDy = fixedReciprocal(bot.y - top.y);
+         int dxLeftStep = dx * invDy;
+         int xTopFixed = (top.x << 16) + 32768;
+         int du = bot.u - top.u;
+         int dv = bot.v - top.v;
+         int dLight = bot.light - top.light;
+         int duLeftStep = du * invDy;
+         int dvLeftStep = dv * invDy;
+         int dLightLeftStep = dLight * invDy;
+         int uTopFixed = (top.u << 16) + 32768;
+         int vTopFixed = (top.v << 16) + 32768;
+         int lightTopFixed = (top.light << 16) + 32768;
+         dx = mid.x - top.x;
+         invDy = mid.y - top.y;
+         du = mid.u - top.u;
+         dv = mid.v - top.v;
+         dLight = mid.light - top.light;
+         int crossArea = (dx << 16) - dxLeftStep * invDy;
+         int det = crossArea >> 16;
+         if (det == 0) {
+            det = crossArea > 0 ? 1 : -1;
          }
 
-         int var24 = fixedReciprocal(var26);
-         drawer.lightFixed = (var15 - (var21 * var9 >> 16)) * var24;
-         drawer.dLightDyFixed = (var16 - (var22 * var9 >> 16)) * var24;
-         drawer.dLightDxFixed = (var17 - (var23 * var9 >> 16)) * var24;
-         drawer.xLeftFixed = var10;
-         drawer.xRightFixed = var10;
-         drawer.uFixed = var18;
-         drawer.vFixed = var19;
-         drawer.duDyFixed = var20;
-         if (var9 > 0) {
-            var9 = fixedReciprocal(var9);
-            int var13 = var8 * var9;
+         int invDet = fixedReciprocal(det);
+         drawer.lightFixed = (du - (duLeftStep * invDy >> 16)) * invDet;
+         drawer.dLightDyFixed = (dv - (dvLeftStep * invDy >> 16)) * invDet;
+         drawer.dLightDxFixed = (dLight - (dLightLeftStep * invDy >> 16)) * invDet;
+         drawer.xLeftFixed = xTopFixed;
+         drawer.xRightFixed = xTopFixed;
+         drawer.uFixed = uTopFixed;
+         drawer.vFixed = vTopFixed;
+         drawer.duDyFixed = lightTopFixed;
+         if (invDy > 0) {
+            invDy = fixedReciprocal(invDy);
+            int dxMidStep = dx * invDy;
             drawer.yEnd = mid.y;
-            if (var24 > 0) {
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var13;
-               drawer.dvDyFixed = var21;
-               drawer.duDxFixed = var22;
-               drawer.dvDxFixed = var23;
+            if (invDet > 0) {
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxMidStep;
+               drawer.dvDyFixed = duLeftStep;
+               drawer.duDxFixed = dvLeftStep;
+               drawer.dvDxFixed = dLightLeftStep;
             } else {
-               drawer.dxLeftFixed = var13;
-               drawer.dxRightFixed = var12;
-               drawer.dvDyFixed = var15 * var9;
-               drawer.duDxFixed = var16 * var9;
-               drawer.dvDxFixed = var17 * var9;
+               drawer.dxLeftFixed = dxMidStep;
+               drawer.dxRightFixed = dxLeftStep;
+               drawer.dvDyFixed = du * invDy;
+               drawer.duDxFixed = dv * invDy;
+               drawer.dvDxFixed = dLight * invDy;
             }
 
             drawer.drawSpan();
          }
 
          if (mid.y != bot.y) {
-            var8 = bot.x - mid.x;
-            var9 = fixedReciprocal(bot.y - mid.y);
-            int var14 = var8 * var9;
-            int var11 = (mid.x << 16) + 32768;
+            dx = bot.x - mid.x;
+            invDy = fixedReciprocal(bot.y - mid.y);
+            int dxBotStep = dx * invDy;
+            int xMidFixed = (mid.x << 16) + 32768;
             drawer.yEnd = bot.y;
-            if (var24 > 0) {
-               drawer.xRightFixed = var11;
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var14;
-               drawer.dvDyFixed = var21;
-               drawer.duDxFixed = var22;
-               drawer.dvDxFixed = var23;
+            if (invDet > 0) {
+               drawer.xRightFixed = xMidFixed;
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxBotStep;
+               drawer.dvDyFixed = duLeftStep;
+               drawer.duDxFixed = dvLeftStep;
+               drawer.dvDxFixed = dLightLeftStep;
             } else {
-               drawer.xLeftFixed = var11;
-               drawer.dxLeftFixed = var14;
-               drawer.dxRightFixed = var12;
+               drawer.xLeftFixed = xMidFixed;
+               drawer.dxLeftFixed = dxBotStep;
+               drawer.dxRightFixed = dxLeftStep;
                drawer.uFixed = (mid.u << 16) + 32768;
                drawer.vFixed = (mid.v << 16) + 32768;
                drawer.duDyFixed = (mid.light << 16) + 32768;
-               drawer.dvDyFixed = (bot.u - mid.u) * var9;
-               drawer.duDxFixed = (bot.v - mid.v) * var9;
-               drawer.dvDxFixed = (bot.light - mid.light) * var9;
+               drawer.dvDyFixed = (bot.u - mid.u) * invDy;
+               drawer.duDxFixed = (bot.v - mid.v) * invDy;
+               drawer.dvDxFixed = (bot.light - mid.light) * invDy;
             }
 
             drawer.drawSpan();
@@ -668,94 +668,94 @@ final class Config {
       if (top.y != bot.y) {
          drawer.y = top.y;
          drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
-         int var8 = bot.x - top.x;
-         int var9 = fixedReciprocal(bot.y - top.y);
-         int var12 = var8 * var9;
-         int var10 = (top.x << 16) + 32768;
-         int var15 = bot.u - top.u;
-         int var16 = bot.v - top.v;
-         int var17 = bot.light - top.light;
-         int var18 = bot.normalZ - top.normalZ;
-         int var23 = var15 * var9;
-         int var24 = var16 * var9;
-         int var25 = var17 * var9;
-         int var26 = var18 * var9;
-         int var19 = (top.u << 16) + 32768;
-         int var20 = (top.v << 16) + 32768;
-         int var21 = (top.light << 16) + 32768;
-         int var22 = (top.normalZ << 16) + 32768;
-         var8 = mid.x - top.x;
-         var9 = mid.y - top.y;
-         var15 = mid.u - top.u;
-         var16 = mid.v - top.v;
-         var17 = mid.light - top.light;
-         var18 = mid.normalZ - top.normalZ;
-         int var28 = (var8 << 16) - var12 * var9;
-         int var29 = var28 >> 16;
-         if (var29 == 0) {
-            var29 = var28 > 0 ? 1 : -1;
+         int dx = bot.x - top.x;
+         int invDy = fixedReciprocal(bot.y - top.y);
+         int dxLeftStep = dx * invDy;
+         int xTopFixed = (top.x << 16) + 32768;
+         int du = bot.u - top.u;
+         int dv = bot.v - top.v;
+         int dLight = bot.light - top.light;
+         int dNormalZ = bot.normalZ - top.normalZ;
+         int duLeftStep = du * invDy;
+         int dvLeftStep = dv * invDy;
+         int dLightLeftStep = dLight * invDy;
+         int dNormalZLeftStep = dNormalZ * invDy;
+         int uTopFixed = (top.u << 16) + 32768;
+         int vTopFixed = (top.v << 16) + 32768;
+         int lightTopFixed = (top.light << 16) + 32768;
+         int normalZTopFixed = (top.normalZ << 16) + 32768;
+         dx = mid.x - top.x;
+         invDy = mid.y - top.y;
+         du = mid.u - top.u;
+         dv = mid.v - top.v;
+         dLight = mid.light - top.light;
+         dNormalZ = mid.normalZ - top.normalZ;
+         int crossArea = (dx << 16) - dxLeftStep * invDy;
+         int det = crossArea >> 16;
+         if (det == 0) {
+            det = crossArea > 0 ? 1 : -1;
          }
 
-         int var27 = fixedReciprocal(var29);
-         drawer.dLightDxFixed = (var15 - (var23 * var9 >> 16)) * var27;
-         drawer.normalZFixed = (var16 - (var24 * var9 >> 16)) * var27;
-         drawer.dNormalZDyFixed = (var17 - (var25 * var9 >> 16)) * var27;
-         drawer.dNormalZDxFixed = (var18 - (var26 * var9 >> 16)) * var27;
-         drawer.xLeftFixed = var10;
-         drawer.xRightFixed = var10;
-         drawer.uFixed = var19;
-         drawer.vFixed = var20;
-         drawer.duDyFixed = var21;
-         drawer.dvDyFixed = var22;
-         if (var9 > 0) {
-            var9 = fixedReciprocal(var9);
-            int var13 = var8 * var9;
+         int invDet = fixedReciprocal(det);
+         drawer.dLightDxFixed = (du - (duLeftStep * invDy >> 16)) * invDet;
+         drawer.normalZFixed = (dv - (dvLeftStep * invDy >> 16)) * invDet;
+         drawer.dNormalZDyFixed = (dLight - (dLightLeftStep * invDy >> 16)) * invDet;
+         drawer.dNormalZDxFixed = (dNormalZ - (dNormalZLeftStep * invDy >> 16)) * invDet;
+         drawer.xLeftFixed = xTopFixed;
+         drawer.xRightFixed = xTopFixed;
+         drawer.uFixed = uTopFixed;
+         drawer.vFixed = vTopFixed;
+         drawer.duDyFixed = lightTopFixed;
+         drawer.dvDyFixed = normalZTopFixed;
+         if (invDy > 0) {
+            invDy = fixedReciprocal(invDy);
+            int dxMidStep = dx * invDy;
             drawer.yEnd = mid.y;
-            if (var27 > 0) {
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var13;
-               drawer.duDxFixed = var23;
-               drawer.dvDxFixed = var24;
-               drawer.lightFixed = var25;
-               drawer.dLightDyFixed = var26;
+            if (invDet > 0) {
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxMidStep;
+               drawer.duDxFixed = duLeftStep;
+               drawer.dvDxFixed = dvLeftStep;
+               drawer.lightFixed = dLightLeftStep;
+               drawer.dLightDyFixed = dNormalZLeftStep;
             } else {
-               drawer.dxLeftFixed = var13;
-               drawer.dxRightFixed = var12;
-               drawer.duDxFixed = var15 * var9;
-               drawer.dvDxFixed = var16 * var9;
-               drawer.lightFixed = var17 * var9;
-               drawer.dLightDyFixed = var18 * var9;
+               drawer.dxLeftFixed = dxMidStep;
+               drawer.dxRightFixed = dxLeftStep;
+               drawer.duDxFixed = du * invDy;
+               drawer.dvDxFixed = dv * invDy;
+               drawer.lightFixed = dLight * invDy;
+               drawer.dLightDyFixed = dNormalZ * invDy;
             }
 
             drawer.drawSpan();
          }
 
          if (mid.y != bot.y) {
-            var8 = bot.x - mid.x;
-            var9 = fixedReciprocal(bot.y - mid.y);
-            int var14 = var8 * var9;
-            int var11 = (mid.x << 16) + 32768;
+            dx = bot.x - mid.x;
+            invDy = fixedReciprocal(bot.y - mid.y);
+            int dxBotStep = dx * invDy;
+            int xMidFixed = (mid.x << 16) + 32768;
             drawer.yEnd = bot.y;
-            if (var27 > 0) {
-               drawer.xRightFixed = var11;
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var14;
-               drawer.duDxFixed = var23;
-               drawer.dvDxFixed = var24;
-               drawer.lightFixed = var25;
-               drawer.dLightDyFixed = var26;
+            if (invDet > 0) {
+               drawer.xRightFixed = xMidFixed;
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxBotStep;
+               drawer.duDxFixed = duLeftStep;
+               drawer.dvDxFixed = dvLeftStep;
+               drawer.lightFixed = dLightLeftStep;
+               drawer.dLightDyFixed = dNormalZLeftStep;
             } else {
-               drawer.xLeftFixed = var11;
-               drawer.dxLeftFixed = var14;
-               drawer.dxRightFixed = var12;
+               drawer.xLeftFixed = xMidFixed;
+               drawer.dxLeftFixed = dxBotStep;
+               drawer.dxRightFixed = dxLeftStep;
                drawer.uFixed = (mid.u << 16) + 32768;
                drawer.vFixed = (mid.v << 16) + 32768;
                drawer.duDyFixed = (mid.light << 16) + 32768;
                drawer.dvDyFixed = (mid.normalZ << 16) + 32768;
-               drawer.duDxFixed = (bot.u - mid.u) * var9;
-               drawer.dvDxFixed = (bot.v - mid.v) * var9;
-               drawer.lightFixed = (bot.light - mid.light) * var9;
-               drawer.dLightDyFixed = (bot.normalZ - mid.normalZ) * var9;
+               drawer.duDxFixed = (bot.u - mid.u) * invDy;
+               drawer.dvDxFixed = (bot.v - mid.v) * invDy;
+               drawer.lightFixed = (bot.light - mid.light) * invDy;
+               drawer.dLightDyFixed = (bot.normalZ - mid.normalZ) * invDy;
             }
 
             drawer.drawSpan();
@@ -800,105 +800,105 @@ final class Config {
       if (top.y != bot.y) {
          drawer.y = top.y;
          drawer.scanlineOffset = top.y * this.stride + this.pixelOffset;
-         int var8 = bot.x - top.x;
-         int var9 = fixedReciprocal(bot.y - top.y);
-         int var12 = var8 * var9;
-         int var10 = (top.x << 16) + 32768;
-         int var15 = bot.u - top.u;
-         int var16 = bot.v - top.v;
-         int var17 = bot.light - top.light;
-         int var18 = bot.normalZ - top.normalZ;
-         int var19 = bot.sphereV - top.sphereV;
-         int var25 = var15 * var9;
-         int var26 = var16 * var9;
-         int var27 = var17 * var9;
-         int var28 = var18 * var9;
-         int var29 = var19 * var9;
-         int var20 = (top.u << 16) + 32768;
-         int var21 = (top.v << 16) + 32768;
-         int var22 = (top.light << 16) + 32768;
-         int var23 = (top.normalZ << 16) + 32768;
-         int var24 = (top.sphereV << 16) + 32768;
-         var8 = mid.x - top.x;
-         var9 = mid.y - top.y;
-         var15 = mid.u - top.u;
-         var16 = mid.v - top.v;
-         var17 = mid.light - top.light;
-         var18 = mid.normalZ - top.normalZ;
-         var19 = mid.sphereV - top.sphereV;
-         int var31 = (var8 << 16) - var12 * var9;
-         int var32 = var31 >> 16;
-         if (var32 == 0) {
-            var32 = var31 > 0 ? 1 : -1;
+         int dx = bot.x - top.x;
+         int invDy = fixedReciprocal(bot.y - top.y);
+         int dxLeftStep = dx * invDy;
+         int xTopFixed = (top.x << 16) + 32768;
+         int du = bot.u - top.u;
+         int dv = bot.v - top.v;
+         int dLight = bot.light - top.light;
+         int dNormalZ = bot.normalZ - top.normalZ;
+         int dSphereV = bot.sphereV - top.sphereV;
+         int duLeftStep = du * invDy;
+         int dvLeftStep = dv * invDy;
+         int dLightLeftStep = dLight * invDy;
+         int dNormalZLeftStep = dNormalZ * invDy;
+         int dSphereVLeftStep = dSphereV * invDy;
+         int uTopFixed = (top.u << 16) + 32768;
+         int vTopFixed = (top.v << 16) + 32768;
+         int lightTopFixed = (top.light << 16) + 32768;
+         int normalZTopFixed = (top.normalZ << 16) + 32768;
+         int sphereVTopFixed = (top.sphereV << 16) + 32768;
+         dx = mid.x - top.x;
+         invDy = mid.y - top.y;
+         du = mid.u - top.u;
+         dv = mid.v - top.v;
+         dLight = mid.light - top.light;
+         dNormalZ = mid.normalZ - top.normalZ;
+         dSphereV = mid.sphereV - top.sphereV;
+         int crossArea = (dx << 16) - dxLeftStep * invDy;
+         int det = crossArea >> 16;
+         if (det == 0) {
+            det = crossArea > 0 ? 1 : -1;
          }
 
-         int var30 = fixedReciprocal(var32);
-         drawer.sphereVFixed = (var15 - (var25 * var9 >> 16)) * var30;
-         drawer.dSphereUDyFixed = (var16 - (var26 * var9 >> 16)) * var30;
-         drawer.dSphereVDyFixed = (var17 - (var27 * var9 >> 16)) * var30;
-         drawer.dSphereUDxFixed = (var18 - (var28 * var9 >> 16)) * var30;
-         drawer.dSphereVDxFixed = (var19 - (var29 * var9 >> 16)) * var30;
-         drawer.xLeftFixed = var10;
-         drawer.xRightFixed = var10;
-         drawer.uFixed = var20;
-         drawer.vFixed = var21;
-         drawer.duDyFixed = var22;
-         drawer.dvDyFixed = var23;
-         drawer.duDxFixed = var24;
-         if (var9 > 0) {
-            var9 = fixedReciprocal(var9);
-            int var13 = var8 * var9;
+         int invDet = fixedReciprocal(det);
+         drawer.sphereVFixed = (du - (duLeftStep * invDy >> 16)) * invDet;
+         drawer.dSphereUDyFixed = (dv - (dvLeftStep * invDy >> 16)) * invDet;
+         drawer.dSphereVDyFixed = (dLight - (dLightLeftStep * invDy >> 16)) * invDet;
+         drawer.dSphereUDxFixed = (dNormalZ - (dNormalZLeftStep * invDy >> 16)) * invDet;
+         drawer.dSphereVDxFixed = (dSphereV - (dSphereVLeftStep * invDy >> 16)) * invDet;
+         drawer.xLeftFixed = xTopFixed;
+         drawer.xRightFixed = xTopFixed;
+         drawer.uFixed = uTopFixed;
+         drawer.vFixed = vTopFixed;
+         drawer.duDyFixed = lightTopFixed;
+         drawer.dvDyFixed = normalZTopFixed;
+         drawer.duDxFixed = sphereVTopFixed;
+         if (invDy > 0) {
+            invDy = fixedReciprocal(invDy);
+            int dxMidStep = dx * invDy;
             drawer.yEnd = mid.y;
-            if (var30 > 0) {
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var13;
-               drawer.dvDxFixed = var25;
-               drawer.lightFixed = var26;
-               drawer.dLightDyFixed = var27;
-               drawer.dLightDxFixed = var28;
-               drawer.sphereUFixed = var29;
+            if (invDet > 0) {
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxMidStep;
+               drawer.dvDxFixed = duLeftStep;
+               drawer.lightFixed = dvLeftStep;
+               drawer.dLightDyFixed = dLightLeftStep;
+               drawer.dLightDxFixed = dNormalZLeftStep;
+               drawer.sphereUFixed = dSphereVLeftStep;
             } else {
-               drawer.dxLeftFixed = var13;
-               drawer.dxRightFixed = var12;
-               drawer.dvDxFixed = var15 * var9;
-               drawer.lightFixed = var16 * var9;
-               drawer.dLightDyFixed = var17 * var9;
-               drawer.dLightDxFixed = var18 * var9;
-               drawer.sphereUFixed = var19 * var9;
+               drawer.dxLeftFixed = dxMidStep;
+               drawer.dxRightFixed = dxLeftStep;
+               drawer.dvDxFixed = du * invDy;
+               drawer.lightFixed = dv * invDy;
+               drawer.dLightDyFixed = dLight * invDy;
+               drawer.dLightDxFixed = dNormalZ * invDy;
+               drawer.sphereUFixed = dSphereV * invDy;
             }
 
             drawer.drawSpan();
          }
 
          if (mid.y != bot.y) {
-            var8 = bot.x - mid.x;
-            var9 = fixedReciprocal(bot.y - mid.y);
-            int var14 = var8 * var9;
-            int var11 = (mid.x << 16) + 32768;
+            dx = bot.x - mid.x;
+            invDy = fixedReciprocal(bot.y - mid.y);
+            int dxBotStep = dx * invDy;
+            int xMidFixed = (mid.x << 16) + 32768;
             drawer.yEnd = bot.y;
-            if (var30 > 0) {
-               drawer.xRightFixed = var11;
-               drawer.dxLeftFixed = var12;
-               drawer.dxRightFixed = var14;
-               drawer.dvDxFixed = var25;
-               drawer.lightFixed = var26;
-               drawer.dLightDyFixed = var27;
-               drawer.dLightDxFixed = var28;
-               drawer.sphereUFixed = var29;
+            if (invDet > 0) {
+               drawer.xRightFixed = xMidFixed;
+               drawer.dxLeftFixed = dxLeftStep;
+               drawer.dxRightFixed = dxBotStep;
+               drawer.dvDxFixed = duLeftStep;
+               drawer.lightFixed = dvLeftStep;
+               drawer.dLightDyFixed = dLightLeftStep;
+               drawer.dLightDxFixed = dNormalZLeftStep;
+               drawer.sphereUFixed = dSphereVLeftStep;
             } else {
-               drawer.xLeftFixed = var11;
-               drawer.dxLeftFixed = var14;
-               drawer.dxRightFixed = var12;
+               drawer.xLeftFixed = xMidFixed;
+               drawer.dxLeftFixed = dxBotStep;
+               drawer.dxRightFixed = dxLeftStep;
                drawer.uFixed = (mid.u << 16) + 32768;
                drawer.vFixed = (mid.v << 16) + 32768;
                drawer.duDyFixed = (mid.light << 16) + 32768;
                drawer.dvDyFixed = (mid.normalZ << 16) + 32768;
                drawer.duDxFixed = (mid.sphereV << 16) + 32768;
-               drawer.dvDxFixed = (bot.u - mid.u) * var9;
-               drawer.lightFixed = (bot.v - mid.v) * var9;
-               drawer.dLightDyFixed = (bot.light - mid.light) * var9;
-               drawer.dLightDxFixed = (bot.normalZ - mid.normalZ) * var9;
-               drawer.sphereUFixed = (bot.sphereV - mid.sphereV) * var9;
+               drawer.dvDxFixed = (bot.u - mid.u) * invDy;
+               drawer.lightFixed = (bot.v - mid.v) * invDy;
+               drawer.dLightDyFixed = (bot.light - mid.light) * invDy;
+               drawer.dLightDxFixed = (bot.normalZ - mid.normalZ) * invDy;
+               drawer.sphereUFixed = (bot.sphereV - mid.sphereV) * invDy;
             }
 
             drawer.drawSpan();
@@ -923,8 +923,8 @@ final class Config {
       return outcode;
    }
 
-   private static int fixedReciprocal(int var0) {
-      return 65536 / var0;
+   private static int fixedReciprocal(int val) {
+      return 65536 / val;
    }
 
    static int[] getPixelBuffer(Config rasterizer) {
@@ -972,18 +972,18 @@ final class Config {
    }
 
    static {
-      int var0 = 65793;
+      int colorStep = 65793;
 
-      for (int var1 = 0; var1 < 129; var1++) {
-         blendTable[var1] = 0;
+      for (int i = 0; i < 129; i++) {
+         blendTable[i] = 0;
       }
 
-      for (int var2 = 1; var2 < 255; var2++) {
-         blendTable[var2 + 128] = 65793 * var2;
+      for (int i = 1; i < 255; i++) {
+         blendTable[i + 128] = 65793 * i;
       }
 
-      for (int var3 = -1; var3 < 128; var3++) {
-         blendTable[var3 + 384] = 16777215;
+      for (int i = -1; i < 128; i++) {
+         blendTable[i + 384] = 16777215;
       }
    }
 }

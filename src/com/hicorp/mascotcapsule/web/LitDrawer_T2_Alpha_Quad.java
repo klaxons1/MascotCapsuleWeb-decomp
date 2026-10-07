@@ -9,88 +9,88 @@ public final class LitDrawer_T2_Alpha_Quad extends LitDrawer {
    }
 
    public void drawSpan() {
-      int[] var1 = Config.getPixelBuffer(this.rasterizer);
-      int[] var2 = Config.getColorTable();
-      int var3 = (super.dLightDxFixed > 0 ? super.dLightDxFixed : -super.dLightDxFixed) + (super.normalZFixed > 0 ? super.normalZFixed : -super.normalZFixed) + 32768;
-      int var4 = Config.getDiffuseTexture(this.rasterizer).selectMipLevel(MatrixUtils.ceilLog2(var3) - 17);
-      int[] var5 = Config.getDiffuseTexture(this.rasterizer).getPixels();
-      int var6 = Config.getDiffuseTexture(this.rasterizer).getMipOffset(var4);
-      int var7 = Config.getDiffuseTexture(this.rasterizer).getMipUMask(var4);
-      int var8 = Config.getDiffuseTexture(this.rasterizer).getMipVMask(var4);
-      int var9 = Config.getDiffuseTexture(this.rasterizer).getMipUShift(var4);
-      int var10 = Config.getDiffuseTexture(this.rasterizer).getMipVShift(var4);
-      int var11 = super.dLightDxFixed >> var4;
-      int var12 = super.normalZFixed >> var4;
-      int var13 = super.dNormalZDyFixed;
-      int var14 = super.dNormalZDxFixed;
-      int var15 = Config.getBlendAlpha(this.rasterizer);
-      int var16 = 255 - Config.getBlendAlpha(this.rasterizer);
+      int[] dstPixels = Config.getPixelBuffer(this.rasterizer);
+      int[] colorTable = Config.getColorTable();
+      int stepDLight = (super.dLightDxFixed > 0 ? super.dLightDxFixed : -super.dLightDxFixed) + (super.normalZFixed > 0 ? super.normalZFixed : -super.normalZFixed) + 32768;
+      int mipLevel = Config.getDiffuseTexture(this.rasterizer).selectMipLevel(MatrixUtils.ceilLog2(stepDLight) - 17);
+      int[] diffusePixels = Config.getDiffuseTexture(this.rasterizer).getPixels();
+      int mipOffset = Config.getDiffuseTexture(this.rasterizer).getMipOffset(mipLevel);
+      int mipUMask = Config.getDiffuseTexture(this.rasterizer).getMipUMask(mipLevel);
+      int mipVMask = Config.getDiffuseTexture(this.rasterizer).getMipVMask(mipLevel);
+      int mipUShift = Config.getDiffuseTexture(this.rasterizer).getMipUShift(mipLevel);
+      int mipVShift = Config.getDiffuseTexture(this.rasterizer).getMipVShift(mipLevel);
+      int stepDLight2 = super.dLightDxFixed >> mipLevel;
+      int curNormalZ = super.normalZFixed >> mipLevel;
+      int stepDy = super.dNormalZDyFixed;
+      int stepDNormalZ = super.dNormalZDxFixed;
+      int blendAlpha = Config.getBlendAlpha(this.rasterizer);
+      int invBlendAlpha = 255 - Config.getBlendAlpha(this.rasterizer);
       if (super.y < Config.getClipTop(this.rasterizer)) {
-         int var17;
+         int clipDeltaY;
          if (super.yEnd < Config.getClipTop(this.rasterizer)) {
-            var17 = super.yEnd - super.y;
+            clipDeltaY = super.yEnd - super.y;
             super.y = super.yEnd;
          } else {
-            var17 = Config.getClipTop(this.rasterizer) - super.y;
+            clipDeltaY = Config.getClipTop(this.rasterizer) - super.y;
             super.y = Config.getClipTop(this.rasterizer);
          }
 
-         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * var17;
-         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed * var17;
-         super.xRightFixed = super.xRightFixed + super.dxRightFixed * var17;
-         super.uFixed = super.uFixed + super.duDxFixed * var17;
-         super.vFixed = super.vFixed + super.dvDxFixed * var17;
-         super.duDyFixed = super.duDyFixed + super.lightFixed * var17;
-         super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed * var17;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.rasterizer) * clipDeltaY;
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed * clipDeltaY;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed * clipDeltaY;
+         super.uFixed = super.uFixed + super.duDxFixed * clipDeltaY;
+         super.vFixed = super.vFixed + super.dvDxFixed * clipDeltaY;
+         super.duDyFixed = super.duDyFixed + super.lightFixed * clipDeltaY;
+         super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed * clipDeltaY;
       }
 
       super.yEnd = super.yEnd < Config.getClipBottom(this.rasterizer) ? super.yEnd : Config.getClipBottom(this.rasterizer);
 
       for (super.dvDyFixed += 8388608; super.y < super.yEnd; super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed) {
-         int var33 = super.xLeftFixed >> 16;
-         int var18 = super.xRightFixed >> 16;
-         int var19 = super.uFixed >> var4;
-         int var20 = super.vFixed >> var4;
-         int var21 = super.duDyFixed;
-         int var22 = super.dvDyFixed;
-         if (var33 < Config.getClipLeft(this.rasterizer)) {
-            int var23 = Config.getClipLeft(this.rasterizer) - var33;
-            var33 = Config.getClipLeft(this.rasterizer);
-            var19 += var11 * var23;
-            var20 += var12 * var23;
-            var21 += var13 * var23;
-            var22 += var14 * var23;
+         int xLeft = super.xLeftFixed >> 16;
+         int xRight = super.xRightFixed >> 16;
+         int curU = super.uFixed >> mipLevel;
+         int curV = super.vFixed >> mipLevel;
+         int stepDy2 = super.duDyFixed;
+         int stepDy3 = super.dvDyFixed;
+         if (xLeft < Config.getClipLeft(this.rasterizer)) {
+            int clipDeltaX = Config.getClipLeft(this.rasterizer) - xLeft;
+            xLeft = Config.getClipLeft(this.rasterizer);
+            curU += stepDLight2 * clipDeltaX;
+            curV += curNormalZ * clipDeltaX;
+            stepDy2 += stepDy * clipDeltaX;
+            stepDy3 += stepDNormalZ * clipDeltaX;
          }
 
-         if (var18 > Config.getClipRight(this.rasterizer)) {
-            var18 = Config.getClipRight(this.rasterizer);
+         if (xRight > Config.getClipRight(this.rasterizer)) {
+            xRight = Config.getClipRight(this.rasterizer);
          }
 
-         int var34 = super.scanlineOffset + var33;
+         int spanPixelIdx = super.scanlineOffset + xLeft;
 
-         for (int var24 = super.scanlineOffset + var18; var34 < var24; var34++) {
-            int var25 = var6 + ((var20 & var8) >>> var10) + ((var19 & var7) >>> var9);
-            int var26 = var5[var25];
-            if (var26 != -1) {
-               int var27 = var1[var34];
-               int var28 = var21 >>> 16;
-               int var29 = var2[var22 >>> 16 & 511];
-               int var32 = ((var26 & 16711935) * var28 & -16711936) + ((var26 & 0xFF00) * var28 & 0xFF0000) >>> 8;
-               int var30 = ((var32 & var29) << 1) + ((var32 ^ var29) & 16711422) & 16843008;
-               var30 = (var30 >>> 8) + 8355711 ^ 8355711;
-               var30 = var32 + var29 - var30 | var30;
-               int var31 = ((var30 & 16711935) * var15 & -16711936)
-                     + ((var30 & 0xFF00) * var15 & 0xFF0000)
-                     + ((var27 & 16711935) * var16 & -16711936)
-                     + ((var27 & 0xFF00) * var16 & 0xFF0000)
+         for (int spanEndIdx = super.scanlineOffset + xRight; spanPixelIdx < spanEndIdx; spanPixelIdx++) {
+            int texelOffset = mipOffset + ((curV & mipVMask) >>> mipVShift) + ((curU & mipUMask) >>> mipUShift);
+            int texelColor = diffusePixels[texelOffset];
+            if (texelColor != -1) {
+               int dstColor = dstPixels[spanPixelIdx];
+               int lightIntensity = stepDy2 >>> 16;
+               int lightIntensity2 = colorTable[stepDy3 >>> 16 & 511];
+               int shadedColor2 = ((texelColor & 16711935) * lightIntensity & -16711936) + ((texelColor & 0xFF00) * lightIntensity & 0xFF0000) >>> 8;
+               int blendResult = ((shadedColor2 & lightIntensity2) << 1) + ((shadedColor2 ^ lightIntensity2) & 16711422) & 16843008;
+               blendResult = (blendResult >>> 8) + 8355711 ^ 8355711;
+               blendResult = shadedColor2 + lightIntensity2 - blendResult | blendResult;
+               int shadedColor = ((blendResult & 16711935) * blendAlpha & -16711936)
+                     + ((blendResult & 0xFF00) * blendAlpha & 0xFF0000)
+                     + ((dstColor & 16711935) * invBlendAlpha & -16711936)
+                     + ((dstColor & 0xFF00) * invBlendAlpha & 0xFF0000)
                   >>> 8;
-               var1[var34] = var31 | 0xFF000000;
+               dstPixels[spanPixelIdx] = shadedColor | 0xFF000000;
             }
 
-            var19 += var11;
-            var20 += var12;
-            var21 += var13;
-            var22 += var14;
+            curU += stepDLight2;
+            curV += curNormalZ;
+            stepDy2 += stepDy;
+            stepDy3 += stepDNormalZ;
          }
 
          super.y++;

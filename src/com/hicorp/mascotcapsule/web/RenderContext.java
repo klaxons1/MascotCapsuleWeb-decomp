@@ -205,8 +205,8 @@ final class RenderContext {
             var17 += var20.sub_59();
          }
 
-         int var48 = this.var_7a3 != null ? this.var_7a3.sub_10a() : 0;
-         int var21 = this.var_7a3 != null ? this.var_7a3.sub_11a() : 0;
+         int var48 = this.var_7a3 != null ? this.var_7a3.getWidth() : 0;
+         int var21 = this.var_7a3 != null ? this.var_7a3.getHeight() : 0;
          Class_ae[] var22 = new Class_ae[4];
          Class_1438 var23 = this.sub_c5();
          var22[0] = var23.var_389;

@@ -68,51 +68,51 @@ public final class Model {
          return true;
       } else {
          Class_613 var2 = new Class_613(var1);
-         byte var11 = var2.sub_13();
-         byte var12 = var2.sub_13();
-         byte var13 = var2.sub_13();
-         byte var14 = var2.sub_13();
+         byte var11 = var2.readByte();
+         byte var12 = var2.readByte();
+         byte var13 = var2.readByte();
+         byte var14 = var2.readByte();
          if (var11 == 72 && var12 == 73 && var13 == 74 && var14 == 84) {
-            int var9 = var2.sub_77();
+            int var9 = var2.readInt();
             if (var9 != 1) {
                return false;
             } else {
-               var2.sub_11c(12);
+               var2.skipBytes(12);
                byte[] var15 = new byte[64];
 
                for (int var3 = 0; var3 < 64; var3++) {
-                  var15[var3] = var2.sub_13();
+                  var15[var3] = var2.readByte();
                }
 
-               short var10 = var2.sub_3f();
-               this.var_395 = var2.sub_3f();
+               short var10 = var2.readShort();
+               this.var_395 = var2.readShort();
                this.var_360 = var10 < 1 ? 0 : var10 - 1;
                this.var_3c7 = new Bone[this.var_395];
 
                for (int var16 = 0; var16 < this.var_395; var16++) {
                   this.var_3c7[var16] = new Bone();
-                  this.var_3c7[var16].var_51 = var2.sub_1a5();
-                  this.var_3c7[var16].var_109.x = var2.sub_de();
-                  this.var_3c7[var16].var_109.y = var2.sub_de();
-                  this.var_3c7[var16].var_109.z = var2.sub_de();
-                  this.var_3c7[var16].var_209.x = var2.sub_de();
-                  this.var_3c7[var16].var_209.y = var2.sub_de();
-                  this.var_3c7[var16].var_209.z = var2.sub_de();
-                  this.var_3c7[var16].var_241.x = var2.sub_de();
-                  this.var_3c7[var16].var_241.y = var2.sub_de();
-                  this.var_3c7[var16].var_241.z = var2.sub_de();
-                  this.var_3c7[var16].var_268.x = var2.sub_de();
-                  this.var_3c7[var16].var_268.y = var2.sub_de();
-                  this.var_3c7[var16].var_268.z = var2.sub_de();
+                  this.var_3c7[var16].var_51 = var2.readCString();
+                  this.var_3c7[var16].var_109.x = var2.readFloat();
+                  this.var_3c7[var16].var_109.y = var2.readFloat();
+                  this.var_3c7[var16].var_109.z = var2.readFloat();
+                  this.var_3c7[var16].var_209.x = var2.readFloat();
+                  this.var_3c7[var16].var_209.y = var2.readFloat();
+                  this.var_3c7[var16].var_209.z = var2.readFloat();
+                  this.var_3c7[var16].var_241.x = var2.readFloat();
+                  this.var_3c7[var16].var_241.y = var2.readFloat();
+                  this.var_3c7[var16].var_241.z = var2.readFloat();
+                  this.var_3c7[var16].var_268.x = var2.readFloat();
+                  this.var_3c7[var16].var_268.y = var2.readFloat();
+                  this.var_3c7[var16].var_268.z = var2.readFloat();
 
                   for (int var4 = 0; var4 < 10; var4++) {
-                     short var6 = var2.sub_3f();
+                     short var6 = var2.readShort();
                      this.var_3c7[var16].var_2b0[var4].sub_9a(var6);
 
                      for (int var5 = 0; var5 < var6; var5++) {
-                        short var7 = var2.sub_3f();
+                        short var7 = var2.readShort();
                         this.var_3c7[var16].var_2b0[var4].var_ce[var5].var_2e = var7;
-                        float var8 = var2.sub_de();
+                        float var8 = var2.readFloat();
                         this.var_3c7[var16].var_2b0[var4].var_ce[var5].var_92 = var8;
                      }
                   }

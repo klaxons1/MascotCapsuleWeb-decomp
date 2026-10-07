@@ -3,143 +3,144 @@ package com.hicorp.mascotcapsule.web;
 import java.io.InputStream;
 
 public final class Class_89e implements Material {
-   private static final int var_54 = 0;
-   private static final int var_f5 = 1;
-   private static final int var_159 = 2;
-   private static final int var_174 = 3;
-   private static final int var_1c6 = 12;
-   private static final int var_1ec = 40;
-   private static final int var_24b = 64;
-   private int[] var_287 = null;
-   private Class_613 var_2af = null;
-   private Class_517 var_2c8 = null;
-   private int var_2e4;
-   private int var_317;
-   private int var_342;
+   private static final int BI_RGB = 0;
+   private static final int BI_RLE8 = 1;
+   private static final int BI_RLE4 = 2;
+   private static final int BI_BITFIELDS = 3;
+   private static final int OS2_HEADER_SIZE = 12;
+   private static final int WIN_V3_HEADER_SIZE = 40;
+   private static final int WIN_V4_HEADER_SIZE = 64;
 
-   public boolean sub_10(InputStream var1, Class_517 var2) {
-      if (var1 == null) {
+   private int[] colorPalette = null;
+   private Class_613 streamReader = null;
+   private Class_517 targetTexture = null;
+   private int redMask;
+   private int greenMask;
+   private int blueMask;
+
+   public boolean readImage(InputStream in, Class_517 texture) {
+      if (in == null) {
          return false;
       } else {
-         this.var_2c8 = var2;
-         this.var_2af = new Class_613(var1);
-         int var3 = this.var_2af.sub_16f();
-         int var4 = this.var_2af.sub_16f();
-         if (var3 == 66 && var4 == 77) {
-            this.var_2af.sub_11c(8);
-            int var10 = this.var_2af.sub_77();
-            int var11 = this.var_2af.sub_77();
-            int var5;
-            int var6;
-            short var7;
-            int var8;
-            int var9;
-            if (var11 != 40 && var11 != 64) {
-               var5 = this.var_2af.sub_3f();
-               var6 = this.var_2af.sub_3f();
-               if (this.var_2af.sub_3f() != 1) {
+         this.targetTexture = texture;
+         this.streamReader = new Class_613(in);
+         int magic0 = this.streamReader.readUnsignedByte();
+         int magic1 = this.streamReader.readUnsignedByte();
+         if (magic0 == 'B' && magic1 == 'M') {
+            this.streamReader.skipBytes(8);
+            int pixelOffset = this.streamReader.readInt();
+            int headerSize = this.streamReader.readInt();
+            int bmpWidth;
+            int bmpHeight;
+            short bitCount;
+            int numColors;
+            int paddingAfterPalette;
+
+            if (headerSize != WIN_V3_HEADER_SIZE && headerSize != WIN_V4_HEADER_SIZE) {
+               bmpWidth = this.streamReader.readShort();
+               bmpHeight = this.streamReader.readShort();
+               if (this.streamReader.readShort() != 1) {
                   return false;
                }
-
-               var7 = this.var_2af.sub_3f();
-               var8 = 0;
-               var9 = 0;
+               bitCount = this.streamReader.readShort();
+               numColors = 0;
+               paddingAfterPalette = 0;
             } else {
-               var5 = this.var_2af.sub_77();
-               var6 = this.var_2af.sub_77();
-               if (this.var_2af.sub_3f() != 1) {
+               bmpWidth = this.streamReader.readInt();
+               bmpHeight = this.streamReader.readInt();
+               if (this.streamReader.readShort() != 1) {
+                  return false;
+               }
+               bitCount = this.streamReader.readShort();
+               int compression = this.streamReader.readInt();
+               if (compression != BI_RGB && compression != BI_BITFIELDS) {
                   return false;
                }
 
-               var7 = this.var_2af.sub_3f();
-               int var12 = this.var_2af.sub_77();
-               if (var12 != 0 && var12 != 3) {
-                  return false;
-               }
+               this.streamReader.skipBytes(12);
+               numColors = this.streamReader.readInt();
+               this.streamReader.skipBytes(4);
 
-               this.var_2af.sub_11c(12);
-               var8 = this.var_2af.sub_77();
-               this.var_2af.sub_11c(4);
-               switch (var7) {
+               switch (bitCount) {
                   case 16:
-                     if (var12 == 0) {
-                        this.var_2e4 = 31744;
-                        this.var_317 = 992;
-                        this.var_342 = 31;
-                        this.var_2af.sub_11c(var11 - 40);
+                     if (compression == BI_RGB) {
+                        this.redMask = 0x7C00;
+                        this.greenMask = 0x03E0;
+                        this.blueMask = 0x001F;
+                        this.streamReader.skipBytes(headerSize - WIN_V3_HEADER_SIZE);
                      } else {
-                        this.var_2e4 = this.var_2af.sub_77();
-                        this.var_317 = this.var_2af.sub_77();
-                        this.var_342 = this.var_2af.sub_77();
-                        this.var_2af.sub_11c(var11 - 40);
+                        this.redMask = this.streamReader.readInt();
+                        this.greenMask = this.streamReader.readInt();
+                        this.blueMask = this.streamReader.readInt();
+                        this.streamReader.skipBytes(headerSize - WIN_V3_HEADER_SIZE);
                      }
                      break;
                   case 24:
-                     if (var12 != 0) {
+                     if (compression != BI_RGB) {
                         return false;
                      }
-
-                     this.var_2af.sub_11c(var11 - 40);
+                     this.streamReader.skipBytes(headerSize - WIN_V3_HEADER_SIZE);
                      break;
                   case 32:
-                     if (var12 != 3) {
+                     if (compression != BI_BITFIELDS) {
                         return false;
                      }
-
-                     this.var_2e4 = this.var_2af.sub_77();
-                     this.var_317 = this.var_2af.sub_77();
-                     this.var_342 = this.var_2af.sub_77();
-                     this.var_2af.sub_11c(var11 - 40);
+                     this.redMask = this.streamReader.readInt();
+                     this.greenMask = this.streamReader.readInt();
+                     this.blueMask = this.streamReader.readInt();
+                     this.streamReader.skipBytes(headerSize - WIN_V3_HEADER_SIZE);
+                     break;
                }
 
-               var9 = var10 - (var11 + 14);
+               paddingAfterPalette = pixelOffset - (headerSize + 14);
             }
 
-            if (var5 >= 0 && var6 > 0 && var5 <= 8192 && var6 <= 8192 && (var7 == 1 || var7 == 4 || var7 == 8 || var7 == 16 || var7 == 24)) {
-               if (var8 >= 0 && var8 <= 1 << var7) {
-                  if (var8 == 0) {
-                     var8 = 1 << var7;
+            if (bmpWidth >= 0 && bmpHeight > 0 && bmpWidth <= 8192 && bmpHeight <= 8192
+                && (bitCount == 1 || bitCount == 4 || bitCount == 8 || bitCount == 16 || bitCount == 24)) {
+               if (numColors >= 0 && numColors <= 1 << bitCount) {
+                  if (numColors == 0) {
+                     numColors = 1 << bitCount;
                   }
 
-                  if (var7 <= 8) {
-                     int var18 = 1 << var7;
-                     this.var_287 = new int[var18];
-                     boolean var13 = var11 != 12;
+                  if (bitCount <= 8) {
+                     int paletteEntries = 1 << bitCount;
+                     this.colorPalette = new int[paletteEntries];
+                     boolean isRgbQuad = headerSize != OS2_HEADER_SIZE;
 
-                     for (int var14 = 0; var14 < var8; var14++) {
-                        int var15 = this.var_2af.sub_16f();
-                        int var16 = this.var_2af.sub_16f();
-                        int var17 = this.var_2af.sub_16f();
-                        this.var_287[var14] = 0xFF000000 | var17 << 16 | var16 << 8 | var15;
-                        if (var13) {
-                           this.var_2af.sub_16f();
+                     for (int i = 0; i < numColors; i++) {
+                        int b = this.streamReader.readUnsignedByte();
+                        int g = this.streamReader.readUnsignedByte();
+                        int r = this.streamReader.readUnsignedByte();
+                        this.colorPalette[i] = 0xFF000000 | r << 16 | g << 8 | b;
+                        if (isRgbQuad) {
+                           this.streamReader.readUnsignedByte();
                         }
                      }
 
-                     for (int var19 = var8; var19 < var18; var19++) {
-                        this.var_287[var19] = -1;
+                     for (int i = numColors; i < paletteEntries; i++) {
+                        this.colorPalette[i] = -1;
                      }
 
-                     var9 -= (3 + (var13 ? 1 : 0)) * var8;
+                     paddingAfterPalette -= (3 + (isRgbQuad ? 1 : 0)) * numColors;
                   }
 
-                  if (var11 != 12 && var9 > 0) {
-                     this.var_2af.sub_11c(var9);
+                  if (headerSize != OS2_HEADER_SIZE && paddingAfterPalette > 0) {
+                     this.streamReader.skipBytes(paddingAfterPalette);
                   }
 
-                  var2.sub_38(var5, var6);
-                  switch (var7) {
+                  texture.allocate(bmpWidth, bmpHeight);
+                  switch (bitCount) {
                      case 4:
-                        this.sub_42();
+                        this.read4BitIndexed();
                         break;
                      case 8:
-                        this.sub_92();
+                        this.read8BitIndexed();
                         break;
                      case 16:
-                        this.sub_b2();
+                        this.read16BitRgb();
                         break;
                      case 24:
-                        this.sub_10c();
+                        this.read24BitRgb();
                         break;
                      default:
                         return false;
@@ -158,100 +159,100 @@ public final class Class_89e implements Material {
       }
    }
 
-   private void sub_42() {
-      int var1 = this.var_2c8.sub_10a();
-      int var2 = this.var_2c8.sub_11a();
-      int var3 = 1 << this.var_2c8.sub_143();
-      int var4 = (var1 + 1) / 2;
-      int var5 = 4 - (var4 & 3) & 3;
-      int[] var6 = this.var_2c8.sub_93();
-      int var7 = var3 * (var2 - 1);
+   private void read4BitIndexed() {
+      int width = this.targetTexture.getWidth();
+      int height = this.targetTexture.getHeight();
+      int stride = 1 << this.targetTexture.getWidthLog2();
+      int byteWidth = (width + 1) / 2;
+      int rowPadding = 4 - (byteWidth & 3) & 3;
+      int[] pixels = this.targetTexture.getPixels();
+      int rowOffset = stride * (height - 1);
 
-      for (int var8 = var2; var8 > 0; var8--) {
-         int var9 = var7;
+      for (int y = height; y > 0; y--) {
+         int pixelIndex = rowOffset;
 
-         for (int var10 = var4; var10 > 0; var9 += 2) {
-            int var11 = this.var_2af.sub_16f();
-            var6[var9 + 0] = this.var_287[var11 >>> 4];
-            var6[var9 + 1] = this.var_287[var11 & 15];
-            var10--;
+         for (int xBytes = byteWidth; xBytes > 0; pixelIndex += 2) {
+            int b = this.streamReader.readUnsignedByte();
+            pixels[pixelIndex] = this.colorPalette[b >>> 4];
+            pixels[pixelIndex + 1] = this.colorPalette[b & 15];
+            xBytes--;
          }
 
-         this.var_2af.sub_11c(var5);
-         var7 -= var3;
+         this.streamReader.skipBytes(rowPadding);
+         rowOffset -= stride;
       }
    }
 
-   private void sub_92() {
-      int var1 = this.var_2c8.sub_10a();
-      int var2 = this.var_2c8.sub_11a();
-      int var3 = 1 << this.var_2c8.sub_143();
-      int var4 = 4 - (var1 & 3) & 3;
-      int[] var5 = this.var_2c8.sub_93();
-      int var6 = var3 * (var2 - 1);
+   private void read8BitIndexed() {
+      int width = this.targetTexture.getWidth();
+      int height = this.targetTexture.getHeight();
+      int stride = 1 << this.targetTexture.getWidthLog2();
+      int rowPadding = 4 - (width & 3) & 3;
+      int[] pixels = this.targetTexture.getPixels();
+      int rowOffset = stride * (height - 1);
 
-      for (int var7 = var2; var7 > 0; var7--) {
-         int var8 = var6;
+      for (int y = height; y > 0; y--) {
+         int pixelIndex = rowOffset;
 
-         for (int var9 = var1; var9 > 0; var8++) {
-            int var10 = this.var_2af.sub_16f();
-            var5[var8] = this.var_287[var10];
-            var9--;
+         for (int x = width; x > 0; pixelIndex++) {
+            int colorIndex = this.streamReader.readUnsignedByte();
+            pixels[pixelIndex] = this.colorPalette[colorIndex];
+            x--;
          }
 
-         this.var_2af.sub_11c(var4);
-         var6 -= var3;
+         this.streamReader.skipBytes(rowPadding);
+         rowOffset -= stride;
       }
    }
 
-   private void sub_b2() {
-      int var1 = this.var_2c8.sub_10a();
-      int var2 = this.var_2c8.sub_11a();
-      int var3 = 1 << this.var_2c8.sub_143();
-      int var4 = this.var_2c8.sub_10a() * 2;
-      int var5 = 4 - (var4 & 3) & 3;
-      int[] var6 = this.var_2c8.sub_93();
-      int var7 = var3 * (var2 - 1);
+   private void read16BitRgb() {
+      int width = this.targetTexture.getWidth();
+      int height = this.targetTexture.getHeight();
+      int stride = 1 << this.targetTexture.getWidthLog2();
+      int byteWidth = this.targetTexture.getWidth() * 2;
+      int rowPadding = 4 - (byteWidth & 3) & 3;
+      int[] pixels = this.targetTexture.getPixels();
+      int rowOffset = stride * (height - 1);
 
-      for (int var8 = var2; var8 > 0; var8--) {
-         int var9 = var7;
+      for (int y = height; y > 0; y--) {
+         int pixelIndex = rowOffset;
 
-         for (int var10 = var1; var10 > 0; var9++) {
-            int var11 = this.var_2af.sub_192();
-            int var12 = (var11 & this.var_2e4) * 255 / this.var_2e4;
-            int var13 = (var11 & this.var_317) * 255 / this.var_317;
-            int var14 = (var11 & this.var_342) * 255 / this.var_342;
-            var6[var9] = 0xFF000000 | var12 << 16 | var13 << 8 | var14;
-            var10--;
+         for (int x = width; x > 0; pixelIndex++) {
+            int pixelVal = this.streamReader.readUnsignedShort();
+            int r = (pixelVal & this.redMask) * 255 / this.redMask;
+            int g = (pixelVal & this.greenMask) * 255 / this.greenMask;
+            int b = (pixelVal & this.blueMask) * 255 / this.blueMask;
+            pixels[pixelIndex] = 0xFF000000 | r << 16 | g << 8 | b;
+            x--;
          }
 
-         this.var_2af.sub_11c(var5);
-         var7 -= var3;
+         this.streamReader.skipBytes(rowPadding);
+         rowOffset -= stride;
       }
    }
 
-   private void sub_10c() {
-      int var1 = this.var_2c8.sub_10a();
-      int var2 = this.var_2c8.sub_11a();
-      int var3 = 1 << this.var_2c8.sub_143();
-      int var4 = this.var_2c8.sub_10a() * 3;
-      int var5 = 4 - (var4 & 3) & 3;
-      int[] var6 = this.var_2c8.sub_93();
-      int var7 = var3 * (var2 - 1);
+   private void read24BitRgb() {
+      int width = this.targetTexture.getWidth();
+      int height = this.targetTexture.getHeight();
+      int stride = 1 << this.targetTexture.getWidthLog2();
+      int byteWidth = this.targetTexture.getWidth() * 3;
+      int rowPadding = 4 - (byteWidth & 3) & 3;
+      int[] pixels = this.targetTexture.getPixels();
+      int rowOffset = stride * (height - 1);
 
-      for (int var8 = var2; var8 > 0; var8--) {
-         int var9 = var7;
+      for (int y = height; y > 0; y--) {
+         int pixelIndex = rowOffset;
 
-         for (int var10 = var1; var10 > 0; var9++) {
-            int var11 = this.var_2af.sub_16f();
-            int var12 = this.var_2af.sub_16f();
-            int var13 = this.var_2af.sub_16f();
-            var6[var9] = 0xFF000000 | var13 << 16 | var12 << 8 | var11;
-            var10--;
+         for (int x = width; x > 0; pixelIndex++) {
+            int b = this.streamReader.readUnsignedByte();
+            int g = this.streamReader.readUnsignedByte();
+            int r = this.streamReader.readUnsignedByte();
+            pixels[pixelIndex] = 0xFF000000 | r << 16 | g << 8 | b;
+            x--;
          }
 
-         this.var_2af.sub_11c(var5);
-         var7 -= var3;
+         this.streamReader.skipBytes(rowPadding);
+         rowOffset -= stride;
       }
    }
 }

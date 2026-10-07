@@ -947,7 +947,7 @@ final class Config {
       return var0.var_674;
    }
 
-   static int sub_467(Config var0) {
+   static int getMipVShift(Config var0) {
       return var0.var_5c5;
    }
 

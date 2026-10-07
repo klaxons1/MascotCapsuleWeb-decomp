@@ -11,72 +11,68 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class Class_808 extends Component implements ImageObserver, Material {
-   public boolean sub_10(InputStream var1, Class_517 var2) {
-      if (var1 == null) {
+   public boolean readImage(InputStream in, Class_517 texture) {
+      if (in == null) {
          return false;
       } else {
-         if (var1.markSupported()) {
-            var1.mark(2);
-            Class_613 var3 = new Class_613(var1);
-            int var4 = var3.sub_16f();
-            int var5 = var3.sub_16f();
-            Object var15 = null;
-            var1.reset();
-            if (var4 == 66 && var5 == 77) {
-               Class_89e var23 = new Class_89e();
-               return var23.sub_10(var1, var2);
+         if (in.markSupported()) {
+            in.mark(2);
+            Class_613 reader = new Class_613(in);
+            int magic0 = reader.readUnsignedByte();
+            int magic1 = reader.readUnsignedByte();
+            in.reset();
+            if (magic0 == 'B' && magic1 == 'M') {
+               Class_89e bmpDecoder = new Class_89e();
+               return bmpDecoder.readImage(in, texture);
             }
          }
 
-         ByteArrayOutputStream var16 = new ByteArrayOutputStream();
+         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
          try {
-            byte[] var17 = new byte[65536];
-
-            int var20;
-            while ((var20 = var1.read(var17)) != -1) {
-               var16.write(var17, 0, var20);
+            byte[] buf = new byte[65536];
+            int bytesRead;
+            while ((bytesRead = in.read(buf)) != -1) {
+               byteOut.write(buf, 0, bytesRead);
             }
-         } catch (IOException var14) {
+         } catch (IOException e) {
             return false;
          }
 
-         var16.close();
-         Image var18 = Toolkit.getDefaultToolkit().createImage(var16.toByteArray());
-         MediaTracker var21 = new MediaTracker(this);
-         var21.addImage(var18, 0);
+         byteOut.close();
+         Image img = Toolkit.getDefaultToolkit().createImage(byteOut.toByteArray());
+         MediaTracker tracker = new MediaTracker(this);
+         tracker.addImage(img, 0);
 
          try {
-            var21.waitForID(0);
-         } catch (InterruptedException var13) {
+            tracker.waitForID(0);
+         } catch (InterruptedException e) {
             return false;
          }
 
-         if (var21.isErrorAny()) {
+         if (tracker.isErrorAny()) {
             return false;
          } else {
-            int var6 = var18.getWidth(this);
-            int var7 = var18.getHeight(this);
-            var2.sub_38(var6, var7);
-            int[] var8 = var2.sub_93();
-            int var9 = 1 << var2.sub_143();
-            var21.removeImage(var18);
-            PixelGrabber var10 = new PixelGrabber(var18, 0, 0, var6, var7, var8, 0, var9);
+            int imgWidth = img.getWidth(this);
+            int imgHeight = img.getHeight(this);
+            texture.allocate(imgWidth, imgHeight);
+            int[] texturePixels = texture.getPixels();
+            int stride = 1 << texture.getWidthLog2();
+            tracker.removeImage(img);
+            PixelGrabber grabber = new PixelGrabber(img, 0, 0, imgWidth, imgHeight, texturePixels, 0, stride);
 
             try {
-               var10.grabPixels();
-            } catch (InterruptedException var12) {
+               grabber.grabPixels();
+            } catch (InterruptedException e) {
                return false;
             }
 
-            Object var19 = null;
-            Object var22 = null;
             return true;
          }
       }
    }
 
-   public synchronized boolean imageUpdate(Image var1, int var2, int var3, int var4, int var5, int var6) {
+   public synchronized boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
       return false;
    }
 }

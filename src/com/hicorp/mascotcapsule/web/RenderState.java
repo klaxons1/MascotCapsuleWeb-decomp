@@ -21,22 +21,22 @@ public final class RenderState {
          Class_13f var9 = new Class_13f();
          this.var_17c[var1] = var9;
          boolean var4;
-         var9.var_2a = var4 = var3.sub_13() != 0;
-         var9.var_8c = var5 = var3.sub_13() != 0;
-         var9.var_a2 = var3.sub_1a5();
-         var9.var_f4.m00 = var3.sub_de();
-         var9.var_f4.m01 = var3.sub_de();
-         var9.var_f4.m02 = var3.sub_de();
-         var9.var_f4.m10 = var3.sub_de();
-         var9.var_f4.m11 = var3.sub_de();
-         var9.var_f4.m12 = var3.sub_de();
-         var9.var_f4.m20 = var3.sub_de();
-         var9.var_f4.m21 = var3.sub_de();
-         var9.var_f4.m22 = var3.sub_de();
-         var9.var_f4.m03 = var3.sub_de();
-         var9.var_f4.m13 = var3.sub_de();
-         var9.var_f4.m23 = var3.sub_de();
-         var9.var_118 = var3.sub_3f();
+         var9.var_2a = var4 = var3.readByte() != 0;
+         var9.var_8c = var5 = var3.readByte() != 0;
+         var9.var_a2 = var3.readCString();
+         var9.var_f4.m00 = var3.readFloat();
+         var9.var_f4.m01 = var3.readFloat();
+         var9.var_f4.m02 = var3.readFloat();
+         var9.var_f4.m10 = var3.readFloat();
+         var9.var_f4.m11 = var3.readFloat();
+         var9.var_f4.m12 = var3.readFloat();
+         var9.var_f4.m20 = var3.readFloat();
+         var9.var_f4.m21 = var3.readFloat();
+         var9.var_f4.m22 = var3.readFloat();
+         var9.var_f4.m03 = var3.readFloat();
+         var9.var_f4.m13 = var3.readFloat();
+         var9.var_f4.m23 = var3.readFloat();
+         var9.var_118 = var3.readShort();
          var9.sub_55((Class_5a9)(var1 == 0 ? this.var_11b : this.var_17c[var2]));
          var1++;
          if (var4) {
@@ -49,35 +49,35 @@ public final class RenderState {
 
    public boolean sub_35(InputStream var1) {
       Class_613 var2 = new Class_613(var1);
-      byte var4 = var2.sub_13();
-      byte var5 = var2.sub_13();
-      byte var6 = var2.sub_13();
-      byte var7 = var2.sub_13();
+      byte var4 = var2.readByte();
+      byte var5 = var2.readByte();
+      byte var6 = var2.readByte();
+      byte var7 = var2.readByte();
       if (var4 == 72 && var5 == 73 && var6 == 74 && var7 == 66) {
-         this.var_a8 = var2.sub_77();
+         this.var_a8 = var2.readInt();
          if (this.var_a8 != 1L) {
             return false;
          } else {
-            var2.sub_11c(12);
+            var2.skipBytes(12);
             byte[] var8 = new byte[64];
             byte var9 = 0;
 
             for (int var3 = 0; var3 < 64; var3++) {
-               var8[var3] = var2.sub_13();
+               var8[var3] = var2.readByte();
                var9 += var8[var3];
             }
 
-            this.var_1d4 = var2.sub_77();
+            this.var_1d4 = var2.readInt();
             this.var_22e = new Vector3f[this.var_1d4];
 
             for (int var13 = 0; var13 < this.var_1d4; var13++) {
                this.var_22e[var13] = new Vector3f();
-               this.var_22e[var13].x = var2.sub_de();
-               this.var_22e[var13].y = var2.sub_de();
-               this.var_22e[var13].z = var2.sub_de();
+               this.var_22e[var13].x = var2.readFloat();
+               this.var_22e[var13].y = var2.readFloat();
+               this.var_22e[var13].z = var2.readFloat();
             }
 
-            int var10 = var2.sub_77();
+            int var10 = var2.readInt();
             if (var10 > 0) {
                if (var10 != this.var_1d4) {
                   return false;
@@ -87,57 +87,57 @@ public final class RenderState {
 
                for (int var14 = 0; var14 < this.var_1d4; var14++) {
                   this.var_244[var14] = new Vector3f();
-                  this.var_244[var14].x = var2.sub_de();
-                  this.var_244[var14].y = var2.sub_de();
-                  this.var_244[var14].z = var2.sub_de();
+                  this.var_244[var14].x = var2.readFloat();
+                  this.var_244[var14].y = var2.readFloat();
+                  this.var_244[var14].z = var2.readFloat();
                }
             } else {
                this.var_244 = null;
             }
 
-            this.var_255 = var2.sub_77();
+            this.var_255 = var2.readInt();
             if (var9 == 0 && this.var_255 >= 500) {
                return false;
             } else {
                this.var_2b7 = new Class_12f[this.var_255];
-               int var11 = var2.sub_77();
+               int var11 = var2.readInt();
 
                for (int var15 = 0; var15 < var11; var15++) {
                   this.var_2b7[var15] = new Class_12f();
-                  this.var_2b7[var15].var_37 = var2.sub_77();
+                  this.var_2b7[var15].var_37 = var2.readInt();
                   this.var_2b7[var15].var_55 = 3;
-                  this.var_2b7[var15].var_a0 = var2.sub_3f();
-                  this.var_2b7[var15].var_bf = var2.sub_3f();
-                  this.var_2b7[var15].var_103 = var2.sub_3f();
-                  this.var_2b7[var15].var_15b = var2.sub_3f();
-                  this.var_2b7[var15].var_1a3 = var2.sub_3f();
-                  this.var_2b7[var15].var_1d0 = var2.sub_3f();
-                  this.var_2b7[var15].var_1f4 = var2.sub_3f();
-                  this.var_2b7[var15].var_23e = var2.sub_3f();
-                  this.var_2b7[var15].var_280 = var2.sub_3f();
+                  this.var_2b7[var15].var_a0 = var2.readShort();
+                  this.var_2b7[var15].var_bf = var2.readShort();
+                  this.var_2b7[var15].var_103 = var2.readShort();
+                  this.var_2b7[var15].var_15b = var2.readShort();
+                  this.var_2b7[var15].var_1a3 = var2.readShort();
+                  this.var_2b7[var15].var_1d0 = var2.readShort();
+                  this.var_2b7[var15].var_1f4 = var2.readShort();
+                  this.var_2b7[var15].var_23e = var2.readShort();
+                  this.var_2b7[var15].var_280 = var2.readShort();
                }
 
-               int var12 = var2.sub_77();
+               int var12 = var2.readInt();
 
                for (int var16 = var11; var16 < this.var_255; var16++) {
                   this.var_2b7[var16] = new Class_12f();
-                  this.var_2b7[var16].var_37 = var2.sub_77();
+                  this.var_2b7[var16].var_37 = var2.readInt();
                   this.var_2b7[var16].var_55 = 4;
-                  this.var_2b7[var16].var_a0 = var2.sub_3f();
-                  this.var_2b7[var16].var_bf = var2.sub_3f();
-                  this.var_2b7[var16].var_103 = var2.sub_3f();
-                  this.var_2b7[var16].var_15b = var2.sub_3f();
-                  this.var_2b7[var16].var_1a3 = var2.sub_3f();
-                  this.var_2b7[var16].var_1d0 = var2.sub_3f();
-                  this.var_2b7[var16].var_1f4 = var2.sub_3f();
-                  this.var_2b7[var16].var_23e = var2.sub_3f();
-                  this.var_2b7[var16].var_280 = var2.sub_3f();
-                  this.var_2b7[var16].var_2ba = var2.sub_3f();
-                  this.var_2b7[var16].var_30e = var2.sub_3f();
-                  this.var_2b7[var16].var_356 = var2.sub_3f();
+                  this.var_2b7[var16].var_a0 = var2.readShort();
+                  this.var_2b7[var16].var_bf = var2.readShort();
+                  this.var_2b7[var16].var_103 = var2.readShort();
+                  this.var_2b7[var16].var_15b = var2.readShort();
+                  this.var_2b7[var16].var_1a3 = var2.readShort();
+                  this.var_2b7[var16].var_1d0 = var2.readShort();
+                  this.var_2b7[var16].var_1f4 = var2.readShort();
+                  this.var_2b7[var16].var_23e = var2.readShort();
+                  this.var_2b7[var16].var_280 = var2.readShort();
+                  this.var_2b7[var16].var_2ba = var2.readShort();
+                  this.var_2b7[var16].var_30e = var2.readShort();
+                  this.var_2b7[var16].var_356 = var2.readShort();
                }
 
-               this.var_12f = var2.sub_77();
+               this.var_12f = var2.readInt();
                this.var_17c = new Class_13f[this.var_12f];
                return this.var_12f == this.sub_2b(0, 0, var2);
             }

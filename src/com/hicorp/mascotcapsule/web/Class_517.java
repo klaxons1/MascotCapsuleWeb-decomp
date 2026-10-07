@@ -1,251 +1,252 @@
 package com.hicorp.mascotcapsule.web;
 
 public final class Class_517 {
-   private static final int var_3c = -1;
-   private static final int var_5a = 12;
-   private static final int var_cb = 16;
-   protected int[] var_f9 = null;
-   protected int var_148 = 0;
-   protected int var_19e = 0;
-   protected int var_1e8 = 0;
-   protected int var_238 = 0;
-   protected int var_26c = 0;
-   protected int var_2f0 = 0;
-   protected int var_34d = 0;
-   protected int var_398 = 0;
-   protected int[] var_3de = new int[12];
-   protected int[] var_413 = new int[12];
-   protected int[] var_4b2 = new int[12];
-   protected int[] var_4d0 = new int[12];
-   protected int[] var_529 = new int[12];
-   protected int[] var_53a = new int[12];
-   protected int[] var_586 = new int[12];
-   protected int[] var_5cc = new int[12];
+   private static final int COLOR_TRANSPARENT = -1;
+   private static final int MAX_MIP_LEVELS = 12;
+   private static final int FIXED_SHIFT = 16;
+   protected int[] pixels = null;
+   protected int width = 0;
+   protected int height = 0;
+   protected int widthLog2 = 0;
+   protected int heightLog2 = 0;
+   protected int uMaskFixed = 0;
+   protected int vMaskFixed = 0;
+   protected int uShift = 0;
+   protected int vShift = 0;
+   protected int[] mipLevels = new int[MAX_MIP_LEVELS];
+   protected int[] mipOffsets = new int[MAX_MIP_LEVELS];
+   protected int[] mipWidthLog2 = new int[MAX_MIP_LEVELS];
+   protected int[] mipHeightLog2 = new int[MAX_MIP_LEVELS];
+   protected int[] mipUMaskFixed = new int[MAX_MIP_LEVELS];
+   protected int[] mipVMaskFixed = new int[MAX_MIP_LEVELS];
+   protected int[] mipUShift = new int[MAX_MIP_LEVELS];
+   protected int[] mipVShift = new int[MAX_MIP_LEVELS];
 
-   public int sub_38(int var1, int var2) {
-      this.var_1e8 = MatrixUtils.ceilLog2(var1);
-      this.var_238 = MatrixUtils.ceilLog2(var2);
-      this.var_26c = (1 << this.var_1e8) - 1 << 16;
-      this.var_2f0 = (1 << this.var_238) - 1 << 16;
-      this.var_34d = 16;
-      this.var_398 = 16 - this.var_1e8;
+   public int allocate(int width, int height) {
+      this.widthLog2 = MatrixUtils.ceilLog2(width);
+      this.heightLog2 = MatrixUtils.ceilLog2(height);
+      this.uMaskFixed = (1 << this.widthLog2) - 1 << FIXED_SHIFT;
+      this.vMaskFixed = (1 << this.heightLog2) - 1 << FIXED_SHIFT;
+      this.uShift = FIXED_SHIFT;
+      this.vShift = FIXED_SHIFT - this.widthLog2;
 
-      for (int var3 = 0; var3 < 12; var3++) {
-         this.var_3de[var3] = 0;
+      for (int i = 0; i < MAX_MIP_LEVELS; i++) {
+         this.mipLevels[i] = 0;
       }
 
-      this.var_413[0] = 0;
-      this.var_4b2[0] = this.var_1e8;
-      this.var_4d0[0] = this.var_238;
-      this.var_529[0] = this.var_26c;
-      this.var_53a[0] = this.var_2f0;
-      this.var_586[0] = this.var_34d;
-      this.var_5cc[0] = this.var_398;
-      int var4 = 1 << this.var_1e8 + this.var_238;
-      this.var_f9 = new int[var4];
+      this.mipOffsets[0] = 0;
+      this.mipWidthLog2[0] = this.widthLog2;
+      this.mipHeightLog2[0] = this.heightLog2;
+      this.mipUMaskFixed[0] = this.uMaskFixed;
+      this.mipVMaskFixed[0] = this.vMaskFixed;
+      this.mipUShift[0] = this.uShift;
+      this.mipVShift[0] = this.vShift;
+      int totalPixels = 1 << this.widthLog2 + this.heightLog2;
+      this.pixels = new int[totalPixels];
 
-      while (var4-- > 0) {
-         this.var_f9[var4] = -1;
+      while (totalPixels-- > 0) {
+         this.pixels[totalPixels] = COLOR_TRANSPARENT;
       }
 
-      this.var_148 = var1;
-      this.var_19e = var2;
+      this.width = width;
+      this.height = height;
       return 1;
    }
 
-   public final int[] sub_93() {
-      return this.var_f9;
+   public final int[] getPixels() {
+      return this.pixels;
    }
 
-   public final int sub_10a() {
-      return this.var_148;
+   public final int getWidth() {
+      return this.width;
    }
 
-   public final int sub_11a() {
-      return this.var_19e;
+   public final int getHeight() {
+      return this.height;
    }
 
-   public final int sub_143() {
-      return this.var_1e8;
+   public final int getWidthLog2() {
+      return this.widthLog2;
    }
 
-   public final int sub_15d() {
-      return this.var_238;
+   public final int getHeightLog2() {
+      return this.heightLog2;
    }
 
-   public final int sub_185() {
-      return this.var_26c;
+   public final int getUMaskFixed() {
+      return this.uMaskFixed;
    }
 
-   public final int sub_1a8() {
-      return this.var_2f0;
+   public final int getVMaskFixed() {
+      return this.vMaskFixed;
    }
 
-   public final int sub_1eb() {
-      return this.var_34d;
+   public final int getUShift() {
+      return this.uShift;
    }
 
-   public final int sub_21d() {
-      return this.var_398;
+   public final int getVShift() {
+      return this.vShift;
    }
 
-   public final boolean sub_281() {
-      if (this.var_f9 == null) {
+   public final boolean generateMipmaps() {
+      if (this.pixels == null) {
          return false;
       } else {
-         int var1 = 0;
-         int var2 = this.var_1e8;
+         int totalMipPixels = 0;
+         int wLog = this.widthLog2;
 
-         for (int var3 = this.var_238; var2 >= 4 && var3 >= 4; var3--) {
-            var1 += 1 << var2 + var3;
-            var2--;
+         for (int hLog = this.heightLog2; wLog >= 4 && hLog >= 4; hLog--) {
+            totalMipPixels += 1 << wLog + hLog;
+            wLog--;
          }
 
-         int[] var4 = new int[var1];
-         int var5 = 1 << this.var_1e8 + this.var_238;
-         System.arraycopy(this.var_f9, 0, var4, 0, var5);
-         int var6 = 1;
-         var2 = this.var_1e8 - 1;
+         int[] mipBuffer = new int[totalMipPixels];
+         int basePixels = 1 << this.widthLog2 + this.heightLog2;
+         System.arraycopy(this.pixels, 0, mipBuffer, 0, basePixels);
+         int level = 1;
+         wLog = this.widthLog2 - 1;
 
-         for (int var8 = this.var_238 - 1; var2 >= 4 && var8 >= 4; var8--) {
-            this.var_3de[var6] = var6;
-            this.var_413[var6] = var5;
-            this.sub_2a1(var4, this.var_413[var6], this.var_413[var6 - 1], 1 << var2, 1 << var8);
-            this.var_4b2[var6] = var2;
-            this.var_4d0[var6] = var8;
-            this.var_529[var6] = (1 << var2) - 1 << 16;
-            this.var_53a[var6] = (1 << var8) - 1 << 16;
-            this.var_586[var6] = 16;
-            this.var_5cc[var6] = 16 - var2;
-            var6++;
-            var5 += 1 << var2 + var8;
-            var2--;
+         for (int hLog = this.heightLog2 - 1; wLog >= 4 && hLog >= 4; hLog--) {
+            this.mipLevels[level] = level;
+            this.mipOffsets[level] = basePixels;
+            this.downsample2x2(mipBuffer, this.mipOffsets[level], this.mipOffsets[level - 1], 1 << wLog, 1 << hLog);
+            this.mipWidthLog2[level] = wLog;
+            this.mipHeightLog2[level] = hLog;
+            this.mipUMaskFixed[level] = (1 << wLog) - 1 << FIXED_SHIFT;
+            this.mipVMaskFixed[level] = (1 << hLog) - 1 << FIXED_SHIFT;
+            this.mipUShift[level] = FIXED_SHIFT;
+            this.mipVShift[level] = FIXED_SHIFT - wLog;
+            level++;
+            basePixels += 1 << wLog + hLog;
+            wLog--;
          }
 
-         while (var6 < 12) {
-            this.var_3de[var6] = this.var_3de[var6 - 1];
-            this.var_413[var6] = this.var_413[var6 - 1];
-            this.var_4b2[var6] = this.var_4b2[var6 - 1];
-            this.var_4d0[var6] = this.var_4d0[var6 - 1];
-            this.var_529[var6] = this.var_529[var6 - 1];
-            this.var_53a[var6] = this.var_53a[var6 - 1];
-            this.var_586[var6] = this.var_586[var6 - 1];
-            this.var_5cc[var6] = this.var_5cc[var6 - 1];
-            var6++;
+         while (level < MAX_MIP_LEVELS) {
+            this.mipLevels[level] = this.mipLevels[level - 1];
+            this.mipOffsets[level] = this.mipOffsets[level - 1];
+            this.mipWidthLog2[level] = this.mipWidthLog2[level - 1];
+            this.mipHeightLog2[level] = this.mipHeightLog2[level - 1];
+            this.mipUMaskFixed[level] = this.mipUMaskFixed[level - 1];
+            this.mipVMaskFixed[level] = this.mipVMaskFixed[level - 1];
+            this.mipUShift[level] = this.mipUShift[level - 1];
+            this.mipVShift[level] = this.mipVShift[level - 1];
+            level++;
          }
 
-         this.var_f9 = var4;
+         this.pixels = mipBuffer;
          return true;
       }
    }
 
-   private void sub_2a1(int[] var1, int var2, int var3, int var4, int var5) {
-      int var6 = var3;
-      int var7 = var3 + var4 * 2;
+   private void downsample2x2(int[] buffer, int dstOffset, int srcOffset, int dstWidth, int dstHeight) {
+      int row0 = srcOffset;
+      int row1 = srcOffset + dstWidth * 2;
 
-      for (int var8 = 0; var8 < var5; var8++) {
-         for (int var9 = 0; var9 < var4; var9++) {
-            int var10 = 0;
-            int var11 = 0;
-            int var12 = 0;
-            int var13 = 0;
-            int var14 = var1[var6];
-            if (var14 == -1) {
-               var10++;
+      for (int y = 0; y < dstHeight; y++) {
+         for (int x = 0; x < dstWidth; x++) {
+            int transparentCount = 0;
+            int rSum = 0;
+            int gSum = 0;
+            int bSum = 0;
+
+            int c = buffer[row0];
+            if (c == COLOR_TRANSPARENT) {
+               transparentCount++;
             } else {
-               var11 += var14 & 0xFF;
-               var12 += var14 & 0xFF00;
-               var13 += var14 & 0xFF0000;
+               bSum += c & 0xFF;
+               gSum += c & 0xFF00;
+               rSum += c & 0xFF0000;
             }
 
-            var14 = var1[var6 + 1];
-            if (var14 == -1) {
-               var10++;
+            c = buffer[row0 + 1];
+            if (c == COLOR_TRANSPARENT) {
+               transparentCount++;
             } else {
-               var11 += var14 & 0xFF;
-               var12 += var14 & 0xFF00;
-               var13 += var14 & 0xFF0000;
+               bSum += c & 0xFF;
+               gSum += c & 0xFF00;
+               rSum += c & 0xFF0000;
             }
 
-            var14 = var1[var7];
-            if (var14 == -1) {
-               var10++;
+            c = buffer[row1];
+            if (c == COLOR_TRANSPARENT) {
+               transparentCount++;
             } else {
-               var11 += var14 & 0xFF;
-               var12 += var14 & 0xFF00;
-               var13 += var14 & 0xFF0000;
+               bSum += c & 0xFF;
+               gSum += c & 0xFF00;
+               rSum += c & 0xFF0000;
             }
 
-            var14 = var1[var7 + 1];
-            if (var14 == -1) {
-               var10++;
+            c = buffer[row1 + 1];
+            if (c == COLOR_TRANSPARENT) {
+               transparentCount++;
             } else {
-               var11 += var14 & 0xFF;
-               var12 += var14 & 0xFF00;
-               var13 += var14 & 0xFF0000;
+               bSum += c & 0xFF;
+               gSum += c & 0xFF00;
+               rSum += c & 0xFF0000;
             }
 
-            if (var10 >= 2) {
-               var1[var2] = -1;
+            if (transparentCount >= 2) {
+               buffer[dstOffset] = COLOR_TRANSPARENT;
             } else {
-               if (var10 == 0) {
-                  var11 >>= 2;
-                  var12 >>= 2;
-                  var13 >>= 2;
+               if (transparentCount == 0) {
+                  bSum >>= 2;
+                  gSum >>= 2;
+                  rSum >>= 2;
                } else {
-                  var11 /= 3;
-                  var12 /= 3;
-                  var13 /= 3;
+                  bSum /= 3;
+                  gSum /= 3;
+                  rSum /= 3;
                }
 
-               var1[var2] = var11 & 0xFF | var12 & 0xFF00 | var13 & 0xFF0000 | 0xFF000000;
+               buffer[dstOffset] = bSum & 0xFF | gSum & 0xFF00 | rSum & 0xFF0000 | 0xFF000000;
             }
 
-            var2++;
-            var6 += 2;
-            var7 += 2;
+            dstOffset++;
+            row0 += 2;
+            row1 += 2;
          }
 
-         var6 += var4 * 2;
-         var7 += var4 * 2;
+         row0 += dstWidth * 2;
+         row1 += dstWidth * 2;
       }
    }
 
-   public final int sub_2cf(int var1) {
-      if (var1 < 0) {
-         var1 = 0;
-      } else if (var1 >= 12) {
-         var1 = 11;
+   public final int selectMipLevel(int delta) {
+      if (delta < 0) {
+         delta = 0;
+      } else if (delta >= MAX_MIP_LEVELS) {
+         delta = MAX_MIP_LEVELS - 1;
       }
 
-      return this.var_3de[var1];
+      return this.mipLevels[delta];
    }
 
-   public final int sub_327(int var1) {
-      return this.var_413[var1];
+   public final int getMipOffset(int level) {
+      return this.mipOffsets[level];
    }
 
-   public final int sub_36e(int var1) {
-      return this.var_4b2[var1];
+   public final int getMipWidthLog2(int level) {
+      return this.mipWidthLog2[level];
    }
 
-   public final int sub_396(int var1) {
-      return this.var_4d0[var1];
+   public final int getMipHeightLog2(int level) {
+      return this.mipHeightLog2[level];
    }
 
-   public final int sub_3df(int var1) {
-      return this.var_529[var1];
+   public final int getMipUMask(int level) {
+      return this.mipUMaskFixed[level];
    }
 
-   public final int sub_418(int var1) {
-      return this.var_53a[var1];
+   public final int getMipVMask(int level) {
+      return this.mipVMaskFixed[level];
    }
 
-   public final int sub_42b(int var1) {
-      return this.var_586[var1];
+   public final int getMipUShift(int level) {
+      return this.mipUShift[level];
    }
 
-   public final int sub_467(int var1) {
-      return this.var_5cc[var1];
+   public final int getMipVShift(int level) {
+      return this.mipVShift[level];
    }
 }

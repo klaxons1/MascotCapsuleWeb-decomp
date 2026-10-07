@@ -294,10 +294,10 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
       int var3 = var2 * var1;
       int[] var4 = new int[var3];
       if (this.var_2cc) {
-         int[] var5 = this.var_247.sub_93();
-         int var6 = 1 << this.var_247.sub_143();
-         int var7 = this.var_247.sub_10a();
-         int var8 = this.var_247.sub_11a();
+         int[] var5 = this.var_247.getPixels();
+         int var6 = 1 << this.var_247.getWidthLog2();
+         int var7 = this.var_247.getWidth();
+         int var8 = this.var_247.getHeight();
 
          for (int var9 = 0; var9 < var1; var9 += var8) {
             int var10 = var9 + var8 < var1 ? var8 : var1 - var9;
@@ -327,7 +327,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
    }
 
    public boolean sub_1aa() {
-      return this.var_1a7.sub_93() != null && this.var_1c9 != null && this.var_1e4 != null;
+      return this.var_1a7.getPixels() != null && this.var_1c9 != null && this.var_1e4 != null;
    }
 
    public void sub_1fc(boolean var1) {
@@ -367,7 +367,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
             int var11 = var10.length();
             if (var10.regionMatches(true, var11 - 10, "sphere", 0, 6)) {
                var4 = new Class_517();
-               if (!var3.sub_10(new BufferedInputStream(var2), var4)) {
+               if (!var3.readImage(new BufferedInputStream(var2), var4)) {
                   var4 = null;
                }
 
@@ -377,7 +377,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
                }
             } else if (var10.regionMatches(true, var11 - 8, "wall", 0, 4)) {
                var5 = new Class_517();
-               if (!var3.sub_10(new BufferedInputStream(var2), var5)) {
+               if (!var3.readImage(new BufferedInputStream(var2), var5)) {
                   var5 = null;
                }
 
@@ -412,7 +412,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
                || var10.regionMatches(true, var11 - 4, ".png", 0, 4)
                || var10.regionMatches(true, var11 - 4, ".gif", 0, 4)) {
                var6 = new Class_517();
-               if (!var3.sub_10(new BufferedInputStream(var2), var6)) {
+               if (!var3.readImage(new BufferedInputStream(var2), var6)) {
                   var6 = null;
                }
 
@@ -428,7 +428,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
       synchronized (this) {
          if (var4 != null) {
             if (this.var_642) {
-               var4.sub_281();
+               var4.generateMipmaps();
             }
 
             this.sub_22b(var4);
@@ -443,7 +443,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
          this.sub_4b();
          if (var6 != null) {
             if (this.var_642) {
-               var6.sub_281();
+               var6.generateMipmaps();
             }
 
             this.var_1a7 = var6;
@@ -473,7 +473,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
          if (var3 != null) {
             Material var7 = this.sub_43a();
             var4 = new Class_517();
-            if (!var7.sub_10(new BufferedInputStream(var3), var4)) {
+            if (!var7.readImage(new BufferedInputStream(var3), var4)) {
                var4 = null;
             }
 
@@ -512,7 +512,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
          synchronized (this) {
             if (var4 != null) {
                if (this.var_642) {
-                  var4.sub_281();
+                  var4.generateMipmaps();
                }
 
                this.var_1a7 = var4;
@@ -536,9 +536,9 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
 
    public synchronized void sub_399(InputStream var1) {
       Material var2 = this.sub_43a();
-      if (var2.sub_10(var1, this.var_17d)) {
+      if (var2.readImage(var1, this.var_17d)) {
          if (this.var_642) {
-            this.var_17d.sub_281();
+            this.var_17d.generateMipmaps();
          }
 
          this.sub_22b(this.var_17d);
@@ -549,7 +549,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
 
    public synchronized void sub_3da(InputStream var1) {
       Material var2 = this.sub_43a();
-      if (var2.sub_10(var1, this.var_247)) {
+      if (var2.readImage(var1, this.var_247)) {
          this.var_2cc = true;
          this.sub_147();
          this.var_10c++;

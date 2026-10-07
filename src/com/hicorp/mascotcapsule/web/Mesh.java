@@ -36,9 +36,9 @@ public final class Mesh extends Class_d00 {
          int var12 = super.var_15d >> 16;
          int var6 = super.var_1c1 >> 16;
          int var7 = super.var_259;
-         if (var12 < Config.sub_467(this.var_ac)) {
-            int var8 = Config.sub_467(this.var_ac) - var12;
-            var12 = Config.sub_467(this.var_ac);
+         if (var12 < Config.getMipVShift(this.var_ac)) {
+            int var8 = Config.getMipVShift(this.var_ac) - var12;
+            var12 = Config.getMipVShift(this.var_ac);
             var7 += var4 * var8;
          }
 

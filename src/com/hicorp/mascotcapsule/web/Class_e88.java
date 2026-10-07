@@ -12,13 +12,13 @@ public final class Class_e88 extends MeshLoader {
       int[] var1 = Config.sub_34c(this.var_2f);
       int[] var2 = Config.sub_4c1();
       int var3 = (super.var_3bf > 0 ? super.var_3bf : -super.var_3bf) + (super.var_3d8 > 0 ? super.var_3d8 : -super.var_3d8) + 32768;
-      int var4 = Config.sub_509(this.var_2f).sub_2cf(MatrixUtils.ceilLog2(var3) - 17);
-      int[] var5 = Config.sub_509(this.var_2f).sub_93();
-      int var6 = Config.sub_509(this.var_2f).sub_327(var4);
-      int var7 = Config.sub_509(this.var_2f).sub_3df(var4);
-      int var8 = Config.sub_509(this.var_2f).sub_418(var4);
-      int var9 = Config.sub_509(this.var_2f).sub_42b(var4);
-      int var10 = Config.sub_509(this.var_2f).sub_467(var4);
+      int var4 = Config.sub_509(this.var_2f).selectMipLevel(MatrixUtils.ceilLog2(var3) - 17);
+      int[] var5 = Config.sub_509(this.var_2f).getPixels();
+      int var6 = Config.sub_509(this.var_2f).getMipOffset(var4);
+      int var7 = Config.sub_509(this.var_2f).getMipUMask(var4);
+      int var8 = Config.sub_509(this.var_2f).getMipVMask(var4);
+      int var9 = Config.sub_509(this.var_2f).getMipUShift(var4);
+      int var10 = Config.sub_509(this.var_2f).getMipVShift(var4);
       int var11 = super.var_3bf >> var4;
       int var12 = super.var_3d8 >> var4;
       int var13 = super.var_403;
@@ -51,9 +51,9 @@ public final class Class_e88 extends MeshLoader {
          int var18 = super.var_248 >> var4;
          int var19 = super.var_264;
          int var20 = super.var_2c9;
-         if (var31 < Config.sub_467(this.var_2f)) {
-            int var21 = Config.sub_467(this.var_2f) - var31;
-            var31 = Config.sub_467(this.var_2f);
+         if (var31 < Config.getMipVShift(this.var_2f)) {
+            int var21 = Config.getMipVShift(this.var_2f) - var31;
+            var31 = Config.getMipVShift(this.var_2f);
             var17 += var11 * var21;
             var18 += var12 * var21;
             var19 += var13 * var21;

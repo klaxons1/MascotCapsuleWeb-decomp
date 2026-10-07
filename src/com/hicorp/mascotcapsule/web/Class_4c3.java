@@ -32,8 +32,8 @@ public final class Class_4c3 extends Class_eda {
       ) {
          int var7 = super.var_1a2 >> 16;
          int var4 = super.var_1ac >> 16;
-         if (var7 < Config.sub_467(this.var_5d)) {
-            var7 = Config.sub_467(this.var_5d);
+         if (var7 < Config.getMipVShift(this.var_5d)) {
+            var7 = Config.getMipVShift(this.var_5d);
          }
 
          if (var4 > Config.sub_48e(this.var_5d)) {

@@ -11,13 +11,13 @@ public final class Class_b61 extends ModelLoader {
    public void sub_26() {
       int[] var1 = Config.sub_34c(this.var_c7);
       int var2 = (super.var_2d1 > 0 ? super.var_2d1 : -super.var_2d1) + (super.var_319 > 0 ? super.var_319 : -super.var_319) + 32768;
-      int var3 = Config.sub_509(this.var_c7).sub_2cf(MatrixUtils.ceilLog2(var2) - 17);
-      int[] var4 = Config.sub_509(this.var_c7).sub_93();
-      int var5 = Config.sub_509(this.var_c7).sub_327(var3);
-      int var6 = Config.sub_509(this.var_c7).sub_3df(var3);
-      int var7 = Config.sub_509(this.var_c7).sub_418(var3);
-      int var8 = Config.sub_509(this.var_c7).sub_42b(var3);
-      int var9 = Config.sub_509(this.var_c7).sub_467(var3);
+      int var3 = Config.sub_509(this.var_c7).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
+      int[] var4 = Config.sub_509(this.var_c7).getPixels();
+      int var5 = Config.sub_509(this.var_c7).getMipOffset(var3);
+      int var6 = Config.sub_509(this.var_c7).getMipUMask(var3);
+      int var7 = Config.sub_509(this.var_c7).getMipVMask(var3);
+      int var8 = Config.sub_509(this.var_c7).getMipUShift(var3);
+      int var9 = Config.sub_509(this.var_c7).getMipVShift(var3);
       int var10 = super.var_2d1 >> var3;
       int var11 = super.var_319 >> var3;
 

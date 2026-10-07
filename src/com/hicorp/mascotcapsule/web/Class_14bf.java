@@ -39,9 +39,9 @@ public final class Class_14bf extends Class_1279 {
          int var8 = super.var_2c3 >> 16;
          int var9 = super.var_368;
          int var10 = super.var_3c2;
-         if (var17 < Config.sub_467(this.var_5e)) {
-            int var11 = Config.sub_467(this.var_5e) - var17;
-            var17 = Config.sub_467(this.var_5e);
+         if (var17 < Config.getMipVShift(this.var_5e)) {
+            int var11 = Config.getMipVShift(this.var_5e) - var17;
+            var17 = Config.getMipVShift(this.var_5e);
             var9 += var5 * var11;
             var10 += var6 * var11;
          }

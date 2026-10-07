@@ -7,22 +7,10 @@ public class Benchmark {
     static final int WIDTH = 320;
     static final int HEIGHT = 240;
     static final int TOTAL_PIXELS = WIDTH * HEIGHT;
-    static final int WARMUP_RUNS = 8;
-    static final int BENCHMARK_RUNS = 15;
-    static final int NUM_TRIANGLES = 25000;
+    static final int WARMUP_RUNS = 15;
+    static final int BENCHMARK_RUNS = 30;
 
-    // Small triangles (in-screen)
-    static int[][] inCoords;
-    static int[] flatColors;
-    static int[][] texCoords;
-    static int[][] uvs;
-    static int[][] litValues;
-
-    // Boundary / clipping triangles
-    static int[][] clipCoords;
-
-    // Large fill-rate triangles
-    static int[][] largeCoords;
+    static final int[] TEST_POLYCOUNTS = { 100, 1000, 1488, 10000 };
 
     public static byte[] generate8bppBMP(int w, int h) {
         int palSize = 256 * 4;
@@ -73,82 +61,78 @@ public class Benchmark {
         b[off+1] = (byte)((v >> 8) & 0xFF);
     }
 
-    public static void generateData() {
-        Random rnd = new Random(1337);
-        inCoords = new int[NUM_TRIANGLES][6];
-        clipCoords = new int[NUM_TRIANGLES][6];
-        flatColors = new int[NUM_TRIANGLES];
-        texCoords = new int[NUM_TRIANGLES][6];
-        uvs = new int[NUM_TRIANGLES][6];
-        litValues = new int[NUM_TRIANGLES][3];
+    static class BatchData {
+        final int count;
+        final int[][] inCoords;
+        final int[][] clipCoords;
+        final int[] colors;
+        final int[][] texCoords;
+        final int[][] uvs;
+        final int[][] litValues;
 
-        for (int i = 0; i < NUM_TRIANGLES; i++) {
-            // Strictly in-screen triangles
-            int cx = 30 + rnd.nextInt(WIDTH - 60);
-            int cy = 30 + rnd.nextInt(HEIGHT - 60);
-            int sz = 16;
+        BatchData(int count, long seed) {
+            this.count = count;
+            Random rnd = new Random(seed);
+            inCoords = new int[count][6];
+            clipCoords = new int[count][6];
+            colors = new int[count];
+            texCoords = new int[count][6];
+            uvs = new int[count][6];
+            litValues = new int[count][3];
 
-            inCoords[i][0] = cx + rnd.nextInt(sz) - sz/2;
-            inCoords[i][1] = cy + rnd.nextInt(sz) - sz/2;
-            inCoords[i][2] = cx + rnd.nextInt(sz) - sz/2;
-            inCoords[i][3] = cy + rnd.nextInt(sz) - sz/2;
-            inCoords[i][4] = cx + rnd.nextInt(sz) - sz/2;
-            inCoords[i][5] = cy + rnd.nextInt(sz) - sz/2;
+            for (int i = 0; i < count; i++) {
+                // Strictly in-screen triangles
+                int cx = 30 + rnd.nextInt(WIDTH - 60);
+                int cy = 30 + rnd.nextInt(HEIGHT - 60);
+                int sz = 16;
+                inCoords[i][0] = cx + rnd.nextInt(sz) - sz/2;
+                inCoords[i][1] = cy + rnd.nextInt(sz) - sz/2;
+                inCoords[i][2] = cx + rnd.nextInt(sz) - sz/2;
+                inCoords[i][3] = cy + rnd.nextInt(sz) - sz/2;
+                inCoords[i][4] = cx + rnd.nextInt(sz) - sz/2;
+                inCoords[i][5] = cy + rnd.nextInt(sz) - sz/2;
 
-            // Boundary crossing triangles
-            int bcx = rnd.nextInt(WIDTH);
-            int bcy = rnd.nextInt(HEIGHT);
-            int bsz = 40;
-            clipCoords[i][0] = bcx + rnd.nextInt(bsz) - bsz/2;
-            clipCoords[i][1] = bcy + rnd.nextInt(bsz) - bsz/2;
-            clipCoords[i][2] = bcx + rnd.nextInt(bsz) - bsz/2;
-            clipCoords[i][3] = bcy + rnd.nextInt(bsz) - bsz/2;
-            clipCoords[i][4] = bcx + rnd.nextInt(bsz) - bsz/2;
-            clipCoords[i][5] = bcy + rnd.nextInt(bsz) - bsz/2;
+                // Boundary-crossing triangles
+                int bcx = rnd.nextInt(WIDTH);
+                int bcy = rnd.nextInt(HEIGHT);
+                int bsz = 40;
+                clipCoords[i][0] = bcx + rnd.nextInt(bsz) - bsz/2;
+                clipCoords[i][1] = bcy + rnd.nextInt(bsz) - bsz/2;
+                clipCoords[i][2] = bcx + rnd.nextInt(bsz) - bsz/2;
+                clipCoords[i][3] = bcy + rnd.nextInt(bsz) - bsz/2;
+                clipCoords[i][4] = bcx + rnd.nextInt(bsz) - bsz/2;
+                clipCoords[i][5] = bcy + rnd.nextInt(bsz) - bsz/2;
 
-            flatColors[i] = 0xFF000000 | rnd.nextInt(0x00FFFFFF);
+                colors[i] = 0xFF000000 | rnd.nextInt(0x00FFFFFF);
 
-            texCoords[i][0] = inCoords[i][0];
-            texCoords[i][1] = inCoords[i][1];
-            texCoords[i][2] = inCoords[i][2];
-            texCoords[i][3] = inCoords[i][3];
-            texCoords[i][4] = inCoords[i][4];
-            texCoords[i][5] = inCoords[i][5];
+                texCoords[i][0] = inCoords[i][0];
+                texCoords[i][1] = inCoords[i][1];
+                texCoords[i][2] = inCoords[i][2];
+                texCoords[i][3] = inCoords[i][3];
+                texCoords[i][4] = inCoords[i][4];
+                texCoords[i][5] = inCoords[i][5];
 
-            uvs[i][0] = rnd.nextInt(256);
-            uvs[i][1] = rnd.nextInt(256);
-            uvs[i][2] = rnd.nextInt(256);
-            uvs[i][3] = rnd.nextInt(256);
-            uvs[i][4] = rnd.nextInt(256);
-            uvs[i][5] = rnd.nextInt(256);
+                uvs[i][0] = rnd.nextInt(256);
+                uvs[i][1] = rnd.nextInt(256);
+                uvs[i][2] = rnd.nextInt(256);
+                uvs[i][3] = rnd.nextInt(256);
+                uvs[i][4] = rnd.nextInt(256);
+                uvs[i][5] = rnd.nextInt(256);
 
-            litValues[i][0] = rnd.nextInt(256);
-            litValues[i][1] = rnd.nextInt(256);
-            litValues[i][2] = rnd.nextInt(256);
-        }
-
-        // Large triangles
-        largeCoords = new int[5000][6];
-        for (int i = 0; i < 5000; i++) {
-            largeCoords[i][0] = 10 + rnd.nextInt(WIDTH - 20);
-            largeCoords[i][1] = 10 + rnd.nextInt(HEIGHT - 20);
-            largeCoords[i][2] = 10 + rnd.nextInt(WIDTH - 20);
-            largeCoords[i][3] = 10 + rnd.nextInt(HEIGHT - 20);
-            largeCoords[i][4] = 10 + rnd.nextInt(WIDTH - 20);
-            largeCoords[i][5] = 10 + rnd.nextInt(HEIGHT - 20);
+                litValues[i][0] = rnd.nextInt(256);
+                litValues[i][1] = rnd.nextInt(256);
+                litValues[i][2] = rnd.nextInt(256);
+            }
         }
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("================================================================================");
-        System.out.println("     COMPREHENSIVE SOFTWARE RASTERIZER BENCHMARK: WEB vs MASCOTME               ");
-        System.out.println("================================================================================");
-        System.out.println("Target Resolution  : " + WIDTH + "x" + HEIGHT + " (" + TOTAL_PIXELS + " pixels)");
-        System.out.println("Micro-triangles    : " + NUM_TRIANGLES + " per iteration");
-        System.out.println("Warmup iterations  : " + WARMUP_RUNS + " | Benchmark iterations: " + BENCHMARK_RUNS);
+        System.out.println("=======================================================================================");
+        System.out.println("   MascotCapsule 3D Software Rasterizer Benchmark: Multi-Polycount Comparison         ");
+        System.out.println("   Polycounts: 100, 1000, 1488, 10000 | Resolution: 320x240 (QVGA)                     ");
+        System.out.println("=======================================================================================");
+        System.out.println("Warmup iterations: " + WARMUP_RUNS + " | Benchmark iterations: " + BENCHMARK_RUNS);
         System.out.println();
-
-        generateData();
 
         byte[] bmpBytes = generate8bppBMP(256, 256);
 
@@ -165,152 +149,164 @@ public class Benchmark {
         decoder.readImage(new ByteArrayInputStream(bmpBytes), texWeb);
         bridgeWeb.setTexture(texWeb);
 
-        // 1. Flat Shaded Triangles (In-Screen, Fast Unclipped vs Clipped)
-        benchmarkScenario("1A. Flat Shaded Triangles (Unclipped Fast Path)", NUM_TRIANGLES,
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = inCoords[i];
-                    bridgeWeb.drawFlatFast(c[0], c[1], c[2], c[3], c[4], c[5], flatColors[i]);
-                }
-            },
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = inCoords[i];
-                    MascotMERasterizerBridge.drawFlat(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
-                        c[0], c[1], c[2], c[3], c[4], c[5], flatColors[i]);
-                }
-            }
-        );
+        // Pre-generate data for each polycount
+        BatchData[] batches = new BatchData[TEST_POLYCOUNTS.length];
+        for (int i = 0; i < TEST_POLYCOUNTS.length; i++) {
+            batches[i] = new BatchData(TEST_POLYCOUNTS[i], 1337 + TEST_POLYCOUNTS[i]);
+        }
 
-        benchmarkScenario("1B. Flat Shaded Triangles (Clipped Path)", NUM_TRIANGLES,
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = clipCoords[i];
-                    bridgeWeb.drawFlat(c[0], c[1], c[2], c[3], c[4], c[5], flatColors[i]);
-                }
-            },
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = clipCoords[i];
-                    MascotMERasterizerBridge.drawFlat(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
-                        c[0], c[1], c[2], c[3], c[4], c[5], flatColors[i]);
-                }
+        // Global JIT warm up with a large run to compile hot loops
+        System.out.print("Warming up JIT compiler across all shaders... ");
+        BatchData warmBatch = new BatchData(10000, 9999);
+        for (int i = 0; i < 25; i++) {
+            for (int k = 0; k < warmBatch.count; k++) {
+                int[] c = warmBatch.inCoords[k];
+                bridgeWeb.drawFlatFast(c[0], c[1], c[2], c[3], c[4], c[5], warmBatch.colors[k]);
+                MascotMERasterizerBridge.drawFlat(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT, c[0], c[1], c[2], c[3], c[4], c[5], warmBatch.colors[k]);
+                bridgeWeb.drawTexturedFast(c[0], c[1], c[2], c[3], c[4], c[5], 0, 0, 10, 0, 0, 10);
+                MascotMERasterizerBridge.drawTextured(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT, c[0], c[1], c[2], c[3], c[4], c[5], 0, 0, 10, 0, 0, 10, texMascotME);
+                bridgeWeb.drawLitFast(c[0], c[1], c[2], c[3], c[4], c[5], 0, 0, 10, 0, 0, 10, 128, 128, 128);
+                MascotMERasterizerBridge.drawLit(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT, c[0], c[1], c[2], c[3], c[4], c[5], 0, 0, 10, 0, 0, 10, 128, 128, 128, texMascotME);
             }
-        );
+        }
+        System.out.println("Done.\n");
 
-        // 2. Textured Triangles (Fast Unclipped vs Clipped)
-        benchmarkScenario("2A. Textured Triangles 256x256 (Unclipped Fast Path)", NUM_TRIANGLES,
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = texCoords[i];
-                    int[] uv = uvs[i];
-                    bridgeWeb.drawTexturedFast(c[0], c[1], c[2], c[3], c[4], c[5],
-                        uv[0], uv[1], uv[2], uv[3], uv[4], uv[5]);
-                }
-            },
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = texCoords[i];
-                    int[] uv = uvs[i];
-                    MascotMERasterizerBridge.drawTextured(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
-                        c[0], c[1], c[2], c[3], c[4], c[5],
-                        uv[0], uv[1], uv[2], uv[3], uv[4], uv[5],
-                        texMascotME);
-                }
-            }
-        );
+        for (BatchData batch : batches) {
+            int poly = batch.count;
+            System.out.println("#######################################################################################");
+            System.out.printf("  POLYCOUNT: %d TRIANGLES%n", poly);
+            System.out.println("#######################################################################################");
 
-        benchmarkScenario("2B. Textured Triangles 256x256 (Clipped Path)", NUM_TRIANGLES,
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = clipCoords[i];
-                    int[] uv = uvs[i];
-                    bridgeWeb.drawTextured(c[0], c[1], c[2], c[3], c[4], c[5],
-                        uv[0], uv[1], uv[2], uv[3], uv[4], uv[5]);
+            // Scenario 1: Flat Shaded (Unclipped Fast Path)
+            runScenario("1. Flat Shaded (Unclipped)", poly,
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.inCoords[i];
+                        bridgeWeb.drawFlatFast(c[0], c[1], c[2], c[3], c[4], c[5], batch.colors[i]);
+                    }
+                },
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.inCoords[i];
+                        MascotMERasterizerBridge.drawFlat(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
+                            c[0], c[1], c[2], c[3], c[4], c[5], batch.colors[i]);
+                    }
                 }
-            },
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = clipCoords[i];
-                    int[] uv = uvs[i];
-                    MascotMERasterizerBridge.drawTextured(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
-                        c[0], c[1], c[2], c[3], c[4], c[5],
-                        uv[0], uv[1], uv[2], uv[3], uv[4], uv[5],
-                        texMascotME);
-                }
-            }
-        );
+            );
 
-        // 3. Lit Textured Triangles (Fast Unclipped vs Clipped)
-        benchmarkScenario("3A. Lit Textured Triangles (Unclipped Fast Path)", NUM_TRIANGLES,
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = texCoords[i];
-                    int[] uv = uvs[i];
-                    int[] l = litValues[i];
-                    bridgeWeb.drawLitFast(c[0], c[1], c[2], c[3], c[4], c[5],
-                        uv[0], uv[1], uv[2], uv[3], uv[4], uv[5],
-                        l[0], l[1], l[2]);
+            // Scenario 2: Flat Shaded (Clipped Path)
+            runScenario("2. Flat Shaded (Clipped)", poly,
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.clipCoords[i];
+                        bridgeWeb.drawFlat(c[0], c[1], c[2], c[3], c[4], c[5], batch.colors[i]);
+                    }
+                },
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.clipCoords[i];
+                        MascotMERasterizerBridge.drawFlat(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
+                            c[0], c[1], c[2], c[3], c[4], c[5], batch.colors[i]);
+                    }
                 }
-            },
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = texCoords[i];
-                    int[] uv = uvs[i];
-                    int[] l = litValues[i];
-                    MascotMERasterizerBridge.drawLit(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
-                        c[0], c[1], c[2], c[3], c[4], c[5],
-                        uv[0], uv[1], uv[2], uv[3], uv[4], uv[5],
-                        l[0], l[1], l[2],
-                        texMascotME);
-                }
-            }
-        );
+            );
 
-        // 4. Alpha Blended Triangles
-        benchmarkScenario("4. Semi-Transparent / Blended Triangles", NUM_TRIANGLES,
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = inCoords[i];
-                    bridgeWeb.drawBlendFast(c[0], c[1], c[2], c[3], c[4], c[5], flatColors[i]);
+            // Scenario 3: Textured (Unclipped Fast Path)
+            runScenario("3. Textured 256x256 (Unclipped)", poly,
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.texCoords[i];
+                        int[] uv = batch.uvs[i];
+                        bridgeWeb.drawTexturedFast(c[0], c[1], c[2], c[3], c[4], c[5],
+                            uv[0], uv[1], uv[2], uv[3], uv[4], uv[5]);
+                    }
+                },
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.texCoords[i];
+                        int[] uv = batch.uvs[i];
+                        MascotMERasterizerBridge.drawTextured(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
+                            c[0], c[1], c[2], c[3], c[4], c[5],
+                            uv[0], uv[1], uv[2], uv[3], uv[4], uv[5],
+                            texMascotME);
+                    }
                 }
-            },
-            () -> {
-                for (int i = 0; i < NUM_TRIANGLES; i++) {
-                    int[] c = inCoords[i];
-                    MascotMERasterizerBridge.drawBlend(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
-                        c[0], c[1], c[2], c[3], c[4], c[5], flatColors[i]);
-                }
-            }
-        );
+            );
 
-        // 5. Fill-rate Stress Test (Large Triangles)
-        benchmarkScenario("5. High Fill-Rate Stress Test (Large Overdrawn Triangles)", 5000,
-            () -> {
-                for (int i = 0; i < 5000; i++) {
-                    int[] c = largeCoords[i];
-                    bridgeWeb.drawFlat(c[0], c[1], c[2], c[3], c[4], c[5], flatColors[i]);
+            // Scenario 4: Textured (Clipped Path)
+            runScenario("4. Textured 256x256 (Clipped)", poly,
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.clipCoords[i];
+                        int[] uv = batch.uvs[i];
+                        bridgeWeb.drawTextured(c[0], c[1], c[2], c[3], c[4], c[5],
+                            uv[0], uv[1], uv[2], uv[3], uv[4], uv[5]);
+                    }
+                },
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.clipCoords[i];
+                        int[] uv = batch.uvs[i];
+                        MascotMERasterizerBridge.drawTextured(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
+                            c[0], c[1], c[2], c[3], c[4], c[5],
+                            uv[0], uv[1], uv[2], uv[3], uv[4], uv[5],
+                            texMascotME);
+                    }
                 }
-            },
-            () -> {
-                for (int i = 0; i < 5000; i++) {
-                    int[] c = largeCoords[i];
-                    MascotMERasterizerBridge.drawFlat(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
-                        c[0], c[1], c[2], c[3], c[4], c[5], flatColors[i]);
+            );
+
+            // Scenario 5: Lit Textured (Unclipped Fast Path)
+            runScenario("5. Lit Textured (Unclipped)", poly,
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.texCoords[i];
+                        int[] uv = batch.uvs[i];
+                        int[] l = batch.litValues[i];
+                        bridgeWeb.drawLitFast(c[0], c[1], c[2], c[3], c[4], c[5],
+                            uv[0], uv[1], uv[2], uv[3], uv[4], uv[5],
+                            l[0], l[1], l[2]);
+                    }
+                },
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.texCoords[i];
+                        int[] uv = batch.uvs[i];
+                        int[] l = batch.litValues[i];
+                        MascotMERasterizerBridge.drawLit(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
+                            c[0], c[1], c[2], c[3], c[4], c[5],
+                            uv[0], uv[1], uv[2], uv[3], uv[4], uv[5],
+                            l[0], l[1], l[2],
+                            texMascotME);
+                    }
                 }
-            }
-        );
+            );
+
+            // Scenario 6: Semi-Transparent / Blended
+            runScenario("6. Semi-Transparent / Blended", poly,
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.inCoords[i];
+                        bridgeWeb.drawBlendFast(c[0], c[1], c[2], c[3], c[4], c[5], batch.colors[i]);
+                    }
+                },
+                () -> {
+                    for (int i = 0; i < poly; i++) {
+                        int[] c = batch.inCoords[i];
+                        MascotMERasterizerBridge.drawBlend(fbMascotME, WIDTH, 0, 0, WIDTH, HEIGHT,
+                            c[0], c[1], c[2], c[3], c[4], c[5], batch.colors[i]);
+                    }
+                }
+            );
+            System.out.println();
+        }
     }
 
     interface Action {
         void run();
     }
 
-    static void benchmarkScenario(String name, int count, Action webAction, Action meAction) {
-        System.out.println("--------------------------------------------------------------------------------");
-        System.out.println("Scenario: " + name);
-        System.out.println("--------------------------------------------------------------------------------");
-
+    static void runScenario(String name, int polycount, Action webAction, Action meAction) {
+        // Warmup MascotCapsuleWeb
         for (int i = 0; i < WARMUP_RUNS; i++) {
             webAction.run();
         }
@@ -324,10 +320,11 @@ public class Benchmark {
             if (dt < bestWeb) bestWeb = dt;
             totalWeb += dt;
         }
-        double avgWebMs = (totalWeb / (double)BENCHMARK_RUNS) / 1_000_000.0;
-        double bestWebMs = bestWeb / 1_000_000.0;
-        double webTriPerSec = (count / (bestWebMs / 1000.0));
+        double bestWebUs = bestWeb / 1_000.0;
+        double avgWebUs = (totalWeb / (double)BENCHMARK_RUNS) / 1_000.0;
+        double webMTrisSec = (polycount / (bestWeb / 1_000_000_000.0)) / 1_000_000.0;
 
+        // Warmup MascotME
         for (int i = 0; i < WARMUP_RUNS; i++) {
             meAction.run();
         }
@@ -341,20 +338,15 @@ public class Benchmark {
             if (dt < bestME) bestME = dt;
             totalME += dt;
         }
-        double avgMEMs = (totalME / (double)BENCHMARK_RUNS) / 1_000_000.0;
-        double bestMEMs = bestME / 1_000_000.0;
-        double meTriPerSec = (count / (bestMEMs / 1000.0));
+        double bestMEUs = bestME / 1_000.0;
+        double avgMEUs = (totalME / (double)BENCHMARK_RUNS) / 1_000.0;
+        double meMTrisSec = (polycount / (bestME / 1_000_000_000.0)) / 1_000_000.0;
 
-        System.out.printf("  MascotCapsuleWeb : Best: %7.2f ms | Avg: %7.2f ms | Throughput: %,10.0f tris/sec%n",
-            bestWebMs, avgWebMs, webTriPerSec);
-        System.out.printf("  MascotME         : Best: %7.2f ms | Avg: %7.2f ms | Throughput: %,10.0f tris/sec%n",
-            bestMEMs, avgMEMs, meTriPerSec);
+        double ratio = (double)bestME / (double)bestWeb;
+        String winner = ratio >= 1.0 ? String.format("Web is %.2fx faster", ratio)
+                                     : String.format("MascotME is %.2fx faster", 1.0 / ratio);
 
-        double ratio = bestMEMs / bestWebMs;
-        if (ratio >= 1.0) {
-            System.out.printf("  => MascotCapsuleWeb is %.2fx FASTER than MascotME%n%n", ratio);
-        } else {
-            System.out.printf("  => MascotME is %.2fx FASTER than MascotCapsuleWeb%n%n", 1.0 / ratio);
-        }
+        System.out.printf("  %-32s | Web: %7.1f us (%5.2f M/s) | ME: %7.1f us (%5.2f M/s) | %s%n",
+            name, bestWebUs, webMTrisSec, bestMEUs, meMTrisSec, winner);
     }
 }

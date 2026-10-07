@@ -50,11 +50,11 @@ final class FrameBuffer implements ImageProducer {
    }
 
    public synchronized void sub_d6(BoundingBox var1) {
-      if (var1.sub_da()) {
-         int var2 = var1.var_35;
-         int var3 = var1.var_88;
-         int var4 = var1.var_d4 - var2;
-         int var5 = var1.var_f0 - var3;
+      if (var1.isValid()) {
+         int var2 = var1.minX;
+         int var3 = var1.minY;
+         int var4 = var1.maxX - var2;
+         int var5 = var1.maxY - var3;
          Enumeration var6 = this.var_16c.elements();
 
          while (var6.hasMoreElements()) {
@@ -68,8 +68,8 @@ final class FrameBuffer implements ImageProducer {
    }
 
    public synchronized void sub_11b(Graphics var1, BoundingBox var2) {
-      if (var2.sub_da()) {
-         var1.clipRect(var2.var_35, var2.var_88, var2.var_d4 - var2.var_35, var2.var_f0 - var2.var_88);
+      if (var2.isValid()) {
+         var1.clipRect(var2.minX, var2.minY, var2.maxX - var2.minX, var2.maxY - var2.minY);
       }
 
       var1.drawImage(this.var_6a, 0, 0, this.var_39);

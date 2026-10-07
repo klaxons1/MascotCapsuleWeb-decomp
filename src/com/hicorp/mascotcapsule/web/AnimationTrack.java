@@ -12,7 +12,7 @@ final class AnimationTrack {
    }
 
    public int sub_2c(int var1, int var2) {
-      Class_8ed.sub_7d(var2 > 0);
+      Class_8ed.assertTrue(var2 > 0);
       this.var_66 = var2;
       this.var_b5 = new Keyframe[this.var_66];
 
@@ -28,7 +28,7 @@ final class AnimationTrack {
    }
 
    float sub_d5(float var1) {
-      Class_8ed.sub_7d(this.var_66 > 0);
+      Class_8ed.assertTrue(this.var_66 > 0);
       int var4;
       if (var1 < 0.0F) {
          var1 = 0.0F;

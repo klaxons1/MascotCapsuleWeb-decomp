@@ -1,214 +1,213 @@
 package com.hicorp.mascotcapsule.web;
 
 public final class MatrixUtils {
-   private static final double var_44 = Math.PI;
-   private static final Vector3f var_76 = new Vector3f(1.0F, 0.0F, 0.0F);
-   private static final Vector3f var_b7 = new Vector3f(0.0F, 1.0F, 0.0F);
-   private static final int[] var_d5 = new int[]{4, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
+   public static final double PI = Math.PI;
+   public static final Vector3f UNIT_X = new Vector3f(1.0F, 0.0F, 0.0F);
+   public static final Vector3f UNIT_Y = new Vector3f(0.0F, 1.0F, 0.0F);
+   private static final int[] CLZ_NIBBLE_TABLE = new int[]{4, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
 
-   public static void sub_2e(float var0, Transform3D var1) {
-      var1.var_13 = var1.var_138 = var1.var_27d = var0;
-      var1.var_ad = var1.var_c2 = var1.var_e7 = var1.var_191 = var1.var_211 = var1.var_263 = 0.0F;
+   public static void setScale(float scale, Transform3D out) {
+      out.m00 = out.m11 = out.m22 = scale;
+      out.m01 = out.m02 = out.m10 = out.m12 = out.m20 = out.m21 = 0.0F;
    }
 
-   public static void sub_3f(float var0, Transform3D var1) {
-      float var2 = (float)Math.cos(var0);
-      float var3 = (float)Math.sin(var0);
-      var1.var_13 = 1.0F;
-      var1.var_ad = 0.0F;
-      var1.var_c2 = 0.0F;
-      var1.var_e7 = 0.0F;
-      var1.var_138 = var2;
-      var1.var_191 = -var3;
-      var1.var_211 = 0.0F;
-      var1.var_263 = var3;
-      var1.var_27d = var2;
+   public static void setRotationX(float radians, Transform3D out) {
+      float cos = (float)Math.cos(radians);
+      float sin = (float)Math.sin(radians);
+      out.m00 = 1.0F;
+      out.m01 = 0.0F;
+      out.m02 = 0.0F;
+      out.m10 = 0.0F;
+      out.m11 = cos;
+      out.m12 = -sin;
+      out.m20 = 0.0F;
+      out.m21 = sin;
+      out.m22 = cos;
    }
 
-   public static void sub_92(float var0, Transform3D var1) {
-      float var2 = (float)Math.cos(var0);
-      float var3 = (float)Math.sin(var0);
-      var1.var_13 = var2;
-      var1.var_ad = 0.0F;
-      var1.var_c2 = var3;
-      var1.var_e7 = 0.0F;
-      var1.var_138 = 1.0F;
-      var1.var_191 = 0.0F;
-      var1.var_211 = -var3;
-      var1.var_263 = 0.0F;
-      var1.var_27d = var2;
+   public static void setRotationY(float radians, Transform3D out) {
+      float cos = (float)Math.cos(radians);
+      float sin = (float)Math.sin(radians);
+      out.m00 = cos;
+      out.m01 = 0.0F;
+      out.m02 = sin;
+      out.m10 = 0.0F;
+      out.m11 = 1.0F;
+      out.m12 = 0.0F;
+      out.m20 = -sin;
+      out.m21 = 0.0F;
+      out.m22 = cos;
    }
 
-   public static void sub_f2(float var0, Transform3D var1) {
-      float var2 = (float)Math.cos(var0);
-      float var3 = (float)Math.sin(var0);
-      var1.var_13 = var2;
-      var1.var_ad = -var3;
-      var1.var_c2 = 0.0F;
-      var1.var_e7 = var3;
-      var1.var_138 = var2;
-      var1.var_191 = 0.0F;
-      var1.var_211 = 0.0F;
-      var1.var_263 = 0.0F;
-      var1.var_27d = 1.0F;
+   public static void setRotationZ(float radians, Transform3D out) {
+      float cos = (float)Math.cos(radians);
+      float sin = (float)Math.sin(radians);
+      out.m00 = cos;
+      out.m01 = -sin;
+      out.m02 = 0.0F;
+      out.m10 = sin;
+      out.m11 = cos;
+      out.m12 = 0.0F;
+      out.m20 = 0.0F;
+      out.m21 = 0.0F;
+      out.m22 = 1.0F;
    }
 
-   public static void sub_135(Vector3f var0, float var1, Transform3D var2) {
-      float var3 = (float)Math.cos(var1);
-      float var4 = (float)Math.sin(var1);
-      float var5 = var0.x;
-      float var6 = var0.y;
-      float var7 = var0.z;
-      float var8 = var5 * var5;
-      float var9 = var6 * var6;
-      float var10 = var7 * var7;
-      float var11 = var5 * var6;
-      float var12 = var5 * var7;
-      float var13 = var5 * var4;
-      float var14 = var6 * var7;
-      float var15 = var6 * var4;
-      float var16 = var7 * var4;
-      float var17 = 1.0F - var3;
-      var2.var_13 = var8 * var17 + var3;
-      var2.var_ad = var11 * var17 - var16;
-      var2.var_c2 = var12 * var17 + var15;
-      var2.var_e7 = var11 * var17 + var16;
-      var2.var_138 = var9 * var17 + var3;
-      var2.var_191 = var14 * var17 - var13;
-      var2.var_211 = var12 * var17 - var15;
-      var2.var_263 = var14 * var17 + var13;
-      var2.var_27d = var10 * var17 + var3;
+   public static void setRotationAxis(Vector3f axis, float radians, Transform3D out) {
+      float cos = (float)Math.cos(radians);
+      float sin = (float)Math.sin(radians);
+      float ax = axis.x;
+      float ay = axis.y;
+      float az = axis.z;
+      float xx = ax * ax;
+      float yy = ay * ay;
+      float zz = az * az;
+      float xy = ax * ay;
+      float xz = ax * az;
+      float xs = ax * sin;
+      float yz = ay * az;
+      float ys = ay * sin;
+      float zs = az * sin;
+      float oneMinusCos = 1.0F - cos;
+      out.m00 = xx * oneMinusCos + cos;
+      out.m01 = xy * oneMinusCos - zs;
+      out.m02 = xz * oneMinusCos + ys;
+      out.m10 = xy * oneMinusCos + zs;
+      out.m11 = yy * oneMinusCos + cos;
+      out.m12 = yz * oneMinusCos - xs;
+      out.m20 = xz * oneMinusCos - ys;
+      out.m21 = yz * oneMinusCos + xs;
+      out.m22 = zz * oneMinusCos + cos;
    }
 
-   public static final void sub_181(Vector3f var0, Vector3f var1, Transform3D var2) {
-      Vector3f var4 = new Vector3f();
-      float var3 = sub_27d(var0, var1);
-      if (var3 < 0.001F) {
-         var2.sub_139();
+   public static final void setLookAt(Vector3f eye, Vector3f target, Transform3D out) {
+      Vector3f rotAxis = new Vector3f();
+      float angle = angleBetween(eye, target);
+      if (angle < 0.001F) {
+         out.setIdentity();
       } else {
-         if (var3 > 3.1405928F) {
-            if (Math.abs(1.0 - Math.abs(var0.x)) < 0.001) {
-               var4.sub_399(var0, var_b7);
+         if (angle > 3.1405928F) {
+            if (Math.abs(1.0 - Math.abs(eye.x)) < 0.001) {
+               rotAxis.cross(eye, UNIT_Y);
             } else {
-               var4.sub_399(var0, var_76);
+               rotAxis.cross(eye, UNIT_X);
             }
          } else {
-            var4.sub_399(var0, var1);
+            rotAxis.cross(eye, target);
          }
 
-         var4.normalize();
-         sub_135(var4, var3, var2);
+         rotAxis.normalize();
+         setRotationAxis(rotAxis, angle, out);
       }
    }
 
-   public static final Transform3D sub_18c(Vector3f var0, Vector3f var1) {
-      return sub_1aa(var0, var1, 0.0F);
+   public static final Transform3D createLookAt(Vector3f eye, Vector3f target) {
+      return createLookAt(eye, target, 0.0F);
    }
 
-   public static final Transform3D sub_1aa(Vector3f var0, Vector3f var1, float var2) {
-      Class_8ed.sub_7d(var0 != var1);
-      Vector3f var3 = new Vector3f();
-      var3.setDifference(var1, var0);
-      var3.normalize();
-      float var13 = var3.x;
-      float var14 = var3.y;
-      float var15 = var3.z;
-      float var17 = var13 * var13 + var15 * var15;
-      float var4;
-      float var5;
-      float var6;
-      float var7;
-      float var8;
-      float var9;
-      float var10;
-      float var11;
-      float var12;
-      if (var17 > 1.0E-5F) {
-         float var16 = 1.0F / (float)Math.sqrt(var17);
-         var4 = -var16 * var15;
-         var5 = var16 * var13 * var14;
-         var6 = var13;
-         var7 = 0.0F;
-         var8 = -var16 * var17;
-         var9 = var14;
-         var10 = var16 * var13;
-         var11 = var16 * var14 * var15;
-         var12 = var15;
+   public static final Transform3D createLookAt(Vector3f eye, Vector3f target, float roll) {
+      Class_8ed.assertTrue(eye != target);
+      Vector3f forward = new Vector3f();
+      forward.setDifference(target, eye);
+      forward.normalize();
+      float fx = forward.x;
+      float fy = forward.y;
+      float fz = forward.z;
+      float xzLenSq = fx * fx + fz * fz;
+      float r00;
+      float r01;
+      float r02;
+      float r10;
+      float r11;
+      float r12;
+      float r20;
+      float r21;
+      float r22;
+      if (xzLenSq > 1.0E-5F) {
+         float invXzLen = 1.0F / (float)Math.sqrt(xzLenSq);
+         r00 = -invXzLen * fz;
+         r01 = invXzLen * fx * fy;
+         r02 = fx;
+         r10 = 0.0F;
+         r11 = -invXzLen * xzLenSq;
+         r12 = fy;
+         r20 = invXzLen * fx;
+         r21 = invXzLen * fy * fz;
+         r22 = fz;
       } else {
-         var4 = -1.0F;
-         var5 = 0.0F;
-         var6 = var13;
-         var7 = 0.0F;
-         var8 = 0.0F;
-         var9 = var14;
-         var10 = 0.0F;
-         var11 = var14 < 0.0F ? -1.0F : 1.0F;
-         var12 = var15;
+         r00 = -1.0F;
+         r01 = 0.0F;
+         r02 = fx;
+         r10 = 0.0F;
+         r11 = 0.0F;
+         r12 = fy;
+         r20 = 0.0F;
+         r21 = fy < 0.0F ? -1.0F : 1.0F;
+         r22 = fz;
       }
 
-      Transform3D var18 = new Transform3D();
-      var18.sub_d5(var4, var5, var6, var7, var8, var9, var10, var11, var12);
-      if (var2 != 0.0F) {
-         Transform3D var19 = new Transform3D();
-         sub_135(var3, var2, var19);
-         var18.sub_2b3(var19, var18);
+      Transform3D result = new Transform3D();
+      result.setRotation(r00, r01, r02, r10, r11, r12, r20, r21, r22);
+      if (roll != 0.0F) {
+         Transform3D rollMat = new Transform3D();
+         setRotationAxis(forward, roll, rollMat);
+         result.multiply(rollMat, result);
       }
 
-      var18.var_d7 = var0.x;
-      var18.var_1ce = var0.y;
-      var18.var_2ce = var0.z;
-      return var18;
+      result.m03 = eye.x;
+      result.m13 = eye.y;
+      result.m23 = eye.z;
+      return result;
    }
 
-   public static final float sub_1d7(float var0) {
-      return (float)(var0 * Math.PI / 180.0);
+   public static final float toRadians(float degrees) {
+      return (float)(degrees * Math.PI / 180.0);
    }
 
-   private static final float sub_227(float var0) {
-      if (var0 > 1.0F) {
-         var0 = 1.0F;
-      } else if (var0 < -1.0F) {
-         var0 = -1.0F;
+   private static final float clampUnit(float val) {
+      if (val > 1.0F) {
+         return 1.0F;
+      } else if (val < -1.0F) {
+         return -1.0F;
       }
-
-      return var0;
+      return val;
    }
 
-   private static final float sub_27d(Vector3f var0, Vector3f var1) {
-      return (float)Math.acos(sub_227(var0.dot(var1)));
+   private static final float angleBetween(Vector3f a, Vector3f b) {
+      return (float)Math.acos(clampUnit(a.dot(b)));
    }
 
-   public static int sub_2ab(int var0) {
-      if ((var0 & -65536) != 0) {
-         if ((var0 & 0xFF000000) != 0) {
-            return (var0 & -268435456) != 0 ? var_d5[var0 >>> 28] : var_d5[var0 >>> 24] + 4;
+   public static int countLeadingZeros(int val) {
+      if ((val & -65536) != 0) {
+         if ((val & 0xFF000000) != 0) {
+            return (val & -268435456) != 0 ? CLZ_NIBBLE_TABLE[val >>> 28] : CLZ_NIBBLE_TABLE[val >>> 24] + 4;
          } else {
-            return (var0 & 15728640) != 0 ? var_d5[var0 >>> 20] + 8 : var_d5[var0 >>> 16] + 12;
+            return (val & 15728640) != 0 ? CLZ_NIBBLE_TABLE[val >>> 20] + 8 : CLZ_NIBBLE_TABLE[val >>> 16] + 12;
          }
-      } else if ((var0 & 0xFF00) != 0) {
-         return (var0 & 61440) != 0 ? var_d5[var0 >>> 12] + 16 : var_d5[var0 >>> 8] + 20;
+      } else if ((val & 0xFF00) != 0) {
+         return (val & 61440) != 0 ? CLZ_NIBBLE_TABLE[val >>> 12] + 16 : CLZ_NIBBLE_TABLE[val >>> 8] + 20;
       } else {
-         return (var0 & 240) != 0 ? var_d5[var0 >>> 4] + 24 : var_d5[var0] + 28;
+         return (val & 240) != 0 ? CLZ_NIBBLE_TABLE[val >>> 4] + 24 : CLZ_NIBBLE_TABLE[val] + 28;
       }
    }
 
-   public static int sub_30a(int var0) {
-      if (var0 != 0L) {
-         int var1 = 31 - sub_2ab(var0);
-         return var0 == 1 << var1 ? var1 : var1 + 1;
+   public static int ceilLog2(int val) {
+      if (val != 0) {
+         int highestBit = 31 - countLeadingZeros(val);
+         return val == 1 << highestBit ? highestBit : highestBit + 1;
       } else {
          return -1;
       }
    }
 
-   public static int sub_33c(long var0) {
-      return (var0 & -4294967296L) != 0L ? sub_2ab((int)(var0 >>> 32)) : sub_2ab((int)var0) + 32;
+   public static int countLeadingZerosLong(long val) {
+      return (val & -4294967296L) != 0L ? countLeadingZeros((int)(val >>> 32)) : countLeadingZeros((int)val) + 32;
    }
 
-   public static int sub_3a0(long var0) {
-      if (var0 != 0L) {
-         int var2 = 63 - sub_33c(var0);
-         return var0 == 1L << var2 ? var2 : var2 + 1;
+   public static int ceilLog2Long(long val) {
+      if (val != 0L) {
+         int highestBit = 63 - countLeadingZerosLong(val);
+         return val == 1L << highestBit ? highestBit : highestBit + 1;
       } else {
          return -1;
       }

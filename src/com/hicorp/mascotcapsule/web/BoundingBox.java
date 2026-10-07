@@ -1,124 +1,124 @@
 package com.hicorp.mascotcapsule.web;
 
 public final class BoundingBox {
-   public int var_35;
-   public int var_88;
-   public int var_d4;
-   public int var_f0;
+   public int minX;
+   public int minY;
+   public int maxX;
+   public int maxY;
 
    public BoundingBox() {
-      this.sub_72();
+      this.resetEmpty();
    }
 
    public BoundingBox(int var1, int var2, int var3, int var4) {
-      this.var_35 = var1;
-      this.var_88 = var2;
-      this.var_d4 = var3;
-      this.var_f0 = var4;
+      this.minX = var1;
+      this.minY = var2;
+      this.maxX = var3;
+      this.maxY = var4;
    }
 
-   public void sub_47(int var1, int var2, int var3, int var4) {
-      this.var_35 = var1;
-      this.var_88 = var2;
-      this.var_d4 = var3;
-      this.var_f0 = var4;
+   public void setBounds(int var1, int var2, int var3, int var4) {
+      this.minX = var1;
+      this.minY = var2;
+      this.maxX = var3;
+      this.maxY = var4;
    }
 
-   public void sub_5d(BoundingBox var1) {
-      this.var_35 = var1.var_35;
-      this.var_88 = var1.var_88;
-      this.var_d4 = var1.var_d4;
-      this.var_f0 = var1.var_f0;
+   public void setBounds(BoundingBox var1) {
+      this.minX = var1.minX;
+      this.minY = var1.minY;
+      this.maxX = var1.maxX;
+      this.maxY = var1.maxY;
    }
 
-   public void sub_72() {
-      this.var_35 = this.var_88 = Integer.MAX_VALUE;
-      this.var_d4 = this.var_f0 = Integer.MIN_VALUE;
+   public void resetEmpty() {
+      this.minX = this.minY = Integer.MAX_VALUE;
+      this.maxX = this.maxY = Integer.MIN_VALUE;
    }
 
-   public void sub_a9() {
-      this.var_35 = this.var_88 = Integer.MIN_VALUE;
-      this.var_d4 = this.var_f0 = Integer.MAX_VALUE;
+   public void resetInfinite() {
+      this.minX = this.minY = Integer.MIN_VALUE;
+      this.maxX = this.maxY = Integer.MAX_VALUE;
    }
 
-   public boolean sub_da() {
-      return this.var_35 < this.var_d4 && this.var_88 < this.var_f0;
+   public boolean isValid() {
+      return this.minX < this.maxX && this.minY < this.maxY;
    }
 
-   public void sub_133(int var1, int var2, int var3, int var4) {
-      if (this.sub_da()) {
-         if (this.var_35 < var1) {
-            this.var_35 = var1;
+   public void intersect(int var1, int var2, int var3, int var4) {
+      if (this.isValid()) {
+         if (this.minX < var1) {
+            this.minX = var1;
          }
 
-         if (this.var_d4 > var3) {
-            this.var_d4 = var3;
+         if (this.maxX > var3) {
+            this.maxX = var3;
          }
 
-         if (this.var_88 < var2) {
-            this.var_88 = var2;
+         if (this.minY < var2) {
+            this.minY = var2;
          }
 
-         if (this.var_f0 > var4) {
-            this.var_f0 = var4;
-         }
-      }
-   }
-
-   public void sub_145(BoundingBox var1) {
-      if (this.sub_da()) {
-         if (this.var_35 < var1.var_35) {
-            this.var_35 = var1.var_35;
-         }
-
-         if (this.var_d4 > var1.var_d4) {
-            this.var_d4 = var1.var_d4;
-         }
-
-         if (this.var_88 < var1.var_88) {
-            this.var_88 = var1.var_88;
-         }
-
-         if (this.var_f0 > var1.var_f0) {
-            this.var_f0 = var1.var_f0;
+         if (this.maxY > var4) {
+            this.maxY = var4;
          }
       }
    }
 
-   public void sub_159(int var1, int var2) {
-      if (var1 < this.var_35) {
-         this.var_35 = var1;
-      }
+   public void intersect(BoundingBox var1) {
+      if (this.isValid()) {
+         if (this.minX < var1.minX) {
+            this.minX = var1.minX;
+         }
 
-      if (var1 > this.var_d4) {
-         this.var_d4 = var1;
-      }
+         if (this.maxX > var1.maxX) {
+            this.maxX = var1.maxX;
+         }
 
-      if (var2 < this.var_88) {
-         this.var_88 = var2;
-      }
+         if (this.minY < var1.minY) {
+            this.minY = var1.minY;
+         }
 
-      if (var2 > this.var_f0) {
-         this.var_f0 = var2;
+         if (this.maxY > var1.maxY) {
+            this.maxY = var1.maxY;
+         }
       }
    }
 
-   public void sub_1bb(BoundingBox var1) {
+   public void unionPoint(int var1, int var2) {
+      if (var1 < this.minX) {
+         this.minX = var1;
+      }
+
+      if (var1 > this.maxX) {
+         this.maxX = var1;
+      }
+
+      if (var2 < this.minY) {
+         this.minY = var2;
+      }
+
+      if (var2 > this.maxY) {
+         this.maxY = var2;
+      }
+   }
+
+   public void union(BoundingBox var1) {
       if (var1 != null) {
-         if (var1.var_35 < this.var_35) {
-            this.var_35 = var1.var_35;
+         if (var1.minX < this.minX) {
+            this.minX = var1.minX;
          }
 
-         if (var1.var_d4 > this.var_d4) {
-            this.var_d4 = var1.var_d4;
+         if (var1.maxX > this.maxX) {
+            this.maxX = var1.maxX;
          }
 
-         if (var1.var_88 < this.var_88) {
-            this.var_88 = var1.var_88;
+         if (var1.minY < this.minY) {
+            this.minY = var1.minY;
          }
 
-         if (var1.var_f0 > this.var_f0) {
-            this.var_f0 = var1.var_f0;
+         if (var1.maxY > this.maxY) {
+            this.maxY = var1.maxY;
          }
       }
    }

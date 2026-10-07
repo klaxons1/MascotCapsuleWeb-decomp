@@ -127,8 +127,8 @@ public final class Model {
    }
 
    public int sub_122(RenderState var1) {
-      Class_8ed.sub_7d(var1 != null);
-      Class_8ed.sub_7d(var1.sub_2ef());
+      Class_8ed.assertTrue(var1 != null);
+      Class_8ed.assertTrue(var1.sub_2ef());
       if (var1 == null) {
          return 1;
       } else if (!var1.sub_2ef()) {
@@ -173,7 +173,7 @@ public final class Model {
                var14.var_1a0[5].var_b5[0].var_eb = 1.0F;
                var14.var_1a0[8].var_b5[0].var_eb = 1.0F;
                var14.var_24 = true;
-               var14.var_ff.sub_139();
+               var14.var_ff.setIdentity();
             } else {
                Bone var15 = this.var_3c7[var5];
                var14.var_127 = var1.sub_126(var19).sub_d3();
@@ -218,8 +218,8 @@ public final class Model {
                AnimationTrack var26 = var14.var_1a0[9];
 
                for (int var22 = 0; var22 < var26.sub_84(); var22++) {
-                  var26.var_b5[var22].var_eb = MatrixUtils.sub_1d7(var26.var_b5[var22].var_eb);
-                  var26.var_b5[var22].var_10a = MatrixUtils.sub_1d7(var26.var_b5[var22].var_10a);
+                  var26.var_b5[var22].var_eb = MatrixUtils.toRadians(var26.var_b5[var22].var_eb);
+                  var26.var_b5[var22].var_10a = MatrixUtils.toRadians(var26.var_b5[var22].var_10a);
                }
 
                if (!var16) {
@@ -231,15 +231,15 @@ public final class Model {
 
          this.var_395 = 0;
          this.var_3c7 = null;
-         Class_8ed.sub_7d(var13 == this.var_450);
+         Class_8ed.assertTrue(var13 == this.var_450);
          return 0;
       }
    }
 
    public void sub_161(Model var1, float var2, Model var3, float var4, int var5) {
-      Class_8ed.sub_7d(var5 >= 2);
-      Class_8ed.sub_7d(this != var1 && this != var3);
-      Class_8ed.sub_7d(var1.var_3e4 == var3.var_3e4);
+      Class_8ed.assertTrue(var5 >= 2);
+      Class_8ed.assertTrue(this != var1 && this != var3);
+      Class_8ed.assertTrue(var1.var_3e4 == var3.var_3e4);
       float[] var8 = new float[10];
       float[] var9 = new float[10];
       Vector3f var10 = new Vector3f();
@@ -262,12 +262,12 @@ public final class Model {
          BoneAnimation var15 = var3.var_409[var16];
          var14.sub_56(var2, var8);
          var15.sub_56(var4, var9);
-         var10.sub_7a(var8[6], var8[7], var8[8]);
+         var10.set(var8[6], var8[7], var8[8]);
          var10.normalize();
          var8[6] = var10.x;
          var8[7] = var10.y;
          var8[8] = var10.z;
-         var10.sub_7a(var9[6], var9[7], var9[8]);
+         var10.set(var9[6], var9[7], var9[8]);
          var10.normalize();
          var9[6] = var10.x;
          var9[7] = var10.y;
@@ -287,14 +287,14 @@ public final class Model {
          }
       }
 
-      Class_8ed.sub_7d(var12 == this.var_450);
+      Class_8ed.assertTrue(var12 == this.var_450);
    }
 
    public void sub_1bc(int var1, float var2, Transform3D var3) {
-      Class_8ed.sub_7d(var1 < this.var_3e4);
+      Class_8ed.assertTrue(var1 < this.var_3e4);
       BoneAnimation var10 = this.var_409[var1];
       if (var10.var_24) {
-         var3.sub_37(var10.var_ff);
+         var3.set(var10.var_ff);
       } else {
          float[] var12 = new float[10];
          int var8;
@@ -324,8 +324,8 @@ public final class Model {
          }
 
          sub_307(var12, var3);
-         var3.sub_2b3(var10.var_14a, var3);
-         var3.sub_311(var10.var_127);
+         var3.multiply(var10.var_14a, var3);
+         var3.multiply(var10.var_127);
       }
    }
 
@@ -348,7 +348,7 @@ public final class Model {
 
    private static final Transform3D sub_2c1(RenderState var0, Class_13f var1, Bone var2) {
       Transform3D var3 = new Transform3D(var1.sub_d3());
-      var3.sub_393();
+      var3.invert();
       return var3;
    }
 
@@ -363,38 +363,38 @@ public final class Model {
       float var6 = var2 * var2;
       float var7 = var3 * var3;
       if (var6 == 0.0F && var7 == 0.0F) {
-         var1.sub_d5(1.0F, 0.0F, 0.0F, 0.0F, var4, 0.0F, 0.0F, 0.0F, var4);
+         var1.setRotation(1.0F, 0.0F, 0.0F, 0.0F, var4, 0.0F, 0.0F, 0.0F, var4);
       } else {
          float var8 = (1.0F - var4) / (var6 + var7);
          float var9 = -var2 * var3 * var8;
-         var1.sub_d5(var7 * var8 + var4, var9, var2, var9, var6 * var8 + var4, var3, -var2, -var3, var4);
+         var1.setRotation(var7 * var8 + var4, var9, var2, var9, var6 * var8 + var4, var3, -var2, -var3, var4);
       }
 
       if (var0[9] != 0.0F) {
          Transform3D var14 = new Transform3D();
-         MatrixUtils.sub_f2(var0[9], var14);
-         var1.sub_37e(var14);
+         MatrixUtils.setRotationZ(var0[9], var14);
+         var1.multiplyRotation(var14);
       }
 
       float var15 = var0[3];
       float var16 = var0[4];
       float var10 = var0[5];
       if (var15 != 1.0F || var16 != 1.0F || var10 != 1.0F) {
-         var1.sub_d5(
-            var1.var_13 * var15,
-            var1.var_ad * var16,
-            var1.var_c2 * var10,
-            var1.var_e7 * var15,
-            var1.var_138 * var16,
-            var1.var_191 * var10,
-            var1.var_211 * var15,
-            var1.var_263 * var16,
-            var1.var_27d * var10
+         var1.setRotation(
+            var1.m00 * var15,
+            var1.m01 * var16,
+            var1.m02 * var10,
+            var1.m10 * var15,
+            var1.m11 * var16,
+            var1.m12 * var10,
+            var1.m20 * var15,
+            var1.m21 * var16,
+            var1.m22 * var10
          );
       }
 
-      var1.var_d7 = var0[0];
-      var1.var_1ce = var0[1];
-      var1.var_2ce = var0[2];
+      var1.m03 = var0[0];
+      var1.m13 = var0[1];
+      var1.m23 = var0[2];
    }
 }

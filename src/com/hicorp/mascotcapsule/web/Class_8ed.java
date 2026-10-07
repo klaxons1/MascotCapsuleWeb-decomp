@@ -1,19 +1,19 @@
 package com.hicorp.mascotcapsule.web;
 
 final class Class_8ed {
-   private static final boolean var_34 = true;
+   private static final boolean DEBUG = true;
 
-   static void sub_3b() {
+   static void fail() {
       throw new RuntimeException("Assertion failed.");
    }
 
-   static void sub_7d(boolean var0) {
-      if (!var0) {
-         sub_3b();
+   static void assertTrue(boolean condition) {
+      if (!condition) {
+         fail();
       }
    }
 
-   static void sub_9a(String var0) {
-      System.out.println(var0);
+   static void log(String message) {
+      System.out.println(message);
    }
 }

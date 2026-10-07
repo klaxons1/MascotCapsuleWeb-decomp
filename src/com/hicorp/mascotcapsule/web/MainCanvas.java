@@ -41,29 +41,29 @@ public class MainCanvas extends Canvas {
 
    public synchronized void setSize(int var1, int var2) {
       this.var_1c.sub_aa(var1, var2);
-      this.var_1cd.sub_47(0, 0, var1, var2);
+      this.var_1cd.setBounds(0, 0, var1, var2);
       this.var_4a.sub_58(this.var_1cd);
       this.var_4a.sub_38(this.var_1c.sub_89(), this.var_1c.sub_bc());
       this.sub_c9(null);
    }
 
    public synchronized void sub_4b() {
-      this.var_1bb.sub_a9();
+      this.var_1bb.resetInfinite();
    }
 
    public synchronized boolean sub_88() {
       FrameBuffer var1 = this.var_1c;
       synchronized (var1) {
-         if (this.var_1bb.sub_da()) {
-            this.var_1bb.sub_145(this.var_1cd);
+         if (this.var_1bb.isValid()) {
+            this.var_1bb.intersect(this.var_1cd);
             this.sub_c9(this.var_1bb);
          }
 
-         this.var_ee.sub_5d(this.var_1bb);
+         this.var_ee.setBounds(this.var_1bb);
          this.var_94.sub_23d(this.var_1bb);
          this.var_94.sub_21e();
-         this.var_ee.sub_1bb(this.var_1bb);
-         this.var_ee.sub_145(this.var_1cd);
+         this.var_ee.union(this.var_1bb);
+         this.var_ee.intersect(this.var_1cd);
          this.var_94.sub_2f2();
       }
 
@@ -78,11 +78,11 @@ public class MainCanvas extends Canvas {
          return false;
       }
 
-      if (this.var_252 && this.var_ee.var_88 < 15) {
-         this.var_ee.var_88 = 15;
+      if (this.var_252 && this.var_ee.minY < 15) {
+         this.var_ee.minY = 15;
       }
 
-      if (this.var_ee.sub_da()) {
+      if (this.var_ee.isValid()) {
          this.var_1c.sub_d6(this.var_ee);
          this.var_1c.sub_11b(var2, this.var_ee);
       }

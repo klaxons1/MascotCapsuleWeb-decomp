@@ -12,7 +12,7 @@ public final class Class_1091 extends MeshLoader {
       int[] var1 = Config.sub_34c(this.var_36);
       int[] var2 = Config.sub_4c1();
       int var3 = (super.var_3bf > 0 ? super.var_3bf : -super.var_3bf) + (super.var_3d8 > 0 ? super.var_3d8 : -super.var_3d8) + 32768;
-      int var4 = Config.sub_509(this.var_36).sub_2cf(MatrixUtils.sub_30a(var3) - 17);
+      int var4 = Config.sub_509(this.var_36).sub_2cf(MatrixUtils.ceilLog2(var3) - 17);
       int[] var5 = Config.sub_509(this.var_36).sub_93();
       int var6 = Config.sub_509(this.var_36).sub_327(var4);
       int var7 = Config.sub_509(this.var_36).sub_3df(var4);

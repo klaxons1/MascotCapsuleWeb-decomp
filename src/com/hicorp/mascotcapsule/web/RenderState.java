@@ -24,18 +24,18 @@ public final class RenderState {
          var9.var_2a = var4 = var3.sub_13() != 0;
          var9.var_8c = var5 = var3.sub_13() != 0;
          var9.var_a2 = var3.sub_1a5();
-         var9.var_f4.var_13 = var3.sub_de();
-         var9.var_f4.var_ad = var3.sub_de();
-         var9.var_f4.var_c2 = var3.sub_de();
-         var9.var_f4.var_e7 = var3.sub_de();
-         var9.var_f4.var_138 = var3.sub_de();
-         var9.var_f4.var_191 = var3.sub_de();
-         var9.var_f4.var_211 = var3.sub_de();
-         var9.var_f4.var_263 = var3.sub_de();
-         var9.var_f4.var_27d = var3.sub_de();
-         var9.var_f4.var_d7 = var3.sub_de();
-         var9.var_f4.var_1ce = var3.sub_de();
-         var9.var_f4.var_2ce = var3.sub_de();
+         var9.var_f4.m00 = var3.sub_de();
+         var9.var_f4.m01 = var3.sub_de();
+         var9.var_f4.m02 = var3.sub_de();
+         var9.var_f4.m10 = var3.sub_de();
+         var9.var_f4.m11 = var3.sub_de();
+         var9.var_f4.m12 = var3.sub_de();
+         var9.var_f4.m20 = var3.sub_de();
+         var9.var_f4.m21 = var3.sub_de();
+         var9.var_f4.m22 = var3.sub_de();
+         var9.var_f4.m03 = var3.sub_de();
+         var9.var_f4.m13 = var3.sub_de();
+         var9.var_f4.m23 = var3.sub_de();
          var9.var_118 = var3.sub_3f();
          var9.sub_55((Class_5a9)(var1 == 0 ? this.var_11b : this.var_17c[var2]));
          var1++;
@@ -201,12 +201,12 @@ public final class RenderState {
             Class_12f var5 = this.var_2b7[var4];
             var1.setDifference(this.var_22e[var5.var_15b], this.var_22e[var5.var_a0]);
             var2.setDifference(this.var_22e[var5.var_1f4], this.var_22e[var5.var_a0]);
-            var2.sub_3b7(var1);
-            this.var_244[var5.var_a0].sub_1b7(var2);
-            this.var_244[var5.var_15b].sub_1b7(var2);
-            this.var_244[var5.var_1f4].sub_1b7(var2);
+            var2.cross(var1);
+            this.var_244[var5.var_a0].add(var2);
+            this.var_244[var5.var_15b].add(var2);
+            this.var_244[var5.var_1f4].add(var2);
             if (var5.var_55 == 4) {
-               this.var_244[var5.var_2ba].sub_1b7(var2);
+               this.var_244[var5.var_2ba].add(var2);
             }
 
             var5.var_37 |= 32768;
@@ -215,7 +215,7 @@ public final class RenderState {
          }
 
          for (int var7 = this.var_1d4 - 1; var7 >= 0; var7--) {
-            float var6 = this.var_244[var7].lenght();
+            float var6 = this.var_244[var7].length();
             if (var6 != 0.0F) {
                this.var_244[var7].scale(1.0F / var6);
             } else {

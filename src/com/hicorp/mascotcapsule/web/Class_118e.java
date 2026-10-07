@@ -11,7 +11,7 @@ public final class Class_118e extends ModelLoader {
    public void sub_26() {
       int[] var1 = Config.sub_34c(this.var_42);
       int var2 = (super.var_2d1 > 0 ? super.var_2d1 : -super.var_2d1) + (super.var_319 > 0 ? super.var_319 : -super.var_319) + 32768;
-      int var3 = Config.sub_509(this.var_42).sub_2cf(MatrixUtils.sub_30a(var2) - 17);
+      int var3 = Config.sub_509(this.var_42).sub_2cf(MatrixUtils.ceilLog2(var2) - 17);
       int[] var4 = Config.sub_509(this.var_42).sub_93();
       int var5 = Config.sub_509(this.var_42).sub_327(var3);
       int var6 = Config.sub_509(this.var_42).sub_3df(var3);

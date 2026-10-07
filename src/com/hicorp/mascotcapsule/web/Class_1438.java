@@ -74,20 +74,20 @@ final class Class_1438 extends Class_1498 {
          }
       }
 
-      if (var1.var_35 > var2) {
-         var1.var_35 = var2;
+      if (var1.minX > var2) {
+         var1.minX = var2;
       }
 
-      if (var1.var_d4 < var3) {
-         var1.var_d4 = var3;
+      if (var1.maxX < var3) {
+         var1.maxX = var3;
       }
 
-      if (var1.var_88 > var4) {
-         var1.var_88 = var4;
+      if (var1.minY > var4) {
+         var1.minY = var4;
       }
 
-      if (var1.var_f0 < var5) {
-         var1.var_f0 = var5;
+      if (var1.maxY < var5) {
+         var1.maxY = var5;
       }
    }
 }

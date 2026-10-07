@@ -88,7 +88,7 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
       this.sub_1a2(10000, 100.0F, 2000.0F);
       this.var_34f = var1 / 2;
       this.var_3ab = var2 / 2;
-      this.var_15a.sub_d7(MatrixUtils.sub_18c(var_880, var_898));
+      this.var_15a.sub_d7(MatrixUtils.createLookAt(var_880, var_898));
       this.resize(var1, var2);
       this.sub_1a();
       if (!var3) {
@@ -100,10 +100,10 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
 
    public void sub_1a() {
       Transform3D var1 = new Transform3D();
-      MatrixUtils.sub_3f(this.var_3e2, this.var_4a8);
-      MatrixUtils.sub_92(this.var_431, var1);
-      this.var_4a8.sub_37e(var1);
-      this.var_4a8.sub_447();
+      MatrixUtils.setRotationX(this.var_3e2, this.var_4a8);
+      MatrixUtils.setRotationY(this.var_431, var1);
+      this.var_4a8.multiplyRotation(var1);
+      this.var_4a8.normalizeColumns();
       this.var_61a = 0.0F;
       this.var_570 = this.var_34f;
       this.var_5d4 = this.var_3ab;
@@ -124,22 +124,22 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
          this.sub_e6(1.0F);
       }
 
-      MatrixUtils.sub_3f(this.var_6bf, this.var_92a);
-      MatrixUtils.sub_92(this.var_71c, this.var_976);
+      MatrixUtils.setRotationX(this.var_6bf, this.var_92a);
+      MatrixUtils.setRotationY(this.var_71c, this.var_976);
       this.var_6bf = 0.0F;
       this.var_71c = 0.0F;
-      this.var_92a.sub_37e(this.var_976);
-      this.var_4a8.sub_339(this.var_92a, this.var_4a8);
-      this.var_4a8.sub_447();
-      this.var_9b2.var_d7 = this.var_9b2.var_1ce = this.var_9b2.var_2ce = 0.0F;
-      MatrixUtils.sub_2e(this.var_53b, this.var_9b2);
-      MatrixUtils.sub_3f(this.var_698, this.var_92a);
-      this.var_9b2.sub_37e(this.var_92a);
-      MatrixUtils.sub_92(this.var_6a3, this.var_92a);
-      this.var_9b2.sub_37e(this.var_92a);
+      this.var_92a.multiplyRotation(this.var_976);
+      this.var_4a8.multiplyRotation(this.var_92a, this.var_4a8);
+      this.var_4a8.normalizeColumns();
+      this.var_9b2.m03 = this.var_9b2.m13 = this.var_9b2.m23 = 0.0F;
+      MatrixUtils.setScale(this.var_53b, this.var_9b2);
+      MatrixUtils.setRotationX(this.var_698, this.var_92a);
+      this.var_9b2.multiplyRotation(this.var_92a);
+      MatrixUtils.setRotationY(this.var_6a3, this.var_92a);
+      this.var_9b2.multiplyRotation(this.var_92a);
       this.var_6bf = 0.0F;
       this.var_71c = 0.0F;
-      this.var_9b2.sub_37e(this.var_4a8);
+      this.var_9b2.multiplyRotation(this.var_4a8);
       if (this.var_1e4 != null) {
          this.var_1e4.sub_208(this.var_61a);
       }
@@ -168,12 +168,12 @@ public final class Class_aa extends MainCanvas implements KeyListener, MouseList
       if (var2 != null && this.var_27f != null) {
          if (var1 == null) {
             System.arraycopy(this.var_27f, 0, var2, 0, var2.length);
-         } else if (var1.sub_da()) {
+         } else if (var1.isValid()) {
             int var3 = this.getWidth();
-            int var4 = var1.var_d4 - var1.var_35;
-            int var5 = var1.var_88 * var3 + var1.var_35;
+            int var4 = var1.maxX - var1.minX;
+            int var5 = var1.minY * var3 + var1.minX;
 
-            for (int var6 = var1.var_88; var6 < var1.var_f0; var6++) {
+            for (int var6 = var1.minY; var6 < var1.maxY; var6++) {
                System.arraycopy(this.var_27f, var5, var2, var5, var4);
                var5 += var3;
             }

@@ -41,7 +41,7 @@ final class RenderContext {
    private boolean var_8be;
    private float var_918;
    private static final float var_96e = 640.0F;
-   private static final float var_992 = MatrixUtils.sub_1d7(60.0F);
+   private static final float var_992 = MatrixUtils.toRadians(60.0F);
    private float var_9da;
    private float var_a3a;
    private static final Vector3f var_a9e = new Vector3f(0.0F, 0.0F, -1.0F);
@@ -57,12 +57,12 @@ final class RenderContext {
       this.var_53d = null;
       this.var_67b = 0;
       this.var_6c6 = 0;
-      this.var_6fb.sub_72();
+      this.var_6fb.resetEmpty();
       this.var_749 = null;
       this.var_70d = var1;
       this.var_7e2 = false;
       this.var_80e = 0.4F;
-      this.var_82c.sub_7a(1.0F, -1.0F, 0.0F);
+      this.var_82c.set(1.0F, -1.0F, 0.0F);
       this.var_82c.normalize();
       this.var_852 = 1.0F;
       this.var_9da = var_992;
@@ -109,9 +109,9 @@ final class RenderContext {
    }
 
    public void sub_106(int var1, float var2, float var3) {
-      Class_8ed.sub_7d(this.var_4da);
-      Class_8ed.sub_7d(var1 > 0);
-      Class_8ed.sub_7d(var2 > 0.0F && var2 < var3);
+      Class_8ed.assertTrue(this.var_4da);
+      Class_8ed.assertTrue(var1 > 0);
+      Class_8ed.assertTrue(var2 > 0.0F && var2 < var3);
       this.var_53d = new Class_1498[var1];
       this.var_5ef = var2;
       this.var_617 = var3;
@@ -119,8 +119,8 @@ final class RenderContext {
    }
 
    public void sub_154(float var1, float var2) {
-      Class_8ed.sub_7d(var1 > 0.0F && var1 < var2);
-      Class_8ed.sub_7d(this.var_53d.length > 0);
+      Class_8ed.assertTrue(var1 > 0.0F && var1 < var2);
+      Class_8ed.assertTrue(this.var_53d.length > 0);
       this.var_5ef = var1;
       this.var_617 = var2;
       this.var_64e = (this.var_617 - this.var_5ef) / this.var_53d.length;
@@ -136,11 +136,11 @@ final class RenderContext {
    }
 
    public final void sub_21e() {
-      this.var_6fb.sub_72();
+      this.var_6fb.resetEmpty();
    }
 
    public final void sub_23d(BoundingBox var1) {
-      var1.sub_5d(this.var_6fb);
+      var1.setBounds(this.var_6fb);
    }
 
    public void sub_269(Class_517 var1) {
@@ -176,25 +176,25 @@ final class RenderContext {
          for (int var19 = 0; var19 < var16; var19++) {
             Class_13f var20 = var1.sub_126(var19);
             var20.sub_16b(var7);
-            var5.sub_2b3(var4, var7);
+            var5.multiply(var4, var7);
             if (this.var_8be) {
-               var5.sub_212(var1.sub_198(), var14, var15, var17, var20.sub_59(), this.var_918);
+               var5.transformAndProjectPerspective(var1.sub_198(), var14, var15, var17, var20.sub_59(), this.var_918);
             } else {
-               var5.sub_249(var1.sub_198(), var14, var15, var17, var20.sub_59(), this.var_8ad);
+               var5.transformAndProjectOrthographic(var1.sub_198(), var14, var15, var17, var20.sub_59(), this.var_8ad);
             }
 
             if (var3) {
                var1.sub_df().sub_12f(var6);
-               var6.sub_311(var7);
-               var8.sub_3d7(var6);
-               var8.sub_447();
-               var8.sub_289(this.var_82c, var11);
+               var6.multiply(var7);
+               var8.invert(var6);
+               var8.normalizeColumns();
+               var8.rotateVector(this.var_82c, var11);
                var12.setScaled(var11, this.var_852);
-               var9.sub_3d7(var5);
-               var9.sub_447();
-               var9.sub_289(var_a9e, var13);
-               var10.sub_37(var5);
-               var10.sub_447();
+               var9.invert(var5);
+               var9.normalizeColumns();
+               var9.rotateVector(var_a9e, var13);
+               var10.set(var5);
+               var10.normalizeColumns();
                if (this.var_7a3 != null) {
                   this.sub_477(var12, var10, var1.sub_1e6(), var17, var20.sub_59());
                } else {
@@ -217,7 +217,7 @@ final class RenderContext {
          for (int var24 = 0; var24 < var1.sub_24a(); var24++) {
             Class_12f var25 = var1.sub_28f(var24);
             int var26 = var25.var_55;
-            Class_8ed.sub_7d(var26 >= 3 && var26 <= 4);
+            Class_8ed.assertTrue(var26 >= 3 && var26 <= 4);
             int var27 = var25.var_37;
             int var28 = var25.var_a0 * 2;
             int var29 = var25.var_15b * 2;
@@ -638,7 +638,7 @@ final class RenderContext {
    }
 
    public void sub_3cc(Vector3f var1, float var2) {
-      this.var_82c.sub_5e(var1);
+      this.var_82c.set(var1);
       this.var_82c.normalize();
       this.var_82c.negate();
       this.var_852 = var2;
@@ -685,12 +685,12 @@ final class RenderContext {
       float var6 = var1.x;
       float var7 = var1.y;
       float var8 = var1.z;
-      float var9 = var2.var_13 * 0.5F;
-      float var10 = var2.var_ad * 0.5F;
-      float var11 = var2.var_c2 * 0.5F;
-      float var12 = var2.var_e7 * 0.5F;
-      float var13 = var2.var_138 * 0.5F;
-      float var14 = var2.var_191 * 0.5F;
+      float var9 = var2.m00 * 0.5F;
+      float var10 = var2.m01 * 0.5F;
+      float var11 = var2.m02 * 0.5F;
+      float var12 = var2.m10 * 0.5F;
+      float var13 = var2.m11 * 0.5F;
+      float var14 = var2.m12 * 0.5F;
       int var15 = var4;
       int var16 = var4 * 3;
 

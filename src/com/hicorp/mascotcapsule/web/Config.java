@@ -176,10 +176,10 @@ final class Config {
    }
 
    public void sub_58(BoundingBox var1) {
-      this.var_5c5 = var1.var_35;
-      this.var_5e7 = var1.var_88;
-      this.var_643 = var1.var_d4;
-      this.var_674 = var1.var_f0;
+      this.var_5c5 = var1.minX;
+      this.var_5e7 = var1.minY;
+      this.var_643 = var1.maxX;
+      this.var_674 = var1.maxY;
    }
 
    public void sub_8b(int var1) {

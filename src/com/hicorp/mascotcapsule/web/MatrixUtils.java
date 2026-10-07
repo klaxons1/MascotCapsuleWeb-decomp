@@ -106,7 +106,7 @@ public final class MatrixUtils {
    }
 
    public static final Transform3D createLookAt(Vector3f eye, Vector3f target, float roll) {
-      Class_8ed.assertTrue(eye != target);
+      Debug.assertTrue(eye != target);
       Vector3f forward = new Vector3f();
       forward.setDifference(target, eye);
       forward.normalize();

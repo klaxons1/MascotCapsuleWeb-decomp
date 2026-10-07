@@ -7,16 +7,16 @@ import com.hicorp.mascotcapsule.web.Vector3f;
 import com.hicorp.mascotcapsule.web.MatrixUtils;
 
 public final class MascotCapsule extends Applet {
-   private Class_aa canvas = null;
+   private MascotCapsuleCanvas canvas = null;
    private boolean autoLoad = true;
    private static final Vector3f DEFAULT_CAMERA_POS = new Vector3f(0.0F, 0.0F, 1000.0F);
    private static final Vector3f DEFAULT_CAMERA_TARGET = new Vector3f(0.0F, 0.0F, 0.0F);
-   private Class_2a modelLoaderThread = null;
+   private ModelLoaderThread modelLoaderThread = null;
 
    public synchronized void init() {
       Thread.currentThread().setName("MascotCapsule");
       Thread.currentThread().setPriority(5);
-      this.canvas = new Class_aa(this.getIntParam("WIDTH", 640), this.getIntParam("HEIGHT", 480), this.getIntParam("FIXED", 0) != 0);
+      this.canvas = new MascotCapsuleCanvas(this.getIntParam("WIDTH", 640), this.getIntParam("HEIGHT", 480), this.getIntParam("FIXED", 0) != 0);
       this.canvas.setStatusText(" ");
       this.canvas.setShowStats(this.getIntParam("SHOW_STATUS", 0) != 0);
       this.autoLoad = false;
@@ -51,7 +51,7 @@ public final class MascotCapsule extends Applet {
 
       this.add(this.canvas);
       this.canvas.repaint();
-      this.modelLoaderThread = new Class_2a(this, null);
+      this.modelLoaderThread = new ModelLoaderThread(this, null);
       this.modelLoaderThread.start();
    }
 
@@ -184,7 +184,7 @@ public final class MascotCapsule extends Applet {
       }
    }
 
-   Class_aa getCanvas() {
+   MascotCapsuleCanvas getCanvas() {
       return this.canvas;
    }
 

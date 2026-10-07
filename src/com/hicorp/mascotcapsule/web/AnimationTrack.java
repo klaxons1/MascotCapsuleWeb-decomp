@@ -2,19 +2,19 @@ package com.hicorp.mascotcapsule.web;
 
 final class AnimationTrack {
    protected int keyframeCount;
-   public Keyframe[] keyframes;
-   private final Model animation;
+   public InterpolatedKeyframe[] keyframes;
+   private final TraAnimation animation;
 
-   private AnimationTrack(Model animation) {
+   private AnimationTrack(TraAnimation animation) {
       this.animation = animation;
       this.keyframeCount = 0;
       this.keyframes = null;
    }
 
    public int bindKeyframes(int offset, int count) {
-      Class_8ed.assertTrue(count > 0);
+      Debug.assertTrue(count > 0);
       this.keyframeCount = count;
-      this.keyframes = new Keyframe[this.keyframeCount];
+      this.keyframes = new InterpolatedKeyframe[this.keyframeCount];
 
       for (int i = 0; i < this.keyframeCount; i++) {
          this.keyframes[i] = this.animation.allKeyframes[offset + i];
@@ -28,7 +28,7 @@ final class AnimationTrack {
    }
 
    float evaluate(float time) {
-      Class_8ed.assertTrue(this.keyframeCount > 0);
+      Debug.assertTrue(this.keyframeCount > 0);
       int frame;
       if (time < 0.0F) {
          time = 0.0F;
@@ -54,7 +54,7 @@ final class AnimationTrack {
       return val;
    }
 
-   AnimationTrack(Model animation, Interpolator unused) {
+   AnimationTrack(TraAnimation animation, InterpolatorToken unused) {
       this(animation);
    }
 }

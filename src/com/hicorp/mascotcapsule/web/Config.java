@@ -1,22 +1,22 @@
 package com.hicorp.mascotcapsule.web;
 
 final class Config {
-   public static final int var_69 = -1;
-   private static final int var_78 = 8;
-   private static final int var_131 = 0;
-   private static final int var_15c = 16;
-   private static final int var_1b6 = 32768;
-   private static final int var_1e9 = -16777216;
-   private static final int var_23f = 16711935;
-   private static final int var_28e = 65280;
-   private static final int var_2b3 = 16711422;
-   private static final int var_2f3 = 16711422;
-   private static final int var_353 = 16843008;
-   private static final int var_3a0 = 8355711;
-   private static final int var_3cf = -16711936;
-   private static final int var_432 = 16711680;
-   private static final int var_48d = 8388608;
-   private static final int var_4cf = 511;
+   public static final int COLOR_TRANSPARENT = -1;
+   private static final int COLOR_SHIFT_8 = 8;
+   private static final int BLEND_OPAQUE = 0;
+   private static final int FIXED_SHIFT = 16;
+   private static final int FIXED_HALF = 32768;
+   private static final int ALPHA_OPAQUE = -16777216;
+   private static final int RB_MASK = 16711935;
+   private static final int G_MASK = 65280;
+   private static final int COLOR_MASK = 16711422;
+   private static final int COLOR_MASK_ALT = 16711422;
+   private static final int ALPHA_STEP = 16843008;
+   private static final int BLEND_FACTOR = 8355711;
+   private static final int GREEN_ALPHA_MASK = -16711936;
+   private static final int RED_MASK = 16711680;
+   private static final int RED_HIGH_BIT = 8388608;
+   private static final int TABLE_MASK = 511;
    private static final int[] blendTable = new int[512];
    private int[] pixelBuffer;
    private int stride;
@@ -27,139 +27,139 @@ final class Config {
    private int clipTop;
    private int clipBottom;
    private int colorKey;
-   private Class_517 diffuseTexture;
-   private Class_517 sphereMapTexture;
-   public final Class_eda[][] flatDrawers = new Class_eda[2][];
-   public final Class_d00[] lineDrawers = new Class_d00[2];
-   public final Class_1279[] litColorDrawers = new Class_1279[2];
-   public final Class_1279[][][] texturedDrawers = new Class_1279[4][][];
-   public final ModelLoader[][][] unlitDrawers = new ModelLoader[4][][];
-   public final MeshLoader[][][] litDrawers = new MeshLoader[4][][];
-   public final Class_15d5[][][] sphereMapDrawers = new Class_15d5[4][][];
+   private Texture diffuseTexture;
+   private Texture sphereMapTexture;
+   public final FlatDrawer[][] flatDrawers = new FlatDrawer[2][];
+   public final LineDrawer[] lineDrawers = new LineDrawer[2];
+   public final TexturedDrawer[] litColorDrawers = new TexturedDrawer[2];
+   public final TexturedDrawer[][][] texturedDrawers = new TexturedDrawer[4][][];
+   public final UnlitDrawer[][][] unlitDrawers = new UnlitDrawer[4][][];
+   public final LitDrawer[][][] litDrawers = new LitDrawer[4][][];
+   public final SphereMapDrawer[][][] sphereMapDrawers = new SphereMapDrawer[4][][];
 
    public Config() {
-      this.flatDrawers[0] = new Class_eda[2];
-      this.flatDrawers[0][0] = new Class_efa(this);
-      this.flatDrawers[0][1] = new Class_4c3(this);
-      this.flatDrawers[1] = new Class_eda[2];
-      this.flatDrawers[1][0] = new Class_f8f(this);
-      this.flatDrawers[1][1] = new Class_13b6(this);
-      this.lineDrawers[0] = new Class_d0f(this);
-      this.lineDrawers[1] = new Mesh(this);
-      this.litColorDrawers[0] = new Light(this);
-      this.litColorDrawers[1] = new Class_14bf(this);
-      this.texturedDrawers[0] = new Class_1279[2][];
-      this.texturedDrawers[0][0] = new Class_1279[2];
-      this.texturedDrawers[0][0][0] = new Class_9ad(this);
-      this.texturedDrawers[0][0][1] = new Class_38(this);
-      this.texturedDrawers[0][1] = new Class_1279[2];
-      this.texturedDrawers[0][1][0] = new Class_1146(this);
-      this.texturedDrawers[0][1][1] = new Class_111(this);
-      this.texturedDrawers[1] = new Class_1279[2][];
-      this.texturedDrawers[1][0] = new Class_1279[2];
-      this.texturedDrawers[1][0][0] = new Class_c3e(this);
-      this.texturedDrawers[1][0][1] = new ResourceEntry(this);
-      this.texturedDrawers[1][1] = new Class_1279[2];
-      this.texturedDrawers[1][1][0] = new Class_1e8(this);
-      this.texturedDrawers[1][1][1] = new Class_c6f(this);
-      this.texturedDrawers[2] = new Class_1279[2][];
-      this.texturedDrawers[2][0] = new Class_1279[2];
-      this.texturedDrawers[2][0][0] = new Class_25b(this);
-      this.texturedDrawers[2][0][1] = new Class_1541(this);
-      this.texturedDrawers[2][1] = new Class_1279[2];
-      this.texturedDrawers[2][1][0] = new Class_1395(this);
-      this.texturedDrawers[2][1][1] = new Class_97c(this);
-      this.texturedDrawers[3] = new Class_1279[2][];
-      this.texturedDrawers[3][0] = new Class_1279[2];
-      this.texturedDrawers[3][0][0] = new Class_1081(this);
-      this.texturedDrawers[3][0][1] = new Class_13d8(this);
-      this.texturedDrawers[3][1] = new Class_1279[2];
-      this.texturedDrawers[3][1][0] = new Class_bcb(this);
-      this.texturedDrawers[3][1][1] = new Class_1629(this);
-      this.unlitDrawers[0] = new ModelLoader[2][];
-      this.unlitDrawers[0][0] = new ModelLoader[2];
-      this.unlitDrawers[0][0][0] = new Class_1562(this);
-      this.unlitDrawers[0][0][1] = new Class_98(this);
-      this.unlitDrawers[0][1] = new ModelLoader[2];
-      this.unlitDrawers[0][1][0] = new Class_1002(this);
-      this.unlitDrawers[0][1][1] = new Class_cc3(this);
-      this.unlitDrawers[1] = new ModelLoader[2][];
-      this.unlitDrawers[1][0] = new ModelLoader[2];
-      this.unlitDrawers[1][0][0] = new Class_11bf(this);
-      this.unlitDrawers[1][0][1] = new Class_dfd(this);
-      this.unlitDrawers[1][1] = new ModelLoader[2];
-      this.unlitDrawers[1][1][0] = new Class_b61(this);
-      this.unlitDrawers[1][1][1] = new Class_3ba(this);
-      this.unlitDrawers[2] = new ModelLoader[2][];
-      this.unlitDrawers[2][0] = new ModelLoader[2];
-      this.unlitDrawers[2][0][0] = new Class_7c1(this);
-      this.unlitDrawers[2][0][1] = new Class_10ea(this);
-      this.unlitDrawers[2][1] = new ModelLoader[2];
-      this.unlitDrawers[2][1][0] = new Class_1059(this);
-      this.unlitDrawers[2][1][1] = new Class_122c(this);
-      this.unlitDrawers[3] = new ModelLoader[2][];
-      this.unlitDrawers[3][0] = new ModelLoader[2];
-      this.unlitDrawers[3][0][0] = new Class_4f2(this);
-      this.unlitDrawers[3][0][1] = new Class_a39(this);
-      this.unlitDrawers[3][1] = new ModelLoader[2];
-      this.unlitDrawers[3][1][0] = new Face(this);
-      this.unlitDrawers[3][1][1] = new Class_118e(this);
-      this.litDrawers[0] = new MeshLoader[2][];
-      this.litDrawers[0][0] = new MeshLoader[2];
-      this.litDrawers[0][0][0] = new Class_5c8(this);
-      this.litDrawers[0][0][1] = new Class_f30(this);
-      this.litDrawers[0][1] = new MeshLoader[2];
-      this.litDrawers[0][1][0] = new Class_11d7(this);
-      this.litDrawers[0][1][1] = new Class_1359(this);
-      this.litDrawers[1] = new MeshLoader[2][];
-      this.litDrawers[1][0] = new MeshLoader[2];
-      this.litDrawers[1][0][0] = new Class_14fc(this);
-      this.litDrawers[1][0][1] = new TextureLoader(this);
-      this.litDrawers[1][1] = new MeshLoader[2];
-      this.litDrawers[1][1][0] = new Class_1091(this);
-      this.litDrawers[1][1][1] = new Class_10ac(this);
-      this.litDrawers[2] = new MeshLoader[2][];
-      this.litDrawers[2][0] = new MeshLoader[2];
-      this.litDrawers[2][0][0] = new Class_b0e(this);
-      this.litDrawers[2][0][1] = new Class_da6(this);
-      this.litDrawers[2][1] = new MeshLoader[2];
-      this.litDrawers[2][1][0] = new Class_e4f(this);
-      this.litDrawers[2][1][1] = new Class_159f(this);
-      this.litDrawers[3] = new MeshLoader[2][];
-      this.litDrawers[3][0] = new MeshLoader[2];
-      this.litDrawers[3][0][0] = new Class_65f(this);
-      this.litDrawers[3][0][1] = new Class_e88(this);
-      this.litDrawers[3][1] = new MeshLoader[2];
-      this.litDrawers[3][1][0] = new Class_916(this);
-      this.litDrawers[3][1][1] = new Class_abb(this);
-      this.sphereMapDrawers[0] = new Class_15d5[2][];
-      this.sphereMapDrawers[0][0] = new Class_15d5[2];
-      this.sphereMapDrawers[0][0][0] = new Class_12c7(this);
-      this.sphereMapDrawers[0][0][1] = new Class_fa0(this);
-      this.sphereMapDrawers[0][1] = new Class_15d5[2];
-      this.sphereMapDrawers[0][1][0] = new Class_a8d(this);
-      this.sphereMapDrawers[0][1][1] = new ColorRGBA(this);
-      this.sphereMapDrawers[1] = new Class_15d5[2][];
-      this.sphereMapDrawers[1][0] = new Class_15d5[2];
-      this.sphereMapDrawers[1][0][0] = new Class_a10(this);
-      this.sphereMapDrawers[1][0][1] = new Class_11ac(this);
-      this.sphereMapDrawers[1][1] = new Class_15d5[2];
-      this.sphereMapDrawers[1][1][0] = new Class_cce(this);
-      this.sphereMapDrawers[1][1][1] = new Class_740(this);
-      this.sphereMapDrawers[2] = new Class_15d5[2][];
-      this.sphereMapDrawers[2][0] = new Class_15d5[2];
-      this.sphereMapDrawers[2][0][0] = new AnimationSet(this);
-      this.sphereMapDrawers[2][0][1] = new Class_6ba(this);
-      this.sphereMapDrawers[2][1] = new Class_15d5[2];
-      this.sphereMapDrawers[2][1][0] = new Class_a66(this);
-      this.sphereMapDrawers[2][1][1] = new Class_d57(this);
-      this.sphereMapDrawers[3] = new Class_15d5[2][];
-      this.sphereMapDrawers[3][0] = new Class_15d5[2];
-      this.sphereMapDrawers[3][0][0] = new Class_4a7(this);
-      this.sphereMapDrawers[3][0][1] = new Class_81f(this);
-      this.sphereMapDrawers[3][1] = new Class_15d5[2];
-      this.sphereMapDrawers[3][1][0] = new Class_1340(this);
-      this.sphereMapDrawers[3][1][1] = new Class_130f(this);
+      this.flatDrawers[0] = new FlatDrawer[2];
+      this.flatDrawers[0][0] = new FlatDrawer_Opaque_Triangle(this);
+      this.flatDrawers[0][1] = new FlatDrawer_Opaque_Quad(this);
+      this.flatDrawers[1] = new FlatDrawer[2];
+      this.flatDrawers[1][0] = new FlatDrawer_Alpha_Triangle(this);
+      this.flatDrawers[1][1] = new FlatDrawer_Alpha_Quad(this);
+      this.lineDrawers[0] = new LineDrawer_Opaque(this);
+      this.lineDrawers[1] = new LineDrawer_Alpha(this);
+      this.litColorDrawers[0] = new LitColorDrawer_Opaque(this);
+      this.litColorDrawers[1] = new LitColorDrawer_Alpha(this);
+      this.texturedDrawers[0] = new TexturedDrawer[2][];
+      this.texturedDrawers[0][0] = new TexturedDrawer[2];
+      this.texturedDrawers[0][0][0] = new TexturedDrawer_T0_Opaque_Triangle(this);
+      this.texturedDrawers[0][0][1] = new TexturedDrawer_T0_Opaque_Quad(this);
+      this.texturedDrawers[0][1] = new TexturedDrawer[2];
+      this.texturedDrawers[0][1][0] = new TexturedDrawer_T0_Alpha_Triangle(this);
+      this.texturedDrawers[0][1][1] = new TexturedDrawer_T0_Alpha_Quad(this);
+      this.texturedDrawers[1] = new TexturedDrawer[2][];
+      this.texturedDrawers[1][0] = new TexturedDrawer[2];
+      this.texturedDrawers[1][0][0] = new TexturedDrawer_T1_Opaque_Triangle(this);
+      this.texturedDrawers[1][0][1] = new TexturedDrawer_T1_Opaque_Quad(this);
+      this.texturedDrawers[1][1] = new TexturedDrawer[2];
+      this.texturedDrawers[1][1][0] = new TexturedDrawer_T1_Alpha_Triangle(this);
+      this.texturedDrawers[1][1][1] = new TexturedDrawer_T1_Alpha_Quad(this);
+      this.texturedDrawers[2] = new TexturedDrawer[2][];
+      this.texturedDrawers[2][0] = new TexturedDrawer[2];
+      this.texturedDrawers[2][0][0] = new TexturedDrawer_T2_Opaque_Triangle(this);
+      this.texturedDrawers[2][0][1] = new TexturedDrawer_T2_Opaque_Quad(this);
+      this.texturedDrawers[2][1] = new TexturedDrawer[2];
+      this.texturedDrawers[2][1][0] = new TexturedDrawer_T2_Alpha_Triangle(this);
+      this.texturedDrawers[2][1][1] = new TexturedDrawer_T2_Alpha_Quad(this);
+      this.texturedDrawers[3] = new TexturedDrawer[2][];
+      this.texturedDrawers[3][0] = new TexturedDrawer[2];
+      this.texturedDrawers[3][0][0] = new TexturedDrawer_T3_Opaque_Triangle(this);
+      this.texturedDrawers[3][0][1] = new TexturedDrawer_T3_Opaque_Quad(this);
+      this.texturedDrawers[3][1] = new TexturedDrawer[2];
+      this.texturedDrawers[3][1][0] = new TexturedDrawer_T3_Alpha_Triangle(this);
+      this.texturedDrawers[3][1][1] = new TexturedDrawer_T3_Alpha_Quad(this);
+      this.unlitDrawers[0] = new UnlitDrawer[2][];
+      this.unlitDrawers[0][0] = new UnlitDrawer[2];
+      this.unlitDrawers[0][0][0] = new UnlitDrawer_T0_Opaque_Triangle(this);
+      this.unlitDrawers[0][0][1] = new UnlitDrawer_T0_Opaque_Quad(this);
+      this.unlitDrawers[0][1] = new UnlitDrawer[2];
+      this.unlitDrawers[0][1][0] = new UnlitDrawer_T0_Alpha_Triangle(this);
+      this.unlitDrawers[0][1][1] = new UnlitDrawer_T0_Alpha_Quad(this);
+      this.unlitDrawers[1] = new UnlitDrawer[2][];
+      this.unlitDrawers[1][0] = new UnlitDrawer[2];
+      this.unlitDrawers[1][0][0] = new UnlitDrawer_T1_Opaque_Triangle(this);
+      this.unlitDrawers[1][0][1] = new UnlitDrawer_T1_Opaque_Quad(this);
+      this.unlitDrawers[1][1] = new UnlitDrawer[2];
+      this.unlitDrawers[1][1][0] = new UnlitDrawer_T1_Alpha_Triangle(this);
+      this.unlitDrawers[1][1][1] = new UnlitDrawer_T1_Alpha_Quad(this);
+      this.unlitDrawers[2] = new UnlitDrawer[2][];
+      this.unlitDrawers[2][0] = new UnlitDrawer[2];
+      this.unlitDrawers[2][0][0] = new UnlitDrawer_T2_Opaque_Triangle(this);
+      this.unlitDrawers[2][0][1] = new UnlitDrawer_T2_Opaque_Quad(this);
+      this.unlitDrawers[2][1] = new UnlitDrawer[2];
+      this.unlitDrawers[2][1][0] = new UnlitDrawer_T2_Alpha_Triangle(this);
+      this.unlitDrawers[2][1][1] = new UnlitDrawer_T2_Alpha_Quad(this);
+      this.unlitDrawers[3] = new UnlitDrawer[2][];
+      this.unlitDrawers[3][0] = new UnlitDrawer[2];
+      this.unlitDrawers[3][0][0] = new UnlitDrawer_T3_Opaque_Triangle(this);
+      this.unlitDrawers[3][0][1] = new UnlitDrawer_T3_Opaque_Quad(this);
+      this.unlitDrawers[3][1] = new UnlitDrawer[2];
+      this.unlitDrawers[3][1][0] = new UnlitDrawer_T3_Alpha_Triangle(this);
+      this.unlitDrawers[3][1][1] = new UnlitDrawer_T3_Alpha_Quad(this);
+      this.litDrawers[0] = new LitDrawer[2][];
+      this.litDrawers[0][0] = new LitDrawer[2];
+      this.litDrawers[0][0][0] = new LitDrawer_T0_Opaque_Triangle(this);
+      this.litDrawers[0][0][1] = new LitDrawer_T0_Opaque_Quad(this);
+      this.litDrawers[0][1] = new LitDrawer[2];
+      this.litDrawers[0][1][0] = new LitDrawer_T0_Alpha_Triangle(this);
+      this.litDrawers[0][1][1] = new LitDrawer_T0_Alpha_Quad(this);
+      this.litDrawers[1] = new LitDrawer[2][];
+      this.litDrawers[1][0] = new LitDrawer[2];
+      this.litDrawers[1][0][0] = new LitDrawer_T1_Opaque_Triangle(this);
+      this.litDrawers[1][0][1] = new LitDrawer_T1_Opaque_Quad(this);
+      this.litDrawers[1][1] = new LitDrawer[2];
+      this.litDrawers[1][1][0] = new LitDrawer_T1_Alpha_Triangle(this);
+      this.litDrawers[1][1][1] = new LitDrawer_T1_Alpha_Quad(this);
+      this.litDrawers[2] = new LitDrawer[2][];
+      this.litDrawers[2][0] = new LitDrawer[2];
+      this.litDrawers[2][0][0] = new LitDrawer_T2_Opaque_Triangle(this);
+      this.litDrawers[2][0][1] = new LitDrawer_T2_Opaque_Quad(this);
+      this.litDrawers[2][1] = new LitDrawer[2];
+      this.litDrawers[2][1][0] = new LitDrawer_T2_Alpha_Triangle(this);
+      this.litDrawers[2][1][1] = new LitDrawer_T2_Alpha_Quad(this);
+      this.litDrawers[3] = new LitDrawer[2][];
+      this.litDrawers[3][0] = new LitDrawer[2];
+      this.litDrawers[3][0][0] = new LitDrawer_T3_Opaque_Triangle(this);
+      this.litDrawers[3][0][1] = new LitDrawer_T3_Opaque_Quad(this);
+      this.litDrawers[3][1] = new LitDrawer[2];
+      this.litDrawers[3][1][0] = new LitDrawer_T3_Alpha_Triangle(this);
+      this.litDrawers[3][1][1] = new LitDrawer_T3_Alpha_Quad(this);
+      this.sphereMapDrawers[0] = new SphereMapDrawer[2][];
+      this.sphereMapDrawers[0][0] = new SphereMapDrawer[2];
+      this.sphereMapDrawers[0][0][0] = new SphereMapDrawer_T0_Opaque_Triangle(this);
+      this.sphereMapDrawers[0][0][1] = new SphereMapDrawer_T0_Opaque_Quad(this);
+      this.sphereMapDrawers[0][1] = new SphereMapDrawer[2];
+      this.sphereMapDrawers[0][1][0] = new SphereMapDrawer_T0_Alpha_Triangle(this);
+      this.sphereMapDrawers[0][1][1] = new SphereMapDrawer_T0_Alpha_Quad(this);
+      this.sphereMapDrawers[1] = new SphereMapDrawer[2][];
+      this.sphereMapDrawers[1][0] = new SphereMapDrawer[2];
+      this.sphereMapDrawers[1][0][0] = new SphereMapDrawer_T1_Opaque_Triangle(this);
+      this.sphereMapDrawers[1][0][1] = new SphereMapDrawer_T1_Opaque_Quad(this);
+      this.sphereMapDrawers[1][1] = new SphereMapDrawer[2];
+      this.sphereMapDrawers[1][1][0] = new SphereMapDrawer_T1_Alpha_Triangle(this);
+      this.sphereMapDrawers[1][1][1] = new SphereMapDrawer_T1_Alpha_Quad(this);
+      this.sphereMapDrawers[2] = new SphereMapDrawer[2][];
+      this.sphereMapDrawers[2][0] = new SphereMapDrawer[2];
+      this.sphereMapDrawers[2][0][0] = new SphereMapDrawer_T2_Opaque_Triangle(this);
+      this.sphereMapDrawers[2][0][1] = new SphereMapDrawer_T2_Opaque_Quad(this);
+      this.sphereMapDrawers[2][1] = new SphereMapDrawer[2];
+      this.sphereMapDrawers[2][1][0] = new SphereMapDrawer_T2_Alpha_Triangle(this);
+      this.sphereMapDrawers[2][1][1] = new SphereMapDrawer_T2_Alpha_Quad(this);
+      this.sphereMapDrawers[3] = new SphereMapDrawer[2][];
+      this.sphereMapDrawers[3][0] = new SphereMapDrawer[2];
+      this.sphereMapDrawers[3][0][0] = new SphereMapDrawer_T3_Opaque_Triangle(this);
+      this.sphereMapDrawers[3][0][1] = new SphereMapDrawer_T3_Opaque_Quad(this);
+      this.sphereMapDrawers[3][1] = new SphereMapDrawer[2];
+      this.sphereMapDrawers[3][1][0] = new SphereMapDrawer_T3_Alpha_Triangle(this);
+      this.sphereMapDrawers[3][1][1] = new SphereMapDrawer_T3_Alpha_Quad(this);
    }
 
    public void setRenderTarget(int var1, int[] var2) {
@@ -168,7 +168,7 @@ final class Config {
       this.bufferWidth = 0;
    }
 
-   public void sub_4d(int var1, int var2, int var3, int var4) {
+   public void setClipRect(int var1, int var2, int var3, int var4) {
       this.bufferHeight = var1;
       this.clipLeft = var2;
       this.clipRight = var3;
@@ -182,7 +182,7 @@ final class Config {
       this.clipTop = bounds.maxY;
    }
 
-   public void sub_8b(int var1) {
+   public void fillColor(int var1) {
       var1 |= -16777216;
       int var2 = this.clipLeft * this.stride + this.bufferHeight + this.bufferWidth;
 
@@ -197,15 +197,15 @@ final class Config {
       }
    }
 
-   public void setDiffuseTexture(Class_517 var1) {
+   public void setDiffuseTexture(Texture var1) {
       this.diffuseTexture = var1;
    }
 
-   public void setSphereMapTexture(Class_517 var1) {
+   public void setSphereMapTexture(Texture var1) {
       this.sphereMapTexture = var1;
    }
 
-   public void sub_f6(int var1) {
+   public void setColorKey(int var1) {
       this.clipBottom = var1 | 0xFF000000;
    }
 
@@ -213,10 +213,10 @@ final class Config {
       this.colorKey = var1;
    }
 
-   public void sub_16b(Class_eda var1, Class_ae var2, Class_ae var3, Class_ae var4) {
-      Class_ae var5;
-      Class_ae var6;
-      Class_ae var7;
+   public void rasterizeFlatTriangle(FlatDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
+      RasterVertex var5;
+      RasterVertex var6;
+      RasterVertex var7;
       if (var2.y <= var4.y) {
          if (var2.y <= var3.y) {
             var5 = var2;
@@ -251,7 +251,7 @@ final class Config {
          var1.y = var5.y;
          var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
          int var8 = var7.x - var5.x;
-         int var9 = sub_31c(var7.y - var5.y);
+         int var9 = fixedReciprocal(var7.y - var5.y);
          int var12 = var8 * var9;
          int var10 = (var5.x << 16) + 32768;
          var8 = var6.x - var5.x;
@@ -262,11 +262,11 @@ final class Config {
             var17 = var16 > 0 ? 1 : -1;
          }
 
-         int var15 = sub_31c(var17);
+         int var15 = fixedReciprocal(var17);
          var1.xLeftFixed = var10;
          var1.xRightFixed = var10;
          if (var9 > 0) {
-            var9 = sub_31c(var9);
+            var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
             var1.yEnd = var6.y;
             if (var15 > 0) {
@@ -282,7 +282,7 @@ final class Config {
 
          if (var6.y != var7.y) {
             var8 = var7.x - var6.x;
-            var9 = sub_31c(var7.y - var6.y);
+            var9 = fixedReciprocal(var7.y - var6.y);
             int var14 = var8 * var9;
             int var11 = (var6.x << 16) + 32768;
             var1.yEnd = var7.y;
@@ -301,10 +301,10 @@ final class Config {
       }
    }
 
-   public void sub_1ad(Class_d00 var1, Class_ae var2, Class_ae var3, Class_ae var4) {
-      Class_ae var5;
-      Class_ae var6;
-      Class_ae var7;
+   public void rasterizeLitColorTriangle(LineDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
+      RasterVertex var5;
+      RasterVertex var6;
+      RasterVertex var7;
       if (var2.y <= var4.y) {
          if (var2.y <= var3.y) {
             var5 = var2;
@@ -339,7 +339,7 @@ final class Config {
          var1.y = var5.y;
          var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
          int var8 = var7.x - var5.x;
-         int var9 = sub_31c(var7.y - var5.y);
+         int var9 = fixedReciprocal(var7.y - var5.y);
          int var12 = var8 * var9;
          int var10 = (var5.x << 16) + 32768;
          int var15 = var7.z - var5.z;
@@ -354,13 +354,13 @@ final class Config {
             var23 = var22 > 0 ? 1 : -1;
          }
 
-         int var21 = sub_31c(var23);
+         int var21 = fixedReciprocal(var23);
          var1.dzDxFixed = (var15 - (var19 * var9 >> 16)) * var21;
          var1.xLeftFixed = var10;
          var1.xRightFixed = var10;
          var1.zFixed = var17;
          if (var9 > 0) {
-            var9 = sub_31c(var9);
+            var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
             var1.yEnd = var6.y;
             if (var21 > 0) {
@@ -378,7 +378,7 @@ final class Config {
 
          if (var6.y != var7.y) {
             var8 = var7.x - var6.x;
-            var9 = sub_31c(var7.y - var6.y);
+            var9 = fixedReciprocal(var7.y - var6.y);
             int var14 = var8 * var9;
             int var11 = (var6.x << 16) + 32768;
             var1.yEnd = var7.y;
@@ -400,10 +400,10 @@ final class Config {
       }
    }
 
-   public void rasterizeTexturedTriangle(Class_1279 var1, Class_ae var2, Class_ae var3, Class_ae var4) {
-      Class_ae var5;
-      Class_ae var6;
-      Class_ae var7;
+   public void rasterizeTexturedTriangle(TexturedDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
+      RasterVertex var5;
+      RasterVertex var6;
+      RasterVertex var7;
       if (var2.y <= var4.y) {
          if (var2.y <= var3.y) {
             var5 = var2;
@@ -438,7 +438,7 @@ final class Config {
          var1.y = var5.y;
          var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
          int var8 = var7.x - var5.x;
-         int var9 = sub_31c(var7.y - var5.y);
+         int var9 = fixedReciprocal(var7.y - var5.y);
          int var12 = var8 * var9;
          int var10 = (var5.x << 16) + 32768;
          int var15 = var7.z - var5.z;
@@ -457,7 +457,7 @@ final class Config {
             var23 = var22 > 0 ? 1 : -1;
          }
 
-         int var21 = sub_31c(var23);
+         int var21 = fixedReciprocal(var23);
          var1.duDxFixed = (var15 - (var19 * var9 >> 16)) * var21;
          var1.dvDxFixed = (var16 - (var20 * var9 >> 16)) * var21;
          var1.xLeftFixed = var10;
@@ -465,7 +465,7 @@ final class Config {
          var1.uFixed = var17;
          var1.vFixed = var18;
          if (var9 > 0) {
-            var9 = sub_31c(var9);
+            var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
             var1.yEnd = var6.y;
             if (var21 > 0) {
@@ -485,7 +485,7 @@ final class Config {
 
          if (var6.y != var7.y) {
             var8 = var7.x - var6.x;
-            var9 = sub_31c(var7.y - var6.y);
+            var9 = fixedReciprocal(var7.y - var6.y);
             int var14 = var8 * var9;
             int var11 = (var6.x << 16) + 32768;
             var1.yEnd = var7.y;
@@ -510,10 +510,10 @@ final class Config {
       }
    }
 
-   public void rasterizeUnlitTriangle(ModelLoader var1, Class_ae var2, Class_ae var3, Class_ae var4) {
-      Class_ae var5;
-      Class_ae var6;
-      Class_ae var7;
+   public void rasterizeUnlitTriangle(UnlitDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
+      RasterVertex var5;
+      RasterVertex var6;
+      RasterVertex var7;
       if (var2.y <= var4.y) {
          if (var2.y <= var3.y) {
             var5 = var2;
@@ -548,7 +548,7 @@ final class Config {
          var1.y = var5.y;
          var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
          int var8 = var7.x - var5.x;
-         int var9 = sub_31c(var7.y - var5.y);
+         int var9 = fixedReciprocal(var7.y - var5.y);
          int var12 = var8 * var9;
          int var10 = (var5.x << 16) + 32768;
          int var15 = var7.z - var5.z;
@@ -571,7 +571,7 @@ final class Config {
             var26 = var25 > 0 ? 1 : -1;
          }
 
-         int var24 = sub_31c(var26);
+         int var24 = fixedReciprocal(var26);
          var1.lightFixed = (var15 - (var21 * var9 >> 16)) * var24;
          var1.dLightDyFixed = (var16 - (var22 * var9 >> 16)) * var24;
          var1.dLightDxFixed = (var17 - (var23 * var9 >> 16)) * var24;
@@ -581,7 +581,7 @@ final class Config {
          var1.vFixed = var19;
          var1.duDyFixed = var20;
          if (var9 > 0) {
-            var9 = sub_31c(var9);
+            var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
             var1.yEnd = var6.y;
             if (var24 > 0) {
@@ -603,7 +603,7 @@ final class Config {
 
          if (var6.y != var7.y) {
             var8 = var7.x - var6.x;
-            var9 = sub_31c(var7.y - var6.y);
+            var9 = fixedReciprocal(var7.y - var6.y);
             int var14 = var8 * var9;
             int var11 = (var6.x << 16) + 32768;
             var1.yEnd = var7.y;
@@ -631,10 +631,10 @@ final class Config {
       }
    }
 
-   public void rasterizeLitTriangle(MeshLoader var1, Class_ae var2, Class_ae var3, Class_ae var4) {
-      Class_ae var5;
-      Class_ae var6;
-      Class_ae var7;
+   public void rasterizeLitTriangle(LitDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
+      RasterVertex var5;
+      RasterVertex var6;
+      RasterVertex var7;
       if (var2.y <= var4.y) {
          if (var2.y <= var3.y) {
             var5 = var2;
@@ -669,7 +669,7 @@ final class Config {
          var1.y = var5.y;
          var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
          int var8 = var7.x - var5.x;
-         int var9 = sub_31c(var7.y - var5.y);
+         int var9 = fixedReciprocal(var7.y - var5.y);
          int var12 = var8 * var9;
          int var10 = (var5.x << 16) + 32768;
          int var15 = var7.z - var5.z;
@@ -696,7 +696,7 @@ final class Config {
             var29 = var28 > 0 ? 1 : -1;
          }
 
-         int var27 = sub_31c(var29);
+         int var27 = fixedReciprocal(var29);
          var1.dLightDxFixed = (var15 - (var23 * var9 >> 16)) * var27;
          var1.normalZFixed = (var16 - (var24 * var9 >> 16)) * var27;
          var1.dNormalZDyFixed = (var17 - (var25 * var9 >> 16)) * var27;
@@ -708,7 +708,7 @@ final class Config {
          var1.duDyFixed = var21;
          var1.dvDyFixed = var22;
          if (var9 > 0) {
-            var9 = sub_31c(var9);
+            var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
             var1.yEnd = var6.y;
             if (var27 > 0) {
@@ -732,7 +732,7 @@ final class Config {
 
          if (var6.y != var7.y) {
             var8 = var7.x - var6.x;
-            var9 = sub_31c(var7.y - var6.y);
+            var9 = fixedReciprocal(var7.y - var6.y);
             int var14 = var8 * var9;
             int var11 = (var6.x << 16) + 32768;
             var1.yEnd = var7.y;
@@ -763,10 +763,10 @@ final class Config {
       }
    }
 
-   public void rasterizeSphereMapTriangle(Class_15d5 var1, Class_ae var2, Class_ae var3, Class_ae var4) {
-      Class_ae var5;
-      Class_ae var6;
-      Class_ae var7;
+   public void rasterizeSphereMapTriangle(SphereMapDrawer var1, RasterVertex var2, RasterVertex var3, RasterVertex var4) {
+      RasterVertex var5;
+      RasterVertex var6;
+      RasterVertex var7;
       if (var2.y <= var4.y) {
          if (var2.y <= var3.y) {
             var5 = var2;
@@ -801,7 +801,7 @@ final class Config {
          var1.y = var5.y;
          var1.scanlineOffset = var5.y * this.stride + this.bufferWidth;
          int var8 = var7.x - var5.x;
-         int var9 = sub_31c(var7.y - var5.y);
+         int var9 = fixedReciprocal(var7.y - var5.y);
          int var12 = var8 * var9;
          int var10 = (var5.x << 16) + 32768;
          int var15 = var7.z - var5.z;
@@ -832,7 +832,7 @@ final class Config {
             var32 = var31 > 0 ? 1 : -1;
          }
 
-         int var30 = sub_31c(var32);
+         int var30 = fixedReciprocal(var32);
          var1.sphereVFixed = (var15 - (var25 * var9 >> 16)) * var30;
          var1.dSphereUDyFixed = (var16 - (var26 * var9 >> 16)) * var30;
          var1.dSphereVDyFixed = (var17 - (var27 * var9 >> 16)) * var30;
@@ -846,7 +846,7 @@ final class Config {
          var1.dvDyFixed = var23;
          var1.duDxFixed = var24;
          if (var9 > 0) {
-            var9 = sub_31c(var9);
+            var9 = fixedReciprocal(var9);
             int var13 = var8 * var9;
             var1.yEnd = var6.y;
             if (var30 > 0) {
@@ -872,7 +872,7 @@ final class Config {
 
          if (var6.y != var7.y) {
             var8 = var7.x - var6.x;
-            var9 = sub_31c(var7.y - var6.y);
+            var9 = fixedReciprocal(var7.y - var6.y);
             int var14 = var8 * var9;
             int var11 = (var6.x << 16) + 32768;
             var1.yEnd = var7.y;
@@ -906,7 +906,7 @@ final class Config {
       }
    }
 
-   public int computeOutcode(Class_ae var1) {
+   public int computeOutcode(RasterVertex var1) {
       byte var2 = 0;
       if (var1.x < this.bufferHeight) {
          var2 |= 1;
@@ -923,7 +923,7 @@ final class Config {
       return var2;
    }
 
-   private static int sub_31c(int var0) {
+   private static int fixedReciprocal(int var0) {
       return 65536 / var0;
    }
 
@@ -959,7 +959,7 @@ final class Config {
       return blendTable;
    }
 
-   static Class_517 getDiffuseTexture(Config var0) {
+   static Texture getDiffuseTexture(Config var0) {
       return var0.diffuseTexture;
    }
 
@@ -967,7 +967,7 @@ final class Config {
       return var0.colorKey;
    }
 
-   static Class_517 getSphereMapTexture(Config var0) {
+   static Texture getSphereMapTexture(Config var0) {
       return var0.sphereMapTexture;
    }
 

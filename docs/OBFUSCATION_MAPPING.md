@@ -1,106 +1,160 @@
 # MascotCapsule Deobfuscation Mapping & Architecture Guide
 
-This document maps all original/obfuscated identifiers in the MascotCapsule Micro3D Web decompilation to their true semantic reverse-engineered names, types, and architectural roles.
+This document maps all original/obfuscated identifiers in the MascotCapsule Micro3D Web decompilation to their final semantic reverse-engineered names, types, and architectural roles.
 
-## Subsystem Overview
+## Subsystem Architecture Overview
 
-| Component | Files | Primary Role |
+| Subsystem | Primary Classes | Architectural Role |
 | :--- | :--- | :--- |
-| **Applet & Frontend** | `MascotCapsule.java`, `Class_aa.java`, `MainCanvas.java` | Web browser applet lifecycle, JavaScript API bridge, AWT canvas integration, user input controls, double buffering |
-| **Threading & Concurrency** | `Class_134.java`, `Class_2a.java`, `Class_105.java`, `Class_60.java` | Background animation tick loop, asynchronous asset streaming/loading, synthetic constructor token classes |
-| **Scene Graph & Math** | `Vector3f.java`, `Transform3D.java`, `MatrixUtils.java`, `BoundingBox.java`, `Class_5a9.java`, `Class_339.java`, `Class_13f.java` | Fixed-point & floating-point 3D math, 4x3 affine transforms, hierarchical scene nodes, cameras, skeletal bone hierarchies |
-| **Asset Formats & Decoders** | `RenderState.java` (JBAC), `Model.java` (JTRA), `Class_613.java`, `Class_89e.java`, `Class_808.java`, `Material.java`, `Class_517.java` | Binary model loader, 10-channel skeletal animation track evaluator, BMP decoder, AWT image loader, 12-level mipmapped texture container |
-| **Rendering Context & Pipeline** | `RenderContext.java`, `Class_1498.java`, `Class_1438.java`, `Class_ae.java`, `FrameBuffer.java` | Packet table depth bucket sorter, directional vertex lighting, polygon clipper, view projection, dirty rectangle tracking |
-| **Software Rasterizer & Drawers** | `Config.java`, 78 span drawer classes (`Class_1279`, `ModelLoader`, `MeshLoader`, `Class_15d5`, `Class_eda`, `Class_d00`, etc.) | Fixed-point 16.16 DDA scanline triangle rasterizer, color keying, alpha blending table, perspective-correct & affine span drawers |
+| **Applet & Frontend** | `MascotCapsule`, `MascotCapsuleCanvas`, `MainCanvas` | Applet lifecycle, JavaScript LiveConnect API, interactive keyboard/mouse camera controls, AWT double-buffering, and FPS/poly HUD overlay |
+| **Worker Threads** | `AnimationThread`, `ModelLoaderThread`, `AnimationThreadToken`, `ModelLoaderThreadToken` | Dedicated background thread for delta-time animation interpolation and thread for asynchronous streaming/unpacking of 3D assets |
+| **Scene Graph & Math** | `SceneNode`, `CameraNode`, `BoneNode`, `Transform3D`, `Vector3f`, `MatrixUtils`, `BoundingBox` | 4x3 affine transforms, Euler rotations, LookAt camera projection, skeletal joint hierarchies, 2D viewport dirty-rect clipping |
+| **3D Formats & Skeletal Animation** | `BacModel` (`.jbac`), `TraAnimation` (`.jtra`), `ModelPolygon`, `AnimatedBone`, `BoneTrackEvaluator`, `AnimationTrack`, `InterpolatedKeyframe`, `KeyframePoint` | Binary parser for `"HIJB"` figure meshes and `"HIJT"` 10-channel skeletal animation tracks with Hermite/linear interpolation |
+| **Textures & Image Decoders** | `Texture`, `ImageDecoder`, `BmpDecoder`, `AwtImageDecoder`, `BinaryReader` | 12-level mipmapped 32-bit ARGB texture container with 2x2 box filtering, 1-32 bpp BMP decoder, and little-endian binary stream reader |
+| **Software Rasterizer & Pipeline** | `Config` (`SoftwareRasterizer`), `RenderContext`, `FrameBuffer`, `RasterVertex`, `RenderCommand`, `PolygonRenderCommand` | Bucket-sorted packet table depth ordering, directional vertex lighting, Cohen-Sutherland outcode clipping, 512-entry saturation table |
+| **Span Drawers (78 classes)** | `FlatDrawer`, `LineDrawer`, `TexturedDrawer`, `UnlitDrawer`, `LitDrawer`, `SphereMapDrawer`, and 72 specialized drawer implementations | 16.16 fixed-point DDA horizontal scanline triangle and quad rasterizers covering all combinations of modulation, blending, and lighting |
 
 ---
 
-## Detailed Class Mappings
+## Complete Class Renaming Catalog (115 Classes)
 
-### 1. Applet & Frontend (`src/`)
+### Core Engine Classes (27 Classes)
 
-| Obfuscated Name | Semantic Name | Description |
-| :--- | :--- | :--- |
-| `MascotCapsule` | `MascotCapsuleApplet` | Main Java Applet providing HTML parameters (`WIDTH`, `HEIGHT`, `BACFILE`, `TRAFILE`, `TEXTURE`, `SPHERE`, `BACKGROUND`, `ZIPFILE`) and JavaScript LiveConnect methods (`bacScale`, `bacMove`, `bacRotate`, `traSpeed`, `showDrawStatus`, `enableLighting`, `setSphere`, `setModel`, `setBG`). |
-| `Class_aa` | `MascotCapsuleCanvas` | Interactive 3D canvas extending `MainCanvas`. Handles keyboard controls (Esc to reset, arrows to translate, 2/4/6/8 to rotate, X/Z to zoom) and mouse controls (left-drag to rotate, middle/right-drag to pan, alt-drag to zoom), zip file archive extraction, animated loading bar, and logo rendering. |
-| `MainCanvas` | `EngineCanvas` | Base AWT Canvas adapter managing dirty rectangle accumulation, `FrameBuffer`, `Config` rasterizer, `RenderContext`, and the real-time FPS / polygon / vertex count overlay banner. |
+| Original Decompiled Name | Intermediate / Hallucinated Name | Final Semantic Class Name | Role & Description |
+| :--- | :--- | :--- | :--- |
+| `a.class` | `Class_aa` | `MascotCapsuleCanvas` | Interactive 3D applet canvas handling mouse drag, keyboard navigation, asset loading, and double buffering |
+| `a$a.class` | `Class_134` | `AnimationThread` | Dedicated worker thread calculating delta time, advancing animation frames and model rotation |
+| `a$1.class` | `Class_105` | `AnimationThreadToken` | Synthetic package-private token class generated by javac for `AnimationThread` constructor |
+| `MascotCapsule$a.class` | `Class_2a` | `ModelLoaderThread` | Asynchronous worker thread downloading and parsing `.bac`, `.tra`, textures, and `.zip` archives |
+| `MascotCapsule$1.class` | `Class_60` | `ModelLoaderThreadToken` | Synthetic package-private token class generated by javac for `ModelLoaderThread` constructor |
+| `a/a/a/a/a.class` | `RenderState` | `BacModel` | MascotCapsule JBAC (`"HIJB"`) binary 3D model container and parser (vertices, normals, polygons, bones) |
+| `a/a/a/a/b.class` | `Model` | `TraAnimation` | MascotCapsule JTRA (`"HIJT"`) binary skeletal animation evaluator (timelines, durations, bone tracks) |
+| `a/a/a/a/c.class` | `Material` | `ImageDecoder` | Texture reader interface (`readImage(InputStream, Texture)`) |
+| `a/a/a/a/d.class` | `Class_517` | `Texture` | Mipmapped 32-bit ARGB texture bitmap container with 12 mipmap levels and 2x2 box filtering |
+| `a/a/a/a/e.class` | `Class_5a9` | `SceneNode` | Hierarchical transform scene node with cached world and relative-to-root matrices |
+| `a/a/a/a/f.class` | `RenderContext` | `RenderContext` | Rendering pipeline manager: depth packet table bucket sorting, lighting, projection, clipping |
+| `a/a/a/a/f$a.class` | `Class_1498` | `RenderCommand` | Base linked-list rendering command node |
+| `a/a/a/a/f$b.class` | `Class_1438` | `PolygonRenderCommand` | Queued polygon render packet with screen vertices, depth, textures, and clipping flags |
+| `a/a/a/a/f$c.class` | `Class_ae` | `RasterVertex` | Vertex structure for rasterizer: screen (x, y), texture (u, v), light, normalZ, sphereV |
+| `a/a/a/a/f$1.class` | `Class_f72` | `RenderCommandToken` | Synthetic package-private token class generated by javac for `RenderCommand` constructor |
+| `a/a/a/a/g.class` | `Class_339` | `CameraNode` | Camera scene node calculating inverted view transform and model-view matrix |
+| `a/a/a/a/h.class` | `Class_13f` | `BoneNode` | Skeletal joint bone node extending `SceneNode` with rest pose transform and bone index |
+| `a/a/a/a/i.class` | `Class_12f` | `ModelPolygon` | Model polygon face structure: flags, vertex count (3 or 4), vertex indices (`vert0`..`vert3`), UV coords |
+| `a/a/a/a/j.class` | `Class_613` | `BinaryReader` | Little-endian binary stream reader for integers, floats, shorts, bytes, and C-strings |
+| `a/a/a/a/k.class` | `Class_89e` | `BmpDecoder` | Decodes 1-bit, 4-bit, 8-bit paletted, 16-bit RGB 555/565, 24-bit RGB, and 32-bit RGBA BMP images |
+| `a/a/a/a/l.class` | `Class_808` | `AwtImageDecoder` | Fallback image decoder using AWT Toolkit and PixelGrabber for GIF/PNG/JPEG formats |
+| `a/a/a/a/m.class` | `Bone` | `AnimatedBone` | Runtime bone container holding 10 animation channels (`KeyframeTrack`s) |
+| `a/a/a/a/m$a.class` | `Class_c25` | `KeyframeTrack` | Array of keyframe data points for a single animation channel |
+| `a/a/a/a/m$b.class` | `VertexWeight` | `KeyframePoint` | Raw keyframe data point with integer timestamp and channel float value |
+| `a/a/a/a/n.class` | `BoneAnimation` | `BoneTrackEvaluator` | Evaluates 10 animation channels for a bone into rotation, scale, and translation matrices |
+| `a/a/a/a/p.class` | `Keyframe` | `InterpolatedKeyframe` | Interpolated keyframe structure with time, duration, value, and delta value |
+| `a/a/a/a/q.class` | `Interpolator` | `InterpolatorToken` | Synthetic package-private token class for keyframe constructors |
+| `a/a/a/a/r.class` | `Class_8ed` | `Debug` | Assertion and validation helper (`assertTrue`, `fail`, `log`) |
 
-### 2. Threading Subsystem (`src/`)
+### Span Drawer Base Classes (6 Classes)
 
-| Obfuscated Name | Semantic Name | Description |
-| :--- | :--- | :--- |
-| `Class_134` | `AnimationThread` | Dedicated worker thread running at priority 1 (`"MascotCapsule - Animation"`). Computes frame-to-frame delta time, calls `canvas.advanceAnimationFrame()` and `canvas.advanceRotation()`, triggers frame rendering, and throttles sleep time to target FPS. |
-| `Class_2a` | `ModelLoaderThread` | Dedicated worker thread running at priority 5 (`"MascotCapsule - ModelLoader"`). Asynchronously streams and parses JBAC models, JTRA animation tables, BMP textures, sphere reflection maps, and background wallpaper files from HTTP URLs. |
-| `Class_105` | `AnimationThreadToken` | Synthetic package-private token class generated by javac for `AnimationThread` private constructor. |
-| `Class_60` | `ModelLoaderThreadToken` | Synthetic package-private token class generated by javac for `ModelLoaderThread` private constructor. |
-| `Class_f72` | `RenderCommandToken` | Synthetic package-private token class generated by javac for `RenderCommand` private constructor. |
+| Original Decompiled Name | Intermediate / Hallucinated Name | Final Semantic Class Name | Base Role |
+| :--- | :--- | :--- | :--- |
+| `a/a/a/a/o$c.class` | `Class_eda` | `FlatDrawer` | Flat-shaded polygon scanline rasterizer base |
+| `a/a/a/a/o$d.class` | `Class_d00` | `LineDrawer` | 3D wireframe line scanline rasterizer base |
+| `a/a/a/a/o$e.class` | `Class_1279` | `TexturedDrawer` | Textured polygon scanline rasterizer base |
+| `a/a/a/a/o$a.class` | `ModelLoader` | `UnlitDrawer` | Textured unlit polygon scanline rasterizer base |
+| `a/a/a/a/o$b.class` | `MeshLoader` | `LitDrawer` | Textured lit polygon scanline rasterizer base |
+| `a/a/a/a/o$f.class` | `Class_15d5` | `SphereMapDrawer` | Textured sphere reflection map polygon scanline rasterizer base |
 
-### 3. Scene Graph & Camera (`src/com/hicorp/mascotcapsule/web/`)
+### Flat & Line Drawers (8 Specialized Classes)
 
-| Obfuscated Name | Semantic Name | Description |
-| :--- | :--- | :--- |
-| `Class_5a9` | `SceneNode` | Base hierarchical transform node with parent/child relationship and lazy world transform matrix caching (`computeWorldTransform`, `computeTransformRelativeToRoot`). |
-| `Class_339` | `Camera` | Camera scene node extending `SceneNode`. Computes the camera view transform (inverted world transform) and combined model-view transform matrix. |
-| `Class_13f` | `BoneNode` | Skeletal bone node extending `SceneNode`. Represents a single joint in the skeleton, storing rest-pose transform, bone index, child/sibling traversal flags, and bone name. |
-| `Transform3D` | `Transform3D` | 4x3 affine matrix representing rotation (m00..m22) and translation (m03..m23). Provides matrix multiplication, column normalization, vector rotation, and affine projection. |
-| `Vector3f` | `Vector3f` | 3D single-precision float vector with dot product, cross product, length, normalization, negation, and vector arithmetic. |
-| `MatrixUtils` | `MatrixUtils` | Math and matrix utilities: Euler angle rotations (X, Y, Z, arbitrary axis), scaling, LookAt camera matrix construction, degrees/radians conversion, and fast binary integer log2/leading-zero count tables. |
-| `BoundingBox` | `BoundingBox` | 2D axis-aligned integer bounding box used for viewport bounds, dirty-rect tracking, union, and clipping intersection. |
+| Original Class | Decompiled Name | Final Semantic Class Name | Configuration |
+| :--- | :--- | :--- | :--- |
+| `a/a/a/a/o$g.class` | `Class_efa` | `FlatDrawer_Opaque_Triangle` | Flat color, opaque, triangle |
+| `a/a/a/a/o$h.class` | `Class_4c3` | `FlatDrawer_Opaque_Quad` | Flat color, opaque, quad |
+| `a/a/a/a/o$i.class` | `Class_f8f` | `FlatDrawer_Alpha_Triangle` | Flat color, alpha-blended, triangle |
+| `a/a/a/a/o$j.class` | `Class_13b6` | `FlatDrawer_Alpha_Quad` | Flat color, alpha-blended, quad |
+| `a/a/a/a/o$k.class` | `Class_d0f` | `LineDrawer_Opaque` | 3D line, opaque |
+| `a/a/a/a/o$l.class` | `Mesh` | `LineDrawer_Alpha` | 3D line, alpha-blended |
+| `a/a/a/a/o$m.class` | `Light` | `LitColorDrawer_Opaque` | Lit vertex color, opaque |
+| `a/a/a/a/o$n.class` | `Class_14bf` | `LitColorDrawer_Alpha` | Lit vertex color, alpha-blended |
 
-### 4. Asset Formats & Decoders (`src/com/hicorp/mascotcapsule/web/`)
+### Textured Drawers (16 Classes)
 
-| Obfuscated Name | Semantic Name | Description |
-| :--- | :--- | :--- |
-| `RenderState` | `ModelData` (JBAC) | Binary model parser for `"HIJB"` format. Reads vertex tables, vertex normal tables, polygon tables (triangles & quads), and bone hierarchies. Computes smooth vertex normals when missing. |
-| `Model` | `AnimationData` (JTRA) | Skeletal animation evaluator for `"HIJT"` format. Evaluates 10 animation channels per bone: rotation (X, Y, Z), translation (X, Y, Z), scaling (X, Y, Z), and visibility across keyframed timelines. |
-| `Class_12f` | `ModelPolygon` | Model polygon face structure: flags (lighting mode, blend mode, double-sided), vertex count (3 or 4), vertex indices (`v0`..`v3`), and texture UV coordinates (`u0`, `v0_coord`, `u1`, `v1_coord`, etc.). |
-| `Class_c25` | `KeyframeTrack` | Keyframe track container storing an array of `VertexWeight` (keyframe time and float value) for a single animation channel. |
-| `Bone` | `AnimatedBone` | Runtime bone container holding 10 `KeyframeTrack` channels and reference to `BoneNode`. |
-| `BoneAnimation` | `BoneAnimationGroup` | Collection of animated bones and animation track evaluation logic. |
-| `AnimationTrack` | `AnimationTrack` | Interpolated track evaluator calculating smooth bone transformations between keyframes. |
-| `Interpolator` | `HermiteInterpolator` | Hermite spline and linear interpolation evaluator for keyframe timelines. |
-| `Keyframe` | `Keyframe` | Single keyframe data point with timestamp and float value. |
-| `VertexWeight` | `KeyframeEntry` | Keyframe timeline point storing integer timestamp and float channel value. |
-| `Class_517` | `Texture` | Mipmapped 32-bit ARGB texture container with 12 mipmap levels. Implements 2x2 box filtering downsampling and bit-shift power-of-two UV coordinate wrapping. |
-| `Class_613` | `BinaryReader` | Little-endian binary stream reader: byte, short, int, float, and null-terminated ASCII strings. |
-| `Class_89e` | `BmpDecoder` | Decodes 1-bit, 4-bit, 8-bit paletted, 16-bit RGB 555/565, 24-bit RGB, and 32-bit RGBA BMP images. |
-| `Class_808` | `AwtImageReader` | Fallback image decoder leveraging AWT `Toolkit.createImage` and `PixelGrabber` for JPEG, GIF, and PNG images. |
-| `Material` | `TextureReader` | Interface for image decoders (`readImage(InputStream, Texture)`). |
+| Final Semantic Class Name | Previous Name | Modulation Mode | Blending | Geometry |
+| :--- | :--- | :--- | :--- | :--- |
+| `TexturedDrawer_T0_Opaque_Triangle` | `Class_9ad` | Mode 0 | Opaque | Triangle |
+| `TexturedDrawer_T0_Opaque_Quad` | `Class_38` | Mode 0 | Opaque | Quad |
+| `TexturedDrawer_T0_Alpha_Triangle` | `Class_1146` | Mode 0 | Alpha-blended | Triangle |
+| `TexturedDrawer_T0_Alpha_Quad` | `Class_111` | Mode 0 | Alpha-blended | Quad |
+| `TexturedDrawer_T1_Opaque_Triangle` | `Class_c3e` | Mode 1 | Opaque | Triangle |
+| `TexturedDrawer_T1_Opaque_Quad` | `ResourceEntry` | Mode 1 | Opaque | Quad |
+| `TexturedDrawer_T1_Alpha_Triangle` | `Class_1e8` | Mode 1 | Alpha-blended | Triangle |
+| `TexturedDrawer_T1_Alpha_Quad` | `Class_c6f` | Mode 1 | Alpha-blended | Quad |
+| `TexturedDrawer_T2_Opaque_Triangle` | `Class_25b` | Mode 2 | Opaque | Triangle |
+| `TexturedDrawer_T2_Opaque_Quad` | `Class_1541` | Mode 2 | Opaque | Quad |
+| `TexturedDrawer_T2_Alpha_Triangle` | `Class_1395` | Mode 2 | Alpha-blended | Triangle |
+| `TexturedDrawer_T2_Alpha_Quad` | `Class_97c` | Mode 2 | Alpha-blended | Quad |
+| `TexturedDrawer_T3_Opaque_Triangle` | `Class_1081` | Mode 3 | Opaque | Triangle |
+| `TexturedDrawer_T3_Opaque_Quad` | `Class_13d8` | Mode 3 | Opaque | Quad |
+| `TexturedDrawer_T3_Alpha_Triangle` | `Class_bcb` | Mode 3 | Alpha-blended | Triangle |
+| `TexturedDrawer_T3_Alpha_Quad` | `Class_1629` | Mode 3 | Alpha-blended | Quad |
 
-### 5. Rendering Pipeline & Rasterizer (`src/com/hicorp/mascotcapsule/web/`)
+### Unlit Textured Drawers (16 Classes)
 
-| Obfuscated Name | Semantic Name | Description |
-| :--- | :--- | :--- |
-| `RenderContext` | `RenderContext` | Core rendering pipeline coordinator: packet table bucket sorting by depth, vertex directional lighting, model-view projection, polygon clipping, and command submission. |
-| `Class_ae` | `RasterVertex` | Vertex data passed to rasterizer: screen coordinates `x`, `y`, depth `z`, texture coordinates `u`, `v`, lighting intensity `light`, and normal `normalZ`. |
-| `Class_1498` | `RenderCommand` | Base linked-list rendering command node with `commandType` and `next` pointer. |
-| `Class_1438` | `PolygonCommand` | Queued polygon render packet with `sortDepth`, `vertexCount` (3 or 4), `renderFlags`, `diffuseTexture`, `sphereMapTexture`, and transformed screen vertices `v0`..`v3`. |
-| `FrameBuffer` | `FrameBuffer` | Double-buffered ARGB pixel target with stride, width, height, partial dirty rectangle flushing, and `paint(Graphics, BoundingBox)` blitting. |
-| `Config` | `SoftwareRasterizer` | 16.16 fixed-point software rasterizer with Cohen-Sutherland outcode clipping, 512-entry alpha blend table, color keying, and span drawer dispatch tables. |
-| `Class_8ed` | `Debug` | Assertion and logging helper (`assertTrue`, `fail`, `log`). |
+| Final Semantic Class Name | Previous Name | Modulation Mode | Blending | Geometry |
+| :--- | :--- | :--- | :--- | :--- |
+| `UnlitDrawer_T0_Opaque_Triangle` | `Class_1562` | Mode 0 | Opaque | Triangle |
+| `UnlitDrawer_T0_Opaque_Quad` | `Class_98` | Mode 0 | Opaque | Quad |
+| `UnlitDrawer_T0_Alpha_Triangle` | `Class_1002` | Mode 0 | Alpha-blended | Triangle |
+| `UnlitDrawer_T0_Alpha_Quad` | `Class_cc3` | Mode 0 | Alpha-blended | Quad |
+| `UnlitDrawer_T1_Opaque_Triangle` | `Class_11bf` | Mode 1 | Opaque | Triangle |
+| `UnlitDrawer_T1_Opaque_Quad` | `Class_dfd` | Mode 1 | Opaque | Quad |
+| `UnlitDrawer_T1_Alpha_Triangle` | `Class_b61` | Mode 1 | Alpha-blended | Triangle |
+| `UnlitDrawer_T1_Alpha_Quad` | `Class_3ba` | Mode 1 | Alpha-blended | Quad |
+| `UnlitDrawer_T2_Opaque_Triangle` | `Class_7c1` | Mode 2 | Opaque | Triangle |
+| `UnlitDrawer_T2_Opaque_Quad` | `Class_10ea` | Mode 2 | Opaque | Quad |
+| `UnlitDrawer_T2_Alpha_Triangle` | `Class_1059` | Mode 2 | Alpha-blended | Triangle |
+| `UnlitDrawer_T2_Alpha_Quad` | `Class_122c` | Mode 2 | Alpha-blended | Quad |
+| `UnlitDrawer_T3_Opaque_Triangle` | `Class_4f2` | Mode 3 | Opaque | Triangle |
+| `UnlitDrawer_T3_Opaque_Quad` | `Class_a39` | Mode 3 | Opaque | Quad |
+| `UnlitDrawer_T3_Alpha_Triangle` | `Face` | Mode 3 | Alpha-blended | Triangle |
+| `UnlitDrawer_T3_Alpha_Quad` | `Class_118e` | Mode 3 | Alpha-blended | Quad |
 
-### 6. Span Drawer Hierarchy (78 Classes)
+### Lit Textured Drawers (16 Classes)
 
-The engine contains 6 base span drawer classes and 72 specialized implementations organized into multi-dimensional dispatch arrays by:
-1. **Rendering Primitive**: Flat color, Lit flat color, Textured unlit, Textured lit, Textured sphere map, 3D line.
-2. **Blend Mode**: Opaque (mode 0), Half-transparent / alpha blended (mode 1), Additive blending (mode 2).
-3. **Texture Modulation**: Replace, modulate with vertex lighting, modulate with color key transparency.
-4. **Polygon Type**: Triangle (3 vertices), Quad (4 vertices).
+| Final Semantic Class Name | Previous Name | Modulation Mode | Blending | Geometry |
+| :--- | :--- | :--- | :--- | :--- |
+| `LitDrawer_T0_Opaque_Triangle` | `Class_5c8` | Mode 0 | Opaque | Triangle |
+| `LitDrawer_T0_Opaque_Quad` | `Class_f30` | Mode 0 | Opaque | Quad |
+| `LitDrawer_T0_Alpha_Triangle` | `Class_11d7` | Mode 0 | Alpha-blended | Triangle |
+| `LitDrawer_T0_Alpha_Quad` | `Class_1359` | Mode 0 | Alpha-blended | Quad |
+| `LitDrawer_T1_Opaque_Triangle` | `Class_14fc` | Mode 1 | Opaque | Triangle |
+| `LitDrawer_T1_Opaque_Quad` | `TextureLoader` | Mode 1 | Opaque | Quad |
+| `LitDrawer_T1_Alpha_Triangle` | `Class_1091` | Mode 1 | Alpha-blended | Triangle |
+| `LitDrawer_T1_Alpha_Quad` | `Class_10ac` | Mode 1 | Alpha-blended | Quad |
+| `LitDrawer_T2_Opaque_Triangle` | `Class_b0e` | Mode 2 | Opaque | Triangle |
+| `LitDrawer_T2_Opaque_Quad` | `Class_da6` | Mode 2 | Opaque | Quad |
+| `LitDrawer_T2_Alpha_Triangle` | `Class_e4f` | Mode 2 | Alpha-blended | Triangle |
+| `LitDrawer_T2_Alpha_Quad` | `Class_159f` | Mode 2 | Alpha-blended | Quad |
+| `LitDrawer_T3_Opaque_Triangle` | `Class_65f` | Mode 3 | Opaque | Triangle |
+| `LitDrawer_T3_Opaque_Quad` | `Class_e88` | Mode 3 | Opaque | Quad |
+| `LitDrawer_T3_Alpha_Triangle` | `Class_916` | Mode 3 | Alpha-blended | Triangle |
+| `LitDrawer_T3_Alpha_Quad` | `Class_abb` | Mode 3 | Alpha-blended | Quad |
 
-- **Base Drawer Classes**:
-  - `Class_eda`: Flat color polygon scanline drawer base.
-  - `Class_1279`: Textured polygon scanline drawer base.
-  - `ModelLoader`: Textured lit polygon scanline drawer base.
-  - `MeshLoader`: Textured unlit polygon scanline drawer base.
-  - `Class_15d5`: Textured sphere map polygon scanline drawer base.
-  - `Class_d00`: 3D line scanline drawer base.
-- **Drawer State Fields** (Standardized across all 78 classes):
-  - `scanlineOffset`, `y`, `yEnd`: Destination pixel buffer offset and scanline Y limits.
-  - `xLeftFixed`, `xRightFixed`: 16.16 fixed-point X span edge coordinates.
-  - `dxLeftFixed`, `dxRightFixed`: 16.16 fixed-point edge slope deltas per scanline.
-  - `uFixed`, `vFixed`, `duDyFixed`, `dvDyFixed`, `duDxFixed`, `dvDxFixed`: 16.16 fixed-point texture UV coordinates and gradients.
-  - `lightFixed`, `dLightDyFixed`, `dLightDxFixed`: 16.16 fixed-point lighting intensity and gradients.
-  - `normalZFixed`, `dNormalZDyFixed`, `dNormalZDxFixed`: 16.16 fixed-point Z normal coordinates and gradients.
-  - `sphereUFixed`, `sphereVFixed`, `dSphereUDyFixed`, `dSphereVDyFixed`: 16.16 fixed-point sphere reflection map coordinates and gradients.
-  - `rasterizer`: Reference to parent `Config` (`SoftwareRasterizer`).
-  - `drawSpan()`: Scanline inner loop rendering the active horizontal pixel span.
+### Sphere Reflection Map Drawers (16 Classes)
+
+| Final Semantic Class Name | Previous Name | Modulation Mode | Blending | Geometry |
+| :--- | :--- | :--- | :--- | :--- |
+| `SphereMapDrawer_T0_Opaque_Triangle` | `Class_12c7` | Mode 0 | Opaque | Triangle |
+| `SphereMapDrawer_T0_Opaque_Quad` | `Class_fa0` | Mode 0 | Opaque | Quad |
+| `SphereMapDrawer_T0_Alpha_Triangle` | `Class_a8d` | Mode 0 | Alpha-blended | Triangle |
+| `SphereMapDrawer_T0_Alpha_Quad` | `ColorRGBA` | Mode 0 | Alpha-blended | Quad |
+| `SphereMapDrawer_T1_Opaque_Triangle` | `Class_a10` | Mode 1 | Opaque | Triangle |
+| `SphereMapDrawer_T1_Opaque_Quad` | `Class_11ac` | Mode 1 | Opaque | Quad |
+| `SphereMapDrawer_T1_Alpha_Triangle` | `Class_cce` | Mode 1 | Alpha-blended | Triangle |
+| `SphereMapDrawer_T1_Alpha_Quad` | `Class_740` | Mode 1 | Alpha-blended | Quad |
+| `SphereMapDrawer_T2_Opaque_Triangle` | `AnimationSet` | Mode 2 | Opaque | Triangle |
+| `SphereMapDrawer_T2_Opaque_Quad` | `Class_6ba` | Mode 2 | Opaque | Quad |
+| `SphereMapDrawer_T2_Alpha_Triangle` | `Class_a66` | Mode 2 | Alpha-blended | Triangle |
+| `SphereMapDrawer_T2_Alpha_Quad` | `Class_d57` | Mode 2 | Alpha-blended | Quad |
+| `SphereMapDrawer_T3_Opaque_Triangle` | `Class_4a7` | Mode 3 | Opaque | Triangle |
+| `SphereMapDrawer_T3_Opaque_Quad` | `Class_81f` | Mode 3 | Opaque | Quad |
+| `SphereMapDrawer_T3_Alpha_Triangle` | `Class_1340` | Mode 3 | Alpha-blended | Triangle |
+| `SphereMapDrawer_T3_Alpha_Quad` | `Class_130f` | Mode 3 | Alpha-blended | Quad |

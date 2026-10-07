@@ -152,15 +152,15 @@ public class MainCanvas extends Canvas {
       this.renderContext.initPacketTable(capacity, nearZ, farZ);
    }
 
-   public synchronized void setDiffuseTexture(Class_517 texture) {
+   public synchronized void setDiffuseTexture(Texture texture) {
       this.renderContext.setDiffuseTexture(texture);
    }
 
-   public synchronized void setSphereMapTexture(Class_517 texture) {
+   public synchronized void setSphereMapTexture(Texture texture) {
       this.renderContext.setSphereMapTexture(texture);
    }
 
-   public synchronized void renderModel(RenderState model, Class_339 camera) {
+   public synchronized void renderModel(BacModel model, CameraNode camera) {
       this.renderContext.setProjection(model, camera);
       this.polyCount += model.getPolygonCount();
       this.vertexCount += model.getVertexCount();

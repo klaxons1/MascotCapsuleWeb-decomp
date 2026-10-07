@@ -1,30 +1,30 @@
 package com.hicorp.mascotcapsule.web;
 
 public abstract class MeshLoader {
-   protected int var_5f;
-   protected int var_aa;
-   protected int var_bc;
-   protected int var_116;
-   protected int var_166;
-   protected int var_172;
-   protected int var_1ab;
-   protected int var_204;
-   protected int var_248;
-   protected int var_264;
-   protected int var_2c9;
-   protected int var_2ea;
-   protected int var_311;
-   protected int var_341;
-   protected int var_3a2;
-   protected int var_3bf;
-   protected int var_3d8;
-   protected int var_403;
-   protected int var_45b;
-   private final Config var_48e;
+   protected int scanlineOffset;
+   protected int y;
+   protected int yEnd;
+   protected int xLeftFixed;
+   protected int xRightFixed;
+   protected int dxLeftFixed;
+   protected int dxRightFixed;
+   protected int uFixed;
+   protected int vFixed;
+   protected int duDyFixed;
+   protected int dvDyFixed;
+   protected int duDxFixed;
+   protected int dvDxFixed;
+   protected int lightFixed;
+   protected int dLightDyFixed;
+   protected int dLightDxFixed;
+   protected int normalZFixed;
+   protected int dNormalZDyFixed;
+   protected int dNormalZDxFixed;
+   private final Config rasterizer;
 
-   public MeshLoader(Config var1) {
-      this.var_48e = var1;
+   public MeshLoader(Config rasterizer) {
+      this.rasterizer = rasterizer;
    }
 
-   public abstract void sub_81();
+   public abstract void drawSpan();
 }

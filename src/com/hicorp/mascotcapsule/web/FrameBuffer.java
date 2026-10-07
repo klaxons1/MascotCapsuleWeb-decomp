@@ -11,125 +11,125 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 final class FrameBuffer implements ImageProducer {
-   private final Canvas var_39;
-   private Image var_6a = null;
-   private int[] var_ba = null;
-   private int var_c9 = 0;
-   private int var_ed = 0;
-   private int var_130 = 0;
-   private final Vector var_16c = new Vector();
-   private final ColorModel var_1cb = ColorModel.getRGBdefault();
-   private final Hashtable var_1e2 = new Hashtable();
+   private final Canvas canvas;
+   private Image image = null;
+   private int[] pixelBuffer = null;
+   private int width = 0;
+   private int stride = 0;
+   private int height = 0;
+   private final Vector consumers = new Vector();
+   private final ColorModel colorModel = ColorModel.getRGBdefault();
+   private final Hashtable properties = new Hashtable();
 
-   public int sub_6f() {
-      return this.var_c9;
+   public int getWidth() {
+      return this.width;
    }
 
-   public int sub_89() {
-      return this.var_ed;
+   public int getStride() {
+      return this.stride;
    }
 
-   public int sub_9b() {
-      return this.var_130;
+   public int getHeight() {
+      return this.height;
    }
 
-   public FrameBuffer(Canvas var1) {
-      this.var_39 = var1;
+   public FrameBuffer(Canvas canvas) {
+      this.canvas = canvas;
    }
 
-   public synchronized void sub_aa(int var1, int var2) {
-      this.var_c9 = var1;
-      this.var_ed = var1;
-      this.var_130 = var2;
-      this.var_ba = new int[this.var_ed * var2];
-      this.var_6a = this.var_39.createImage(this);
+   public synchronized void setSize(int width, int height) {
+      this.width = width;
+      this.stride = width;
+      this.height = height;
+      this.pixelBuffer = new int[this.stride * height];
+      this.image = this.canvas.createImage(this);
    }
 
-   public int[] sub_bc() {
-      return this.var_ba;
+   public int[] getPixels() {
+      return this.pixelBuffer;
    }
 
-   public synchronized void sub_d6(BoundingBox var1) {
-      if (var1.isValid()) {
-         int var2 = var1.minX;
-         int var3 = var1.minY;
-         int var4 = var1.maxX - var2;
-         int var5 = var1.maxY - var3;
-         Enumeration var6 = this.var_16c.elements();
+   public synchronized void flush(BoundingBox dirtyRect) {
+      if (dirtyRect.isValid()) {
+         int minX = dirtyRect.minX;
+         int minY = dirtyRect.minY;
+         int w = dirtyRect.maxX - minX;
+         int h = dirtyRect.maxY - minY;
+         Enumeration e = this.consumers.elements();
 
-         while (var6.hasMoreElements()) {
-            ImageConsumer var7 = (ImageConsumer)var6.nextElement();
-            if (this.isConsumer(var7)) {
-               var7.setPixels(var2, var3, var4, var5, this.var_1cb, this.var_ba, this.var_ed * var3 + var2, this.var_ed);
-               var7.imageComplete(2);
+         while (e.hasMoreElements()) {
+            ImageConsumer consumer = (ImageConsumer)e.nextElement();
+            if (this.isConsumer(consumer)) {
+               consumer.setPixels(minX, minY, w, h, this.colorModel, this.pixelBuffer, this.stride * minY + minX, this.stride);
+               consumer.imageComplete(2);
             }
          }
       }
    }
 
-   public synchronized void sub_11b(Graphics var1, BoundingBox var2) {
-      if (var2.isValid()) {
-         var1.clipRect(var2.minX, var2.minY, var2.maxX - var2.minX, var2.maxY - var2.minY);
+   public synchronized void paint(Graphics g, BoundingBox clip) {
+      if (clip.isValid()) {
+         g.clipRect(clip.minX, clip.minY, clip.maxX - clip.minX, clip.maxY - clip.minY);
       }
 
-      var1.drawImage(this.var_6a, 0, 0, this.var_39);
+      g.drawImage(this.image, 0, 0, this.canvas);
    }
 
-   public synchronized void sub_166(Graphics var1) {
-      var1.drawImage(this.var_6a, 0, 0, this.var_39);
+   public synchronized void paint(Graphics g) {
+      g.drawImage(this.image, 0, 0, this.canvas);
    }
 
-   public synchronized void requestTopDownLeftRightResend(ImageConsumer var1) {
+   public synchronized void requestTopDownLeftRightResend(ImageConsumer consumer) {
    }
 
-   public synchronized boolean isConsumer(ImageConsumer var1) {
-      return this.var_16c.contains(var1);
+   public synchronized boolean isConsumer(ImageConsumer consumer) {
+      return this.consumers.contains(consumer);
    }
 
-   public synchronized void removeConsumer(ImageConsumer var1) {
-      this.var_16c.removeElement(var1);
+   public synchronized void removeConsumer(ImageConsumer consumer) {
+      this.consumers.removeElement(consumer);
    }
 
-   public synchronized void startProduction(ImageConsumer var1) {
-      this.addConsumer(var1);
+   public synchronized void startProduction(ImageConsumer consumer) {
+      this.addConsumer(consumer);
    }
 
-   public synchronized void addConsumer(ImageConsumer var1) {
-      if (!this.var_16c.contains(var1)) {
-         this.var_16c.addElement(var1);
+   public synchronized void addConsumer(ImageConsumer consumer) {
+      if (!this.consumers.contains(consumer)) {
+         this.consumers.addElement(consumer);
 
          try {
-            this.sub_1c1(var1);
-            if (this.isConsumer(var1)) {
-               var1.setPixels(0, 0, this.var_c9, this.var_130, this.var_1cb, this.var_ba, 0, this.var_ed);
+            this.initConsumer(consumer);
+            if (this.isConsumer(consumer)) {
+               consumer.setPixels(0, 0, this.width, this.height, this.colorModel, this.pixelBuffer, 0, this.stride);
             }
 
-            if (this.isConsumer(var1)) {
-               var1.imageComplete(2);
+            if (this.isConsumer(consumer)) {
+               consumer.imageComplete(2);
             }
-         } catch (Exception var3) {
-            if (this.isConsumer(var1)) {
-               var1.imageComplete(1);
+         } catch (Exception e) {
+            if (this.isConsumer(consumer)) {
+               consumer.imageComplete(1);
             }
          }
       }
    }
 
-   private synchronized void sub_1c1(ImageConsumer var1) {
-      if (this.isConsumer(var1)) {
-         var1.setDimensions(this.var_c9, this.var_130);
+   private synchronized void initConsumer(ImageConsumer consumer) {
+      if (this.isConsumer(consumer)) {
+         consumer.setDimensions(this.width, this.height);
       }
 
-      if (this.isConsumer(var1)) {
-         var1.setProperties(this.var_1e2);
+      if (this.isConsumer(consumer)) {
+         consumer.setProperties(this.properties);
       }
 
-      if (this.isConsumer(var1)) {
-         var1.setColorModel(this.var_1cb);
+      if (this.isConsumer(consumer)) {
+         consumer.setColorModel(this.colorModel);
       }
 
-      if (this.isConsumer(var1)) {
-         var1.setHints(1);
+      if (this.isConsumer(consumer)) {
+         consumer.setHints(1);
       }
    }
 }

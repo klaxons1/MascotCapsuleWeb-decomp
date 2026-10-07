@@ -8,63 +8,63 @@ public final class ColorRGBA extends Class_15d5 {
       this.var_90 = var1;
    }
 
-   public void sub_22() {
-      int[] var1 = Config.sub_34c(this.var_90);
-      int var2 = (super.var_478 > 0 ? super.var_478 : -super.var_478) + (super.var_510 > 0 ? super.var_510 : -super.var_510) + 32768;
-      int var3 = Config.sub_509(this.var_90).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
-      int[] var4 = Config.sub_509(this.var_90).getPixels();
-      int var5 = Config.sub_509(this.var_90).getMipOffset(var3);
-      int var6 = Config.sub_509(this.var_90).getMipUMask(var3);
-      int var7 = Config.sub_509(this.var_90).getMipVMask(var3);
-      int var8 = Config.sub_509(this.var_90).getMipUShift(var3);
-      int var9 = Config.sub_509(this.var_90).getMipVShift(var3);
-      int var10 = super.var_478 >> var3;
-      int var11 = super.var_510 >> var3;
-      int var12 = super.var_52a;
-      var2 = (super.var_54a > 0 ? super.var_54a : -super.var_54a) + (super.var_55b > 0 ? super.var_55b : -super.var_55b) + 32768;
-      int var13 = Config.sub_55c(this.var_90).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
-      int[] var14 = Config.sub_55c(this.var_90).getPixels();
-      int var15 = Config.sub_55c(this.var_90).getMipOffset(var13);
-      int var16 = Config.sub_55c(this.var_90).getMipUMask(var13);
-      int var17 = Config.sub_55c(this.var_90).getMipVMask(var13);
-      int var18 = Config.sub_55c(this.var_90).getMipUShift(var13);
-      int var19 = Config.sub_55c(this.var_90).getMipVShift(var13);
-      int var20 = super.var_54a >> var13;
-      int var21 = super.var_55b >> var13;
-      if (super.var_8b < Config.sub_41a(this.var_90)) {
+   public void drawSpan() {
+      int[] var1 = Config.getPixelBuffer(this.var_90);
+      int var2 = (super.sphereVFixed > 0 ? super.sphereVFixed : -super.sphereVFixed) + (super.dSphereUDyFixed > 0 ? super.dSphereUDyFixed : -super.dSphereUDyFixed) + 32768;
+      int var3 = Config.getDiffuseTexture(this.var_90).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
+      int[] var4 = Config.getDiffuseTexture(this.var_90).getPixels();
+      int var5 = Config.getDiffuseTexture(this.var_90).getMipOffset(var3);
+      int var6 = Config.getDiffuseTexture(this.var_90).getMipUMask(var3);
+      int var7 = Config.getDiffuseTexture(this.var_90).getMipVMask(var3);
+      int var8 = Config.getDiffuseTexture(this.var_90).getMipUShift(var3);
+      int var9 = Config.getDiffuseTexture(this.var_90).getMipVShift(var3);
+      int var10 = super.sphereVFixed >> var3;
+      int var11 = super.dSphereUDyFixed >> var3;
+      int var12 = super.dSphereVDyFixed;
+      var2 = (super.dSphereUDxFixed > 0 ? super.dSphereUDxFixed : -super.dSphereUDxFixed) + (super.dSphereVDxFixed > 0 ? super.dSphereVDxFixed : -super.dSphereVDxFixed) + 32768;
+      int var13 = Config.getSphereMapTexture(this.var_90).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
+      int[] var14 = Config.getSphereMapTexture(this.var_90).getPixels();
+      int var15 = Config.getSphereMapTexture(this.var_90).getMipOffset(var13);
+      int var16 = Config.getSphereMapTexture(this.var_90).getMipUMask(var13);
+      int var17 = Config.getSphereMapTexture(this.var_90).getMipVMask(var13);
+      int var18 = Config.getSphereMapTexture(this.var_90).getMipUShift(var13);
+      int var19 = Config.getSphereMapTexture(this.var_90).getMipVShift(var13);
+      int var20 = super.dSphereUDxFixed >> var13;
+      int var21 = super.dSphereVDxFixed >> var13;
+      if (super.y < Config.getClipLeft(this.var_90)) {
          int var22;
-         if (super.var_e8 < Config.sub_41a(this.var_90)) {
-            var22 = super.var_e8 - super.var_8b;
-            super.var_8b = super.var_e8;
+         if (super.yEnd < Config.getClipLeft(this.var_90)) {
+            var22 = super.yEnd - super.y;
+            super.y = super.yEnd;
          } else {
-            var22 = Config.sub_41a(this.var_90) - super.var_8b;
-            super.var_8b = Config.sub_41a(this.var_90);
+            var22 = Config.getClipLeft(this.var_90) - super.y;
+            super.y = Config.getClipLeft(this.var_90);
          }
 
-         super.var_41 = super.var_41 + Config.sub_3dd(this.var_90) * var22;
-         super.var_189 = super.var_189 + super.var_236 * var22;
-         super.var_1d6 = super.var_1d6 + super.var_26a * var22;
-         super.var_274 = super.var_274 + super.var_3b1 * var22;
-         super.var_29a = super.var_29a + super.var_3ca * var22;
-         super.var_2d0 = super.var_2d0 + super.var_3f6 * var22;
-         super.var_328 = super.var_328 + super.var_44d * var22;
-         super.var_383 = super.var_383 + super.var_460 * var22;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.var_90) * var22;
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed * var22;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed * var22;
+         super.uFixed = super.uFixed + super.dvDxFixed * var22;
+         super.vFixed = super.vFixed + super.lightFixed * var22;
+         super.duDyFixed = super.duDyFixed + super.dLightDyFixed * var22;
+         super.dvDyFixed = super.dvDyFixed + super.dLightDxFixed * var22;
+         super.duDxFixed = super.duDxFixed + super.sphereUFixed * var22;
       }
 
-      for (super.var_e8 = super.var_e8 < Config.sub_45d(this.var_90) ? super.var_e8 : Config.sub_45d(this.var_90);
-         super.var_8b < super.var_e8;
-         super.var_383 = super.var_383 + super.var_460
+      for (super.yEnd = super.yEnd < Config.getClipBottom(this.var_90) ? super.yEnd : Config.getClipBottom(this.var_90);
+         super.y < super.yEnd;
+         super.duDxFixed = super.duDxFixed + super.sphereUFixed
       ) {
-         int var39 = super.var_189 >> 16;
-         int var23 = super.var_1d6 >> 16;
-         int var24 = super.var_274 >> var3;
-         int var25 = super.var_29a >> var3;
-         int var26 = super.var_2d0;
-         int var27 = super.var_328 >> var13;
-         int var28 = super.var_383 >> var13;
-         if (var39 < Config.getMipVShift(this.var_90)) {
-            int var29 = Config.getMipVShift(this.var_90) - var39;
-            var39 = Config.getMipVShift(this.var_90);
+         int var39 = super.xLeftFixed >> 16;
+         int var23 = super.xRightFixed >> 16;
+         int var24 = super.uFixed >> var3;
+         int var25 = super.vFixed >> var3;
+         int var26 = super.duDyFixed;
+         int var27 = super.dvDyFixed >> var13;
+         int var28 = super.duDxFixed >> var13;
+         if (var39 < Config.getBufferHeight(this.var_90)) {
+            int var29 = Config.getBufferHeight(this.var_90) - var39;
+            var39 = Config.getBufferHeight(this.var_90);
             var24 += var10 * var29;
             var25 += var11 * var29;
             var26 += var12 * var29;
@@ -72,13 +72,13 @@ public final class ColorRGBA extends Class_15d5 {
             var28 += var21 * var29;
          }
 
-         if (var23 > Config.sub_48e(this.var_90)) {
-            var23 = Config.sub_48e(this.var_90);
+         if (var23 > Config.getClipRight(this.var_90)) {
+            var23 = Config.getClipRight(this.var_90);
          }
 
-         int var40 = super.var_41 + var39;
+         int var40 = super.scanlineOffset + var39;
 
-         for (int var30 = super.var_41 + var23; var40 < var30; var40++) {
+         for (int var30 = super.scanlineOffset + var23; var40 < var30; var40++) {
             int var31 = var5 + ((var25 & var7) >>> var9) + ((var24 & var6) >>> var8);
             int var32 = var4[var31];
             if (var32 != -1) {
@@ -99,14 +99,14 @@ public final class ColorRGBA extends Class_15d5 {
             var28 += var21;
          }
 
-         super.var_8b++;
-         super.var_41 = super.var_41 + Config.sub_3dd(this.var_90);
-         super.var_189 = super.var_189 + super.var_236;
-         super.var_1d6 = super.var_1d6 + super.var_26a;
-         super.var_274 = super.var_274 + super.var_3b1;
-         super.var_29a = super.var_29a + super.var_3ca;
-         super.var_2d0 = super.var_2d0 + super.var_3f6;
-         super.var_328 = super.var_328 + super.var_44d;
+         super.y++;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.var_90);
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed;
+         super.uFixed = super.uFixed + super.dvDxFixed;
+         super.vFixed = super.vFixed + super.lightFixed;
+         super.duDyFixed = super.duDyFixed + super.dLightDyFixed;
+         super.dvDyFixed = super.dvDyFixed + super.dLightDxFixed;
       }
    }
 }

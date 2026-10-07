@@ -1,33 +1,33 @@
 package com.hicorp.mascotcapsule.web;
 
 public abstract class Class_15d5 {
-   protected int var_41;
-   protected int var_8b;
-   protected int var_e8;
-   protected int var_189;
-   protected int var_1d6;
-   protected int var_236;
-   protected int var_26a;
-   protected int var_274;
-   protected int var_29a;
-   protected int var_2d0;
-   protected int var_328;
-   protected int var_383;
-   protected int var_3b1;
-   protected int var_3ca;
-   protected int var_3f6;
-   protected int var_44d;
-   protected int var_460;
-   protected int var_478;
-   protected int var_510;
-   protected int var_52a;
-   protected int var_54a;
-   protected int var_55b;
-   private final Config var_575;
+   protected int scanlineOffset;
+   protected int y;
+   protected int yEnd;
+   protected int xLeftFixed;
+   protected int xRightFixed;
+   protected int dxLeftFixed;
+   protected int dxRightFixed;
+   protected int uFixed;
+   protected int vFixed;
+   protected int duDyFixed;
+   protected int dvDyFixed;
+   protected int duDxFixed;
+   protected int dvDxFixed;
+   protected int lightFixed;
+   protected int dLightDyFixed;
+   protected int dLightDxFixed;
+   protected int sphereUFixed;
+   protected int sphereVFixed;
+   protected int dSphereUDyFixed;
+   protected int dSphereVDyFixed;
+   protected int dSphereUDxFixed;
+   protected int dSphereVDxFixed;
+   private final Config rasterizer;
 
-   public Class_15d5(Config var1) {
-      this.var_575 = var1;
+   public Class_15d5(Config rasterizer) {
+      this.rasterizer = rasterizer;
    }
 
-   public abstract void sub_22();
+   public abstract void drawSpan();
 }

@@ -8,26 +8,26 @@ public final class Face extends ModelLoader {
       this.var_3d = var1;
    }
 
-   public void sub_26() {
-      int[] var1 = Config.sub_34c(this.var_3d);
-      int var2 = (super.var_2d1 > 0 ? super.var_2d1 : -super.var_2d1) + (super.var_319 > 0 ? super.var_319 : -super.var_319) + 32768;
-      int var3 = Config.sub_509(this.var_3d).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
-      int[] var4 = Config.sub_509(this.var_3d).getPixels();
-      int var5 = Config.sub_509(this.var_3d).getMipOffset(var3);
-      int var6 = Config.sub_509(this.var_3d).getMipUMask(var3);
-      int var7 = Config.sub_509(this.var_3d).getMipVMask(var3);
-      int var8 = Config.sub_509(this.var_3d).getMipUShift(var3);
-      int var9 = Config.sub_509(this.var_3d).getMipVShift(var3);
-      int var10 = super.var_2d1 >> var3;
-      int var11 = super.var_319 >> var3;
+   public void drawSpan() {
+      int[] var1 = Config.getPixelBuffer(this.var_3d);
+      int var2 = (super.lightFixed > 0 ? super.lightFixed : -super.lightFixed) + (super.dLightDyFixed > 0 ? super.dLightDyFixed : -super.dLightDyFixed) + 32768;
+      int var3 = Config.getDiffuseTexture(this.var_3d).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
+      int[] var4 = Config.getDiffuseTexture(this.var_3d).getPixels();
+      int var5 = Config.getDiffuseTexture(this.var_3d).getMipOffset(var3);
+      int var6 = Config.getDiffuseTexture(this.var_3d).getMipUMask(var3);
+      int var7 = Config.getDiffuseTexture(this.var_3d).getMipVMask(var3);
+      int var8 = Config.getDiffuseTexture(this.var_3d).getMipUShift(var3);
+      int var9 = Config.getDiffuseTexture(this.var_3d).getMipVShift(var3);
+      int var10 = super.lightFixed >> var3;
+      int var11 = super.dLightDyFixed >> var3;
 
-      for (int var12 = super.var_339; super.var_6c < super.var_81; super.var_216 = super.var_216 + super.var_282) {
-         int var13 = (super.var_db >> 16) + super.var_31;
-         int var14 = (super.var_12b >> 16) + super.var_31;
-         int var15 = super.var_1c8 >> var3;
-         int var16 = super.var_205 >> var3;
+      for (int var12 = super.dLightDxFixed; super.y < super.yEnd; super.duDyFixed = super.duDyFixed + super.dvDxFixed) {
+         int var13 = (super.xLeftFixed >> 16) + super.scanlineOffset;
+         int var14 = (super.xRightFixed >> 16) + super.scanlineOffset;
+         int var15 = super.uFixed >> var3;
+         int var16 = super.vFixed >> var3;
 
-         for (int var17 = super.var_216; var13 < var14; var13++) {
+         for (int var17 = super.duDyFixed; var13 < var14; var13++) {
             int var18 = var5 + ((var16 & var7) >>> var9) + ((var15 & var6) >>> var8);
             int var19 = var4[var18];
             if (var19 != -1) {
@@ -45,12 +45,12 @@ public final class Face extends ModelLoader {
             var17 += var12;
          }
 
-         super.var_6c++;
-         super.var_31 = super.var_31 + Config.sub_3dd(this.var_3d);
-         super.var_db = super.var_db + super.var_14b;
-         super.var_12b = super.var_12b + super.var_18a;
-         super.var_1c8 = super.var_1c8 + super.var_243;
-         super.var_205 = super.var_205 + super.var_24d;
+         super.y++;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.var_3d);
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed;
+         super.uFixed = super.uFixed + super.dvDyFixed;
+         super.vFixed = super.vFixed + super.duDxFixed;
       }
    }
 }

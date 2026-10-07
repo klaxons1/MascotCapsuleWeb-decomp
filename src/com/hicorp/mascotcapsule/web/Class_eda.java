@@ -1,18 +1,18 @@
 package com.hicorp.mascotcapsule.web;
 
 public abstract class Class_eda {
-   protected int var_f1;
-   protected int var_15e;
-   protected int var_170;
-   protected int var_1a2;
-   protected int var_1ac;
-   protected int var_201;
-   protected int var_24e;
-   private final Config var_29d;
+   protected int scanlineOffset;
+   protected int y;
+   protected int yEnd;
+   protected int xLeftFixed;
+   protected int xRightFixed;
+   protected int dxLeftFixed;
+   protected int dxRightFixed;
+   private final Config rasterizer;
 
-   public Class_eda(Config var1) {
-      this.var_29d = var1;
+   public Class_eda(Config rasterizer) {
+      this.rasterizer = rasterizer;
    }
 
-   public abstract void sub_46();
+   public abstract void drawSpan();
 }

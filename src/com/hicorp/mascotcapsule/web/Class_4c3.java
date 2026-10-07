@@ -8,47 +8,47 @@ public final class Class_4c3 extends Class_eda {
       this.var_5d = var1;
    }
 
-   public void sub_46() {
-      int[] var1 = Config.sub_34c(this.var_5d);
-      int var2 = Config.sub_397(this.var_5d);
-      if (super.var_15e < Config.sub_41a(this.var_5d)) {
+   public void drawSpan() {
+      int[] var1 = Config.getPixelBuffer(this.var_5d);
+      int var2 = Config.getClipBottom(this.var_5d);
+      if (super.y < Config.getClipLeft(this.var_5d)) {
          int var3;
-         if (super.var_170 < Config.sub_41a(this.var_5d)) {
-            var3 = super.var_170 - super.var_15e;
-            super.var_15e = super.var_170;
+         if (super.yEnd < Config.getClipLeft(this.var_5d)) {
+            var3 = super.yEnd - super.y;
+            super.y = super.yEnd;
          } else {
-            var3 = Config.sub_41a(this.var_5d) - super.var_15e;
-            super.var_15e = Config.sub_41a(this.var_5d);
+            var3 = Config.getClipLeft(this.var_5d) - super.y;
+            super.y = Config.getClipLeft(this.var_5d);
          }
 
-         super.var_f1 = super.var_f1 + Config.sub_3dd(this.var_5d) * var3;
-         super.var_1a2 = super.var_1a2 + super.var_201 * var3;
-         super.var_1ac = super.var_1ac + super.var_24e * var3;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.var_5d) * var3;
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed * var3;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed * var3;
       }
 
-      for (super.var_170 = super.var_170 < Config.sub_45d(this.var_5d) ? super.var_170 : Config.sub_45d(this.var_5d);
-         super.var_15e < super.var_170;
-         super.var_1ac = super.var_1ac + super.var_24e
+      for (super.yEnd = super.yEnd < Config.getClipBottom(this.var_5d) ? super.yEnd : Config.getClipBottom(this.var_5d);
+         super.y < super.yEnd;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed
       ) {
-         int var7 = super.var_1a2 >> 16;
-         int var4 = super.var_1ac >> 16;
-         if (var7 < Config.getMipVShift(this.var_5d)) {
-            var7 = Config.getMipVShift(this.var_5d);
+         int var7 = super.xLeftFixed >> 16;
+         int var4 = super.xRightFixed >> 16;
+         if (var7 < Config.getBufferHeight(this.var_5d)) {
+            var7 = Config.getBufferHeight(this.var_5d);
          }
 
-         if (var4 > Config.sub_48e(this.var_5d)) {
-            var4 = Config.sub_48e(this.var_5d);
+         if (var4 > Config.getClipRight(this.var_5d)) {
+            var4 = Config.getClipRight(this.var_5d);
          }
 
-         int var5 = super.var_f1 + var7;
+         int var5 = super.scanlineOffset + var7;
 
-         for (int var6 = super.var_f1 + var4; var5 < var6; var5++) {
+         for (int var6 = super.scanlineOffset + var4; var5 < var6; var5++) {
             var1[var5] = var2;
          }
 
-         super.var_15e++;
-         super.var_f1 = super.var_f1 + Config.sub_3dd(this.var_5d);
-         super.var_1a2 = super.var_1a2 + super.var_201;
+         super.y++;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.var_5d);
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed;
       }
    }
 }

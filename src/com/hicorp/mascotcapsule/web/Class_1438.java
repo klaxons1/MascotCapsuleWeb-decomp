@@ -1,93 +1,93 @@
 package com.hicorp.mascotcapsule.web;
 
 final class Class_1438 extends Class_1498 {
-   int var_1c2;
-   int var_1db;
-   int var_1f3;
-   int var_272;
-   Class_517 var_2bb;
-   Class_517 var_2c5;
-   final Class_ae var_389;
-   final Class_ae var_3b9;
-   final Class_ae var_3ed;
-   final Class_ae var_46c;
-   private final RenderContext var_4f3;
+   int vertexCount;
+   int renderFlags;
+   int clipped;
+   int sortDepth;
+   Class_517 diffuseTexture;
+   Class_517 sphereMapTexture;
+   final Class_ae v0;
+   final Class_ae v1;
+   final Class_ae v2;
+   final Class_ae v3;
+   private final RenderContext renderContext;
 
-   Class_1438(RenderContext var1) {
-      super(var1, null);
-      this.var_4f3 = var1;
-      this.var_389 = new Class_ae();
-      this.var_3b9 = new Class_ae();
-      this.var_3ed = new Class_ae();
-      this.var_46c = new Class_ae();
-      super.var_5c = 1;
+   Class_1438(RenderContext renderContext) {
+      super(renderContext, null);
+      this.renderContext = renderContext;
+      this.v0 = new Class_ae();
+      this.v1 = new Class_ae();
+      this.v2 = new Class_ae();
+      this.v3 = new Class_ae();
+      super.commandType = 1;
    }
 
-   public void sub_ac(BoundingBox var1) {
-      int var2;
-      int var3;
-      if (this.var_3b9.var_59 > this.var_3ed.var_59) {
-         if (this.var_389.var_59 > this.var_3b9.var_59) {
-            var3 = this.var_389.var_59;
-            var2 = this.var_3ed.var_59;
+   public void updateBounds(BoundingBox bounds) {
+      int minXVal;
+      int maxXVal;
+      if (this.v1.x > this.v2.x) {
+         if (this.v0.x > this.v1.x) {
+            maxXVal = this.v0.x;
+            minXVal = this.v2.x;
          } else {
-            var3 = this.var_3b9.var_59;
-            var2 = this.var_389.var_59 > this.var_3ed.var_59 ? this.var_3ed.var_59 : this.var_389.var_59;
+            maxXVal = this.v1.x;
+            minXVal = this.v0.x > this.v2.x ? this.v2.x : this.v0.x;
          }
-      } else if (this.var_3b9.var_59 > this.var_389.var_59) {
-         var3 = this.var_3ed.var_59;
-         var2 = this.var_389.var_59;
+      } else if (this.v1.x > this.v0.x) {
+         maxXVal = this.v2.x;
+         minXVal = this.v0.x;
       } else {
-         var3 = this.var_389.var_59 > this.var_3ed.var_59 ? this.var_389.var_59 : this.var_3ed.var_59;
-         var2 = this.var_3b9.var_59;
+         maxXVal = this.v0.x > this.v2.x ? this.v2.x : this.v0.x;
+         minXVal = this.v1.x;
       }
 
-      int var4;
-      int var5;
-      if (this.var_3b9.var_9f > this.var_3ed.var_9f) {
-         if (this.var_389.var_9f > this.var_3b9.var_9f) {
-            var5 = this.var_389.var_9f;
-            var4 = this.var_3ed.var_9f;
+      int minYVal;
+      int maxYVal;
+      if (this.v1.y > this.v2.y) {
+         if (this.v0.y > this.v1.y) {
+            maxYVal = this.v0.y;
+            minYVal = this.v2.y;
          } else {
-            var5 = this.var_3b9.var_9f;
-            var4 = this.var_389.var_9f > this.var_3ed.var_9f ? this.var_3ed.var_9f : this.var_389.var_9f;
+            maxYVal = this.v1.y;
+            minYVal = this.v0.y > this.v2.y ? this.v2.y : this.v0.y;
          }
-      } else if (this.var_3b9.var_9f > this.var_389.var_9f) {
-         var5 = this.var_3ed.var_9f;
-         var4 = this.var_389.var_9f;
+      } else if (this.v1.y > this.v0.y) {
+         maxYVal = this.v2.y;
+         minYVal = this.v0.y;
       } else {
-         var5 = this.var_389.var_9f > this.var_3ed.var_9f ? this.var_389.var_9f : this.var_3ed.var_9f;
-         var4 = this.var_3b9.var_9f;
+         maxYVal = this.v0.y > this.v2.y ? this.v2.y : this.v0.y;
+         minYVal = this.v1.y;
       }
 
-      if (this.var_1c2 == 4) {
-         if (var2 > this.var_46c.var_59) {
-            var2 = this.var_46c.var_59;
-         } else if (var3 < this.var_46c.var_59) {
-            var3 = this.var_46c.var_59;
+      if (this.vertexCount == 4) {
+         if (minXVal > this.v3.x) {
+            minXVal = this.v3.x;
+         } else if (maxXVal < this.v3.x) {
+            maxXVal = this.v3.x;
          }
 
-         if (var4 > this.var_46c.var_9f) {
-            var4 = this.var_46c.var_9f;
-         } else if (var5 < this.var_46c.var_9f) {
-            var5 = this.var_46c.var_9f;
+         if (minYVal > this.v3.y) {
+            minYVal = this.v3.y;
+         } else if (maxYVal < this.v3.y) {
+            maxYVal = this.v3.y;
          }
       }
 
-      if (var1.minX > var2) {
-         var1.minX = var2;
+      if (bounds.minX > minXVal) {
+         bounds.minX = minXVal;
       }
 
-      if (var1.maxX < var3) {
-         var1.maxX = var3;
+      if (bounds.maxX < maxXVal) {
+         bounds.maxX = maxXVal;
       }
 
-      if (var1.minY > var4) {
-         var1.minY = var4;
+      if (bounds.minY > minYVal) {
+         bounds.minY = minYVal;
       }
 
-      if (var1.maxY < var5) {
-         var1.maxY = var5;
+      if (bounds.maxY < maxYVal) {
+         bounds.maxY = maxYVal;
       }
    }
 }

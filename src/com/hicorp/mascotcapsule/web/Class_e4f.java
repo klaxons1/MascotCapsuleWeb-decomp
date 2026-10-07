@@ -8,32 +8,32 @@ public final class Class_e4f extends MeshLoader {
       this.var_46 = var1;
    }
 
-   public void sub_81() {
-      int[] var1 = Config.sub_34c(this.var_46);
-      int[] var2 = Config.sub_4c1();
-      int var3 = (super.var_3bf > 0 ? super.var_3bf : -super.var_3bf) + (super.var_3d8 > 0 ? super.var_3d8 : -super.var_3d8) + 32768;
-      int var4 = Config.sub_509(this.var_46).selectMipLevel(MatrixUtils.ceilLog2(var3) - 17);
-      int[] var5 = Config.sub_509(this.var_46).getPixels();
-      int var6 = Config.sub_509(this.var_46).getMipOffset(var4);
-      int var7 = Config.sub_509(this.var_46).getMipUMask(var4);
-      int var8 = Config.sub_509(this.var_46).getMipVMask(var4);
-      int var9 = Config.sub_509(this.var_46).getMipUShift(var4);
-      int var10 = Config.sub_509(this.var_46).getMipVShift(var4);
-      int var11 = super.var_3bf >> var4;
-      int var12 = super.var_3d8 >> var4;
-      int var13 = super.var_403;
-      int var14 = super.var_45b;
-      int var15 = Config.sub_52c(this.var_46);
-      int var16 = 255 - Config.sub_52c(this.var_46);
+   public void drawSpan() {
+      int[] var1 = Config.getPixelBuffer(this.var_46);
+      int[] var2 = Config.getColorTable();
+      int var3 = (super.dLightDxFixed > 0 ? super.dLightDxFixed : -super.dLightDxFixed) + (super.normalZFixed > 0 ? super.normalZFixed : -super.normalZFixed) + 32768;
+      int var4 = Config.getDiffuseTexture(this.var_46).selectMipLevel(MatrixUtils.ceilLog2(var3) - 17);
+      int[] var5 = Config.getDiffuseTexture(this.var_46).getPixels();
+      int var6 = Config.getDiffuseTexture(this.var_46).getMipOffset(var4);
+      int var7 = Config.getDiffuseTexture(this.var_46).getMipUMask(var4);
+      int var8 = Config.getDiffuseTexture(this.var_46).getMipVMask(var4);
+      int var9 = Config.getDiffuseTexture(this.var_46).getMipUShift(var4);
+      int var10 = Config.getDiffuseTexture(this.var_46).getMipVShift(var4);
+      int var11 = super.dLightDxFixed >> var4;
+      int var12 = super.normalZFixed >> var4;
+      int var13 = super.dNormalZDyFixed;
+      int var14 = super.dNormalZDxFixed;
+      int var15 = Config.getColorKey(this.var_46);
+      int var16 = 255 - Config.getColorKey(this.var_46);
 
-      for (super.var_2c9 += 8388608; super.var_aa < super.var_bc; super.var_2c9 = super.var_2c9 + super.var_3a2) {
-         int var17 = (super.var_116 >> 16) + super.var_5f;
-         int var18 = (super.var_166 >> 16) + super.var_5f;
-         int var19 = super.var_204 >> var4;
-         int var20 = super.var_248 >> var4;
-         int var21 = super.var_264;
+      for (super.dvDyFixed += 8388608; super.y < super.yEnd; super.dvDyFixed = super.dvDyFixed + super.dLightDyFixed) {
+         int var17 = (super.xLeftFixed >> 16) + super.scanlineOffset;
+         int var18 = (super.xRightFixed >> 16) + super.scanlineOffset;
+         int var19 = super.uFixed >> var4;
+         int var20 = super.vFixed >> var4;
+         int var21 = super.duDyFixed;
 
-         for (int var22 = super.var_2c9; var17 < var18; var17++) {
+         for (int var22 = super.dvDyFixed; var17 < var18; var17++) {
             int var23 = var6 + ((var20 & var8) >>> var10) + ((var19 & var7) >>> var9);
             int var24 = var5[var23];
             if (var24 != -1) {
@@ -58,15 +58,15 @@ public final class Class_e4f extends MeshLoader {
             var22 += var14;
          }
 
-         super.var_aa++;
-         super.var_5f = super.var_5f + Config.sub_3dd(this.var_46);
-         super.var_116 = super.var_116 + super.var_172;
-         super.var_166 = super.var_166 + super.var_1ab;
-         super.var_204 = super.var_204 + super.var_2ea;
-         super.var_248 = super.var_248 + super.var_311;
-         super.var_264 = super.var_264 + super.var_341;
+         super.y++;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.var_46);
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed;
+         super.uFixed = super.uFixed + super.duDxFixed;
+         super.vFixed = super.vFixed + super.dvDxFixed;
+         super.duDyFixed = super.duDyFixed + super.lightFixed;
       }
 
-      super.var_2c9 -= 8388608;
+      super.dvDyFixed -= 8388608;
    }
 }

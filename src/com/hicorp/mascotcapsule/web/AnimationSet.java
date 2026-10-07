@@ -8,40 +8,40 @@ public final class AnimationSet extends Class_15d5 {
       this.var_79 = var1;
    }
 
-   public void sub_22() {
-      int[] var1 = Config.sub_34c(this.var_79);
-      int var2 = (super.var_478 > 0 ? super.var_478 : -super.var_478) + (super.var_510 > 0 ? super.var_510 : -super.var_510) + 32768;
-      int var3 = Config.sub_509(this.var_79).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
-      int[] var4 = Config.sub_509(this.var_79).getPixels();
-      int var5 = Config.sub_509(this.var_79).getMipOffset(var3);
-      int var6 = Config.sub_509(this.var_79).getMipUMask(var3);
-      int var7 = Config.sub_509(this.var_79).getMipVMask(var3);
-      int var8 = Config.sub_509(this.var_79).getMipUShift(var3);
-      int var9 = Config.sub_509(this.var_79).getMipVShift(var3);
-      int var10 = super.var_478 >> var3;
-      int var11 = super.var_510 >> var3;
-      int var12 = super.var_52a;
-      var2 = (super.var_54a > 0 ? super.var_54a : -super.var_54a) + (super.var_55b > 0 ? super.var_55b : -super.var_55b) + 32768;
-      int var13 = Config.sub_55c(this.var_79).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
-      int[] var14 = Config.sub_55c(this.var_79).getPixels();
-      int var15 = Config.sub_55c(this.var_79).getMipOffset(var13);
-      int var16 = Config.sub_55c(this.var_79).getMipUMask(var13);
-      int var17 = Config.sub_55c(this.var_79).getMipVMask(var13);
-      int var18 = Config.sub_55c(this.var_79).getMipUShift(var13);
-      int var19 = Config.sub_55c(this.var_79).getMipVShift(var13);
-      int var20 = super.var_54a >> var13;
-      int var21 = super.var_55b >> var13;
-      int var22 = Config.sub_52c(this.var_79);
+   public void drawSpan() {
+      int[] var1 = Config.getPixelBuffer(this.var_79);
+      int var2 = (super.sphereVFixed > 0 ? super.sphereVFixed : -super.sphereVFixed) + (super.dSphereUDyFixed > 0 ? super.dSphereUDyFixed : -super.dSphereUDyFixed) + 32768;
+      int var3 = Config.getDiffuseTexture(this.var_79).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
+      int[] var4 = Config.getDiffuseTexture(this.var_79).getPixels();
+      int var5 = Config.getDiffuseTexture(this.var_79).getMipOffset(var3);
+      int var6 = Config.getDiffuseTexture(this.var_79).getMipUMask(var3);
+      int var7 = Config.getDiffuseTexture(this.var_79).getMipVMask(var3);
+      int var8 = Config.getDiffuseTexture(this.var_79).getMipUShift(var3);
+      int var9 = Config.getDiffuseTexture(this.var_79).getMipVShift(var3);
+      int var10 = super.sphereVFixed >> var3;
+      int var11 = super.dSphereUDyFixed >> var3;
+      int var12 = super.dSphereVDyFixed;
+      var2 = (super.dSphereUDxFixed > 0 ? super.dSphereUDxFixed : -super.dSphereUDxFixed) + (super.dSphereVDxFixed > 0 ? super.dSphereVDxFixed : -super.dSphereVDxFixed) + 32768;
+      int var13 = Config.getSphereMapTexture(this.var_79).selectMipLevel(MatrixUtils.ceilLog2(var2) - 17);
+      int[] var14 = Config.getSphereMapTexture(this.var_79).getPixels();
+      int var15 = Config.getSphereMapTexture(this.var_79).getMipOffset(var13);
+      int var16 = Config.getSphereMapTexture(this.var_79).getMipUMask(var13);
+      int var17 = Config.getSphereMapTexture(this.var_79).getMipVMask(var13);
+      int var18 = Config.getSphereMapTexture(this.var_79).getMipUShift(var13);
+      int var19 = Config.getSphereMapTexture(this.var_79).getMipVShift(var13);
+      int var20 = super.dSphereUDxFixed >> var13;
+      int var21 = super.dSphereVDxFixed >> var13;
+      int var22 = Config.getColorKey(this.var_79);
 
-      for (int var23 = 255 - Config.sub_52c(this.var_79); super.var_8b < super.var_e8; super.var_383 = super.var_383 + super.var_460) {
-         int var24 = (super.var_189 >> 16) + super.var_41;
-         int var25 = (super.var_1d6 >> 16) + super.var_41;
-         int var26 = super.var_274 >> var3;
-         int var27 = super.var_29a >> var3;
-         int var28 = super.var_2d0;
-         int var29 = super.var_328 >> var13;
+      for (int var23 = 255 - Config.getColorKey(this.var_79); super.y < super.yEnd; super.duDxFixed = super.duDxFixed + super.sphereUFixed) {
+         int var24 = (super.xLeftFixed >> 16) + super.scanlineOffset;
+         int var25 = (super.xRightFixed >> 16) + super.scanlineOffset;
+         int var26 = super.uFixed >> var3;
+         int var27 = super.vFixed >> var3;
+         int var28 = super.duDyFixed;
+         int var29 = super.dvDyFixed >> var13;
 
-         for (int var30 = super.var_383 >> var13; var24 < var25; var24++) {
+         for (int var30 = super.duDxFixed >> var13; var24 < var25; var24++) {
             int var31 = var5 + ((var27 & var7) >>> var9) + ((var26 & var6) >>> var8);
             int var32 = var15 + ((var30 & var17) >>> var19) + ((var29 & var16) >>> var18);
             int var33 = var4[var31];
@@ -65,14 +65,14 @@ public final class AnimationSet extends Class_15d5 {
             var30 += var21;
          }
 
-         super.var_8b++;
-         super.var_41 = super.var_41 + Config.sub_3dd(this.var_79);
-         super.var_189 = super.var_189 + super.var_236;
-         super.var_1d6 = super.var_1d6 + super.var_26a;
-         super.var_274 = super.var_274 + super.var_3b1;
-         super.var_29a = super.var_29a + super.var_3ca;
-         super.var_2d0 = super.var_2d0 + super.var_3f6;
-         super.var_328 = super.var_328 + super.var_44d;
+         super.y++;
+         super.scanlineOffset = super.scanlineOffset + Config.getStride(this.var_79);
+         super.xLeftFixed = super.xLeftFixed + super.dxLeftFixed;
+         super.xRightFixed = super.xRightFixed + super.dxRightFixed;
+         super.uFixed = super.uFixed + super.dvDxFixed;
+         super.vFixed = super.vFixed + super.lightFixed;
+         super.duDyFixed = super.duDyFixed + super.dLightDyFixed;
+         super.dvDyFixed = super.dvDyFixed + super.dLightDxFixed;
       }
    }
 }

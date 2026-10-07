@@ -1,24 +1,24 @@
 package com.hicorp.mascotcapsule.web;
 
 public abstract class Class_1279 {
-   protected int var_c4;
-   protected int var_139;
-   protected int var_21c;
-   protected int var_279;
-   protected int var_2c3;
-   protected int var_2fe;
-   protected int var_326;
-   protected int var_368;
-   protected int var_3c2;
-   protected int var_40c;
-   protected int var_438;
-   protected int var_491;
-   protected int var_49f;
-   private final Config var_4af;
+   protected int scanlineOffset;
+   protected int y;
+   protected int yEnd;
+   protected int xLeftFixed;
+   protected int xRightFixed;
+   protected int dxLeftFixed;
+   protected int dxRightFixed;
+   protected int uFixed;
+   protected int vFixed;
+   protected int duDyFixed;
+   protected int dvDyFixed;
+   protected int duDxFixed;
+   protected int dvDxFixed;
+   private final Config rasterizer;
 
-   public Class_1279(Config var1) {
-      this.var_4af = var1;
+   public Class_1279(Config rasterizer) {
+      this.rasterizer = rasterizer;
    }
 
-   public abstract void sub_1c();
+   public abstract void drawSpan();
 }

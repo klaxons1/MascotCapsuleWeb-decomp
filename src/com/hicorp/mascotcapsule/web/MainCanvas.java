@@ -24,15 +24,15 @@ public class MainCanvas extends Canvas {
    private int var_3ae = 0;
 
    public final int getWidth() {
-      return this.var_1c.sub_6f();
+      return this.var_1c.getWidth();
    }
 
    public final int getHeight() {
-      return this.var_1c.sub_9b();
+      return this.var_1c.getHeight();
    }
 
    public final int[] sub_3d() {
-      return this.var_1c.sub_bc();
+      return this.var_1c.getPixels();
    }
 
    public MainCanvas(int var1, int var2) {
@@ -40,10 +40,10 @@ public class MainCanvas extends Canvas {
    }
 
    public synchronized void setSize(int var1, int var2) {
-      this.var_1c.sub_aa(var1, var2);
+      this.var_1c.setSize(var1, var2);
       this.var_1cd.setBounds(0, 0, var1, var2);
       this.var_4a.sub_58(this.var_1cd);
-      this.var_4a.sub_38(this.var_1c.sub_89(), this.var_1c.sub_bc());
+      this.var_4a.setRenderTarget(this.var_1c.getStride(), this.var_1c.getPixels());
       this.sub_c9(null);
    }
 
@@ -60,11 +60,11 @@ public class MainCanvas extends Canvas {
          }
 
          this.var_ee.setBounds(this.var_1bb);
-         this.var_94.sub_23d(this.var_1bb);
-         this.var_94.sub_21e();
+         this.var_94.flushToDirtyRect(this.var_1bb);
+         this.var_94.resetRenderBounds();
          this.var_ee.union(this.var_1bb);
          this.var_ee.intersect(this.var_1cd);
-         this.var_94.sub_2f2();
+         this.var_94.clearPacketTable();
       }
 
       Graphics var2 = null;
@@ -83,7 +83,7 @@ public class MainCanvas extends Canvas {
       }
 
       if (this.var_ee.isValid()) {
-         this.var_1c.sub_d6(this.var_ee);
+         this.var_1c.flush(this.var_ee);
          this.var_1c.sub_11b(var2, this.var_ee);
       }
 
@@ -141,45 +141,45 @@ public class MainCanvas extends Canvas {
    }
 
    public synchronized void sub_e6(float var1) {
-      this.var_94.sub_73(var1);
+      this.var_94.enablePerspective(var1);
    }
 
    public synchronized void sub_144() {
-      this.var_94.sub_a2();
+      this.var_94.disablePerspective();
    }
 
    public synchronized void sub_1a2(int var1, float var2, float var3) {
-      this.var_94.sub_106(var1, var2, var3);
+      this.var_94.initPacketTable(var1, var2, var3);
    }
 
    public synchronized void sub_1f9(Class_517 var1) {
-      this.var_94.sub_269(var1);
+      this.var_94.setDiffuseTexture(var1);
    }
 
    public synchronized void sub_22b(Class_517 var1) {
-      this.var_94.sub_2b7(var1);
+      this.var_94.setSphereMapTexture(var1);
    }
 
    public synchronized void sub_242(RenderState var1, Class_339 var2) {
-      this.var_94.sub_2dd(var1, var2);
+      this.var_94.setProjection(var1, var2);
       this.var_375 = this.var_375 + var1.var_255;
       this.var_3ae = this.var_3ae + var1.var_1d4;
    }
 
    public synchronized void sub_263(int var1, int var2) {
-      this.var_94.sub_19c(var1, var2);
+      this.var_94.setViewportOffset(var1, var2);
    }
 
    public synchronized void sub_283(boolean var1) {
-      this.var_94.sub_39e(var1);
+      this.var_94.setLightingEnabled(var1);
    }
 
    public synchronized void sub_2e4(Vector3f var1, float var2) {
-      this.var_94.sub_3cc(var1, var2);
+      this.var_94.setDirectionalLight(var1, var2);
    }
 
    public synchronized void sub_331(float var1) {
-      this.var_94.sub_3ba(var1);
+      this.var_94.setAmbientIntensity(var1);
    }
 
    public synchronized void sub_33e(boolean var1) {
